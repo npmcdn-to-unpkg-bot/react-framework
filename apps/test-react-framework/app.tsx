@@ -78,7 +78,7 @@ class AppRootStore extends flux.Store {
         setTimeout(() => { this.modify(st => st.title += 'x'); completed(null); }, 200);
         break;
       case TActions.refreshState:
-        var stateStr = flux.saveAppStateToJSON(flux.store, 2);
+        var stateStr = flux.appStateToJSON(flux.store, 2);
         ReactDOM.unmountComponentAtNode(document.getElementById('app'));
         history.pushState(null, null, 'http://localhost:53159/apps/test-react-framework/index.html');
         setTimeout(() => flux.StoreApp.bootApp(JSON.parse(stateStr)), 1000);

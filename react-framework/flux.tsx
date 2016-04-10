@@ -4,8 +4,6 @@ import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
 import * as utils from '../utils/exports';
 
-//import {utils.Exception, utils.ENotImplemented, getClassName, noop} from '../utils/low-utils';
-
 var moduleId = 'store';
 export type TExceptionCallback = (exp: Error) => void;
 export class ELoginNeeded extends Error {
@@ -189,6 +187,7 @@ export var routeHookDefaultName = 'routeHookDefault';
 
 //****************** ROOT STORE
 export var store: StoreApp;
+export type TStoreAppClass = new () => StoreApp;
 
 @StoreDef({ moduleId: moduleId })
 export abstract class StoreApp extends Store { //global Application store (root for other stores)
@@ -247,7 +246,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
     //create
     if ((source as ITypedObj)._type) { //from StoreApp encoded do JSON literal object
       var literal = source as ITypedObj;
-      flux.replaceByStore(null, literal) as StoreApp; //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
+      flux.literalToAppState(literal); //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
       store.bindRouteToStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
         delete store.saveRoute;
         store.pushState();
@@ -328,7 +327,4 @@ window.addEventListener("popstate", ev => {
   if (!store) return;
   console.log(`> popstate: ${window.location.href}`);
   store.routeBind(flux.decodeFullUrl(), false);
-  //store.onPopState(false);
 });
-
-export type TStoreAppClass = new () => StoreApp;

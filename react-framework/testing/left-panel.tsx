@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 import * as right from './right-panel';
-import * as cfg from './config';
+import * as cfg from '../../apps/test-config';
 
 var moduleId = 'testingLeftPanel';
 export function init() { flux.StoreApp.bootApp(AppStore); }
@@ -43,7 +43,7 @@ export class TestItem extends flux.Component<TestItemStore> { }
 
 @flux.StoreDef({ moduleId: moduleId })
 class TestItemStore extends flux.Store {
-  constructor($parent: AppRootStore, instanceId: string, public key: string, public cfg: cfg.Test) {
+  constructor($parent: AppRootStore, instanceId: string, public key: string, public cfg: flux.ITest) {
     super($parent, instanceId);
   }
   $parent: AppRootStore;

@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
-import * as cfg from './config';
+import * as cfg from '../../apps/test-config';
 
 //******************* GUI for Dump
 var moduleId = 'testingRightPanel';
@@ -29,7 +29,7 @@ class AppRootStore extends flux.Store implements IAppRootRouteActionPar {
     ev.preventDefault();
     try {
       var src = JSON.parse(this.input.value);
-      flux.ActionRecorder.saveAllRecordings(src);
+      flux.saveAllRecordings(src);
       this.input.value = '**** done *****';
     } catch (msg) {
       alert('Wrong JSON format');
@@ -40,7 +40,7 @@ class AppRootStore extends flux.Store implements IAppRootRouteActionPar {
     switch (this.mode) {
       case AppRootMode.export:
       case AppRootMode.dump:
-        var txt = this.mode == AppRootMode.dump ? flux.ActionRecorder.getRecording(this.dumpKey) : flux.ActionRecorder.getAllRecordings();
+        var txt = this.mode == AppRootMode.dump ? flux.getRecording(this.dumpKey) : flux.getAllRecordings();
         return <pre><code>{txt}</code></pre>;
       case AppRootMode.import:
         return <div>
@@ -67,8 +67,8 @@ export class RightClient {
   }
   startRecording() { flux.store.$recorder.startRecording(); }
   saveRecording(key: string) { flux.store.$recorder.saveRecording(key); }
-  hasRecording(key: string) { return flux.ActionRecorder.hasRecording(key); }
-  startPlaying(key: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) { flux.ActionRecorder.startPlaying(key, progress, completed); }
+  hasRecording(key: string) { return flux.hasRecording(key); }
+  startPlaying(key: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) { flux.startPlaying(key, progress, completed); }
   service(mode: AppRootMode, dumpKey?: string) { flux.StoreApp.bootApp(AppStore, null, flux.createRoute<IAppRootRouteActionPar>(AppRootStore, { mode: mode, dumpKey: dumpKey })); }
 }
 export var rightClient = new RightClient();

@@ -40,7 +40,7 @@
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
     <TypeScriptCompile Include="react-framework\router.ts" />
-    <TypeScriptCompile Include="react-framework\testing\config.ts" />
+    <TypeScriptCompile Include="apps\test-config.ts" />
     <TypeScriptCompile Include="react-framework\testing\right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\testing\left-panel.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />
