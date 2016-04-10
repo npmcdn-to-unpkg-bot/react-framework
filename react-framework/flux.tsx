@@ -1,9 +1,9 @@
 ﻿import * as rx from 'rxjs/Rx';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as flux from './exports';
 import {Exception, ENotImplemented, getClassName, noop} from '../utils/low-utils';
-import {decodeUrl, decodeFullUrl, decodeUrlPart, getChildRoutes, encodeUrl, encodeFullUrl, navigate} from './router';
-import {ActionRecorder, replaceByStore} from './action-recorder';
+//import {encodeUrl, encodeFullUrl, navigate} from './router';
 
 var moduleId = 'store';
 export type TExceptionCallback = (exp: Error) => void;
@@ -94,9 +94,9 @@ export abstract class Store implements ITypedObj {
 
   bindRouteToStore(isRestore: boolean, par: IActionPar, completed: TExceptionCallback) {
     let rPar = par as TRouteActionPar;
-    let hookId = rPar.hookId ? rPar.hookId : routeHookDefault;
+    let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
     let hookStore = this[hookId] as StoreRouteHook; if (!hookStore) throw new Exception(`Missing route hook ${rPar.hookId}`);
-    console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefault}, storeId=${rPar.storeId}`);
+    console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefaultName}, storeId=${rPar.storeId}`);
     hookStore.bindRouteToHookStore(isRestore, rPar, completed);
   }
 
@@ -145,7 +145,7 @@ export class StoreRouteHook extends Store { //Route Hook component
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
     if (isRestore) {
-      getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], noop));
+      flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], noop));
       completed(null);
     } else {
       this.hookedStore = createStore<Store>(this, par.storeId); //vytvori store (po kontrole na loginNeeded)
@@ -153,7 +153,7 @@ export class StoreRouteHook extends Store { //Route Hook component
       this.hookedStore.prepareBindRouteToStore(par.par, err => {
         if (err) { completed(err); return; }
         //process child routes
-        let childRoutes = getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
+        let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
         //hookedStore.action(routeHookActionId) for all child routes:
         var childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => this.hookedStore.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
         rx.Observable.concat.apply(this, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
@@ -184,7 +184,7 @@ export interface IRouteActionPar<T extends IActionPar> extends IActionPar {
 }
 export type TRouteActionPar = IRouteActionPar<IActionPar>;
 export var routeParIgnores = ['storeId', 'hookId', 'par'];
-export var routeHookDefault = 'routeHookDefault';
+export var routeHookDefaultName = 'routeHookDefault';
 
 //****************** ROOT STORE
 export var store: StoreApp;
@@ -221,7 +221,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
 
   //**** action player
   saveRoute: TRouteActionPar;
-  $recorder = new ActionRecorder();
+  $recorder = new flux.ActionRecorder();
 
   //************************** 
   routeBind(routes: TRouteActionPar, withPustState: boolean, completed?: TExceptionCallback) {
@@ -235,7 +235,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
   }
   actRoutes(): TRouteActionPar { return this.routeHookDefault.$routePar; }
 
-  static bootApp(source: TStoreAppClass | ITypedObj, compl?: TExceptionCallback, startRoute?: TRouteActionPar /*null => default route, undefined => decodeFullUrl, else => startRoute*/) {
+  static bootApp(source: TStoreAppClass | ITypedObj, compl?: TExceptionCallback, startRoute?: TRouteActionPar /*null => default route, undefined => flux.decodeFullUrl, else => startRoute*/) {
     //clear all
     if (store) {
       store.$recorder.stopAll();
@@ -246,7 +246,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
     //create
     if ((source as ITypedObj)._type) { //from StoreApp encoded do JSON literal object
       var literal = source as ITypedObj;
-      replaceByStore(null, literal) as StoreApp; //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
+      flux.replaceByStore(null, literal) as StoreApp; //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
       store.bindRouteToStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
         delete store.saveRoute;
         store.pushState();
@@ -258,12 +258,12 @@ export abstract class StoreApp extends Store { //global Application store (root 
       new cls(); //vedlejsi efekt je naplneni store
       ReactDOM.render(store.render(), store.$appElement); //render pouze StoreApp a jeji hook
       if (startRoute === null) startRoute = store.getStartRoute();
-      store.routeBind(startRoute ? startRoute : decodeFullUrl(), startRoute ? true : false, compl); //bind (=> init Stores) route
+      store.routeBind(startRoute ? startRoute : flux.decodeFullUrl(), startRoute ? true : false, compl); //bind (=> init Stores) route
     }
   }
 
   pushState() {
-    var urlStr = encodeFullUrl(this.actRoutes());
+    var urlStr = flux.encodeFullUrl(this.actRoutes());
     console.log(`> pushState: ${urlStr}`);
     history.pushState(null, null, urlStr);
   }
@@ -271,7 +271,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
     if (err instanceof ELoginNeeded) {
       console.log(`> navigateError, redirect to login`)
       var logUrl = this.getLoginRoute((err as ELoginNeeded).returnUrl);
-      navigate(logUrl, completed);
+      flux.navigate(logUrl, completed);
     }
   }
   loginNeeded(storeClass: TStoreClass): boolean {
@@ -326,7 +326,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
 window.addEventListener("popstate", ev => {
   if (!store) return;
   console.log(`> popstate: ${window.location.href}`);
-  store.routeBind(decodeFullUrl(), false);
+  store.routeBind(flux.decodeFullUrl(), false);
   //store.onPopState(false);
 });
 

@@ -2,13 +2,15 @@
 //import * as React from 'react';
 //import * as ReactDOM from 'react-dom';
 import {Exception, ENotImplemented, TCallback} from '../utils/low-utils';
-import {store, ITypedObj, createStore, StoreApp, Store, TAction, TExceptionCallback, playActions} from './flux';
 
-export const enum TPlayRecordStatus { no, playing, recording }
+import * as flux from './exports';
+//import {flux.ITypedObj, createStore, flux.StoreApp, flux.Store, flux.TAction, TExceptionCallback, playActions} from './flux';
+
+export const enum TPlayRecordStatus { no, playing, recording } 
 
 interface IData {
-  store?: ITypedObj;
-  playList?: Array<TAction>;
+  store?: flux.ITypedObj;
+  playList?: Array<flux.TAction>;
 }
 const prefix = 'action-recorder.';
 export class ActionRecorder {
@@ -28,11 +30,11 @@ export class ActionRecorder {
 
   //***** recording
   startRecording() {
-    var json = saveAppStateToJSON(store, 2);
+    var json = saveAppStateToJSON(flux.store, 2);
     this.data = { playList: [], store: JSON.parse(json) };
     this.status = TPlayRecordStatus.recording;
   }
-  onStoreAction(getAction: () => TAction) {
+  onStoreAction(getAction: () => flux.TAction) {
     if (this.status != TPlayRecordStatus.recording) return;
     var act = getAction();
     this.data.playList.push(act);
@@ -64,39 +66,36 @@ export class ActionRecorder {
   }
 
   //***** playing
-  static startPlaying(saveId: string, progress: (pos: number, len: number) => void, completed: TExceptionCallback) {
+  static startPlaying(saveId: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) {
     var str = ActionRecorder.getRecording(saveId); if (!str) { completed(new Exception(`Recording not found: ${saveId}`)); return; }
-    var data = JSON.parse(str);
+    var data: IData = JSON.parse(str);
     var playList = data.playList;
     if (!playList || playList.length <= 0) { completed(new Exception(`Empty Recording playlist: ${saveId}`)); return; }
     var len = playList.length; var pos = 1; 
-    StoreApp.bootApp(data.store, err => {
+    flux.StoreApp.bootApp(data.store, err => {
       if (err) { completed(err); return; }
-      store.$recorder.playListCancel = playActions(playList).subscribe(() => progress(pos++, len), err => completed(err), () => completed(null));
+      flux.store.$recorder.playListCancel = flux.playActions(playList).subscribe(() => progress(pos++, len), err => completed(err), () => completed(null));
     });
-    //this.data.playList.map(act => new Promise((ok, err) => {
-    //  var actStore = store.findStore(act.dispPath); if (!actStore) { err(`Cannot find store ${act.dispPath}`); return; }
-    //}));
   }
 }
 
-export function saveAppStateToJSON(store: StoreApp, indent?: number): string {
-  store.saveRoute = store.actRoutes();
-  return JSON.stringify(store, (key, val) => {
+export function saveAppStateToJSON(st: flux.StoreApp, indent?: number): string {
+  st.saveRoute = st.actRoutes();
+  return JSON.stringify(st, (key, val) => {
     if (key && key.startsWith('$')) return undefined;
     return val;
   }, indent)
 }
 
-export function replaceByStore(parentStore: Store, toRepl: ITypedObj): Store {
+export function replaceByStore(parentStore: flux.Store, toRepl: flux.ITypedObj): flux.Store {
   if (!toRepl || !toRepl._type) throw new Exception(JSON.stringify(toRepl));
-  var st = createStore(parentStore, toRepl._type, true);
+  var st = flux.createStore(parentStore, toRepl._type, true);
   Object.assign(st, toRepl);
   traverseToRepl(st, st);
   return st;
 }
 
-function traverseToRepl(parentStore: Store, obj: Object) {
+function traverseToRepl(parentStore: flux.Store, obj: Object) {
   for (var p in obj) {
     if (p.startsWith('$')) continue;
     let res = obj[p];
