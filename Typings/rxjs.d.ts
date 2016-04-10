@@ -3942,7 +3942,7 @@ declare module "rxjs/add/operator/zipAll" {
         }
     }
 }
-declare module "rxjs/Rx" {
+declare module "rxjs/Rx" { 
     export { Subject } from "rxjs/Subject";
     export { Observable } from "rxjs/Observable";
     import "rxjs/add/observable/bindCallback";

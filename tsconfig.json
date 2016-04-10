@@ -13,9 +13,9 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "jsx": "react"
-  },
-  "exclude": [
-    "node_modules"
+  }
+  //"exclude": [
+    //"node_modules"
     //"typings"
-  ]
+  //]
 }
