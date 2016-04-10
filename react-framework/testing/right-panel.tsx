@@ -22,7 +22,7 @@ export enum AppRootMode { export, import, dump }
 export interface IAppRootRouteActionPar { mode: AppRootMode; dumpKey: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-class AppRootStore extends flux.StoreDispatcher implements IAppRootRouteActionPar {
+class AppRootStore extends flux.Store implements IAppRootRouteActionPar {
   dumpKey: string;
   mode: AppRootMode;
   //doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {

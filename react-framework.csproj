@@ -22,6 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="apps\mdl-d-ts\index.html" />
+    <None Include="apps\test-data.json" />
     <Content Include="react-framework\testing\index.html" />
     <Content Include="react-framework\testing\right-panel.html" />
     <Content Include="react-framework\testing\left-panel.html" />

@@ -52,7 +52,7 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
     rx.Observable.timer(300).concat(
     rx.Observable.create((obs: rx.Subscriber<any>) => {
       var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new Exception(`Cannot find store ${act.dispPath}`)); return; }
-      (actStore as StoreDispatcher).action(act.actionId, act.par, err => {
+      actStore.action(act.actionId, act.par, err => {
         if (err) obs.error(err); else obs.complete();
       });
       return () => { };
@@ -87,35 +87,8 @@ export abstract class Store implements ITypedObj {
   abstract render(): JSX.Element; // { throw new ENotImplemented('Missing render override'); } //React.Component render
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
-}
-
-
-export type TStoreClass = new ($parent: Store, instanceId?: string) => Store;
-
-
-//****************** DISPATCHER STORE
-@StoreDef({ moduleId: moduleId })
-export abstract class StoreDispatcher extends Store { //Store, which can dispatch (flux) Actions. Actions could be assync.
-  //doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { //generic action dispatcher (which solves some Route binding issues)
-  //  switch (id) {
-  //    case act_routeBindTo:
-  //    case act_routeRestoreAssignTo:
-  //      let rPar = par as TRouteActionPar;
-  //      let hookId = rPar.hookId ? rPar.hookId : routeHookDefault;
-  //      let hookStore = this[hookId] as StoreRouteHook; if (!hookStore) throw new Exception(`Missing route hook ${rPar.hookId}`);
-  //      console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefault}, storeId=${rPar.storeId}`);
-  //      hookStore.doDispatchAction(id, rPar, completed);
-  //      break;
-  //    case act_routeInitForBind:
-  //      completed(null);
-  //      break;
-  //    default:
-  //      throw new ENotImplemented(`doDispatchAction id=${id}`);
-  //  }
-  //}
-  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) {
-    throw new ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`);
-  }
+  //************** Action Binding
+  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
   prepareBindRouteToStore(par: IActionPar, completed: TExceptionCallback) { completed(null); }
 
@@ -136,14 +109,10 @@ export abstract class StoreDispatcher extends Store { //Store, which can dispatc
     this.action<T>(id, par, completed);
     ev.preventDefault();
   }
-
 }
 
+export type TStoreClass = new ($parent: Store, instanceId?: string) => Store;
 export type TDispatchCallback = (store: Store) => void;
-
-//export const act_routeBindTo = 9090; //akci dostava store, do ktereho je bindovano plus route hook
-//export const act_routeRestoreAssignTo = 9091; //akci dostava store, do ktereho je bindovano plus route hook
-//export const act_routeInitForBind = 9092; //inicializace store pred nabindovanim do route hook
 
 //******************  REACT COMPONENTS
 export interface IProps<T extends Store> {
@@ -171,29 +140,7 @@ export type TComponentClass = React.ComponentClass<TProps>;
 export class RouteHook extends Component<StoreRouteHook> { }
 
 @StoreDef({ moduleId: moduleId, componentClass: RouteHook })
-export class StoreRouteHook extends StoreDispatcher { //Route Hook component
-  //doDispatchAction(id: number, par: TRouteActionPar, completed: TExceptionCallback) {
-  //  switch (id) {
-  //    case act_routeRestoreAssignTo:
-  //      this.$routePar = par;
-  //      getChildRoutes(par).forEach(propName => this.hookedStore.action(act_routeRestoreAssignTo, par[propName]));
-  //      completed(null);
-  //      break;
-  //    case act_routeBindTo:
-  //      this.$routePar = par;
-  //      this.hookedStore = createStore<StoreDispatcher>(this, par.storeId); //vytvori store (po kontrole na loginNeeded)
-  //      if (!this.hookedStore) { /*debugger; console.log(JSON.stringify(store.actRoutes(), null, 2));*/ completed(new ELoginNeeded()); return; } //je potreba login
-  //      this.hookedStore.doDispatchAction(act_routeInitForBind, par.par, err => {
-  //        if (err) { completed(err); return; }
-  //        //process child routes
-  //        let childRoutes = getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
-  //        //hookedStore.action(routeHookActionId) for all child routes:
-  //        var childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => this.hookedStore.doDispatchAction(act_routeBindTo, subPar, exp => { if (exp) err(exp); else ok(); })));
-  //        rx.Observable.concat.apply(this, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
-  //      });
-  //      break;
-  //  }
-  //}
+export class StoreRouteHook extends Store { //Route Hook component
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
@@ -201,7 +148,7 @@ export class StoreRouteHook extends StoreDispatcher { //Route Hook component
       getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], noop));
       completed(null);
     } else {
-      this.hookedStore = createStore<StoreDispatcher>(this, par.storeId); //vytvori store (po kontrole na loginNeeded)
+      this.hookedStore = createStore<Store>(this, par.storeId); //vytvori store (po kontrole na loginNeeded)
       if (!this.hookedStore) { /*debugger; console.log(JSON.stringify(store.actRoutes(), null, 2));*/ completed(new ELoginNeeded()); return; } //je potreba login
       this.hookedStore.prepareBindRouteToStore(par.par, err => {
         if (err) { completed(err); return; }
@@ -215,7 +162,6 @@ export class StoreRouteHook extends StoreDispatcher { //Route Hook component
   }
 
   routeBind(completed?: TExceptionCallback) {
-    //this.doDispatchAction(act_routeBindTo, this.$routePar, err => {
     this.bindRouteToHookStore(false, this.$routePar, err => {
       if (err) { store.navigateError(err, completed); return; }
       this.modify();
@@ -227,7 +173,7 @@ export class StoreRouteHook extends StoreDispatcher { //Route Hook component
   render(): JSX.Element {
     return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { state: this.hookedStore, key: store.getUnique() }) : <div>Loading...</div>;
   }
-  hookedStore: StoreDispatcher;
+  hookedStore: Store;
 }
 
 export interface IRouteActionPar<T extends IActionPar> extends IActionPar {
@@ -244,7 +190,7 @@ export var routeHookDefault = 'routeHookDefault';
 export var store: StoreApp;
 
 @StoreDef({ moduleId: moduleId })
-export abstract class StoreApp extends StoreDispatcher { //global Application store (root for other stores)
+export abstract class StoreApp extends Store { //global Application store (root for other stores)
   constructor() {
     super(null);
     //configure App
@@ -280,7 +226,6 @@ export abstract class StoreApp extends StoreDispatcher { //global Application st
   //************************** 
   routeBind(routes: TRouteActionPar, withPustState: boolean, completed?: TExceptionCallback) {
     if (!routes) routes = this.getStartRoute(); if (!routes) { if (completed) completed(null); return; };
-    //this.doDispatchAction(act_routeBindTo, routes, err => {
     this.bindRouteToStore(false, routes, err => {
       if (err) { this.navigateError(err, completed); return; }
       this.routeHookDefault.modify();
@@ -302,7 +247,6 @@ export abstract class StoreApp extends StoreDispatcher { //global Application st
     if ((source as ITypedObj)._type) { //from StoreApp encoded do JSON literal object
       var literal = source as ITypedObj;
       replaceByStore(null, literal) as StoreApp; //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
-      //store.action(act_routeRestoreAssignTo, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
       store.bindRouteToStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
         delete store.saveRoute;
         store.pushState();

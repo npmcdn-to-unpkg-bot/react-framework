@@ -18,7 +18,7 @@ export class AppStore extends flux.StoreApp {
 export class AppRoot extends flux.Component<AppRootStore> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-class AppRootStore extends flux.StoreDispatcher {
+class AppRootStore extends flux.Store {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);
     this.items = Object.keys(cfg.tests).map(k => { return { key: k, value: cfg.tests[k] }; }).map((kv, idx) => new TestItemStore(this, idx.toString(), kv.key, kv.value));
@@ -43,7 +43,7 @@ enum TItemState { no, playing, recording }
 export class TestItem extends flux.Component<TestItemStore> { }
 
 @flux.StoreDef({ moduleId: moduleId })
-class TestItemStore extends flux.StoreDispatcher {
+class TestItemStore extends flux.Store {
   constructor($parent: AppRootStore, instanceId: string, public key: string, public cfg: cfg.Test) {
     super($parent, instanceId);
   }
