@@ -102,11 +102,11 @@ export abstract class Store implements ITypedObj {
 
   action<T extends IActionPar>(id: number, descr:string, par?: T, completed?: TExceptionCallback) { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);
-    store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr:descr }; });
+    store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr: this.getMeta().id + ': ' + descr }; });
     this.doDispatchAction(id, par, completed ? completed : utils.noop);
   }
   clickAction<T extends IActionPar>(ev: React.MouseEvent, id:number, descr:string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
-    this.action<T>(id, this.getMeta().id + ': ' + descr, par, completed);
+    this.action<T>(id, descr, par, completed);
     ev.preventDefault();
   }
 }

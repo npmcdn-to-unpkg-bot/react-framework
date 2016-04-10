@@ -37,21 +37,20 @@ class AppRootStore extends flux.Store implements IAppRootRouteActionPar {
   }
   input;
   render(): JSX.Element {
+    if (this.mode == AppRootMode.import) return <div>
+      <br/>
+      <div>Paste exported JSON here and click <a href='#' onClick={this.import.bind(this) }><b>Import</b></a></div>
+      <br/>
+      <textarea ref= {c => this.input = c} rows='40' style={{ width: '99%' }}></textarea>
+    </div>;
+    var txt = '';
     switch (this.mode) {
-      case AppRootMode.export:
-      case AppRootMode.dump:
-        var txt = this.mode == AppRootMode.dump ? flux.getRecording(this.dumpKey) : flux.getAllRecordings();
-        return <pre><code>{txt}</code></pre>;
-      case AppRootMode.import:
-        return <div>
-          <br/>
-          <div>Paste exported JSON here and click <a href='#' onClick={this.import.bind(this)}><b>Import</b></a></div>
-          <br/>
-          <textarea ref= {c => this.input = c} rows='40' style={{ width: '99%' }}></textarea>
-        </div>;
-      default:
-        return null;
+      case AppRootMode.export: txt = flux.getAllRecordings(); break;
+      case AppRootMode.dump: txt = flux.getRecording(this.dumpKey); break;
+      //case AppRootMode.dumpAct: txt = flux.appStateToJSON(flux.store, 2); break;
+      default: return null;
     }
+    return <pre><code>{txt}</code></pre>;
   }
 }
 
@@ -70,5 +69,6 @@ export class RightClient {
   hasRecording(key: string) { return flux.hasRecording(key); }
   startPlaying(key: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) { flux.startPlaying(key, progress, completed); }
   service(mode: AppRootMode, dumpKey?: string) { flux.StoreApp.bootApp(AppStore, null, flux.createRoute<IAppRootRouteActionPar>(AppRootStore, { mode: mode, dumpKey: dumpKey })); }
+  getActStatus(): string { return flux.store ? flux.appStateToJSON(flux.store, 2) : ''; } 
 }
 export var rightClient = new RightClient();

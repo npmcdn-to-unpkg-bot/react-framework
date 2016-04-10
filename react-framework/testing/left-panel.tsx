@@ -22,14 +22,22 @@ class AppRootStore extends flux.Store {
     super($parent, instanceId);
     this.items = Object.keys(cfg.tests).map(k => { return { key: k, value: cfg.tests[k] }; }).map((kv, idx) => new TestItemStore(this, idx.toString(), kv.key, kv.value));
   }
+  showDump: boolean;
   exportImport(ev: React.MouseEvent, isExport: boolean) { ev.preventDefault(); rightClient.service(isExport ? right.AppRootMode.export : right.AppRootMode.import); }
   export(ev: React.MouseEvent) { this.exportImport(ev, true); }
   import(ev: React.MouseEvent) { this.exportImport(ev, false); }
+  dump(ev: React.MouseEvent) { ev.preventDefault(); this.modify(st => st.showDump = true); }
   items: Array<TestItemStore>;
   render(): JSX.Element {
+    var shoDumpEl = null;
+    if (this.showDump) {
+      this.showDump = false; shoDumpEl = [<br/>, <textarea rows={2} value={rightClient.getActStatus() }/>];
+    }
     return <div>
       <a href='#' onClick={this.export.bind(this) }>Export All</a> |
-      <a href='#' onClick={this.import.bind(this) }>Import All</a>
+      <a href='#' onClick={this.import.bind(this) }>Import All</a> |
+      <a href='#' onClick={this.dump.bind(this) }>Dump</a>
+      {shoDumpEl}
       <hr/>
       {this.items.map(item => <TestItem state={item} key={item.instanceId}/>) }
     </div>;
@@ -90,7 +98,7 @@ class TestItemStore extends flux.Store {
         case TItemState.no:
           detail = <span>
             <a href='#' onClick={st.run.bind(st) }>Run</a>
-            <span style={{ display: st.hasRecording() ? 'inline' : 'none' }}>| <a href='#' onClick={st.startPlaying.bind(st) }>Play</a> | <a href='#' onClick={st.dumpRecording.bind(st) }>Dump</a></span> |
+            <span style={{ display: st.hasRecording() ? 'inline' : 'none' }}>| <a href='#' onClick={st.startPlaying.bind(st) }>Play</a> | <a href='#' onClick={st.dumpRecording.bind(st) }>Dump-Recording</a></span> |
             <a href='#' onClick={st.startRecording.bind(st) }>Record</a>
           </span>;
           break;
