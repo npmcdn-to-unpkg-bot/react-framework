@@ -239,3 +239,8 @@ _Pvt_Extensions
 
 *.js
 trash/
+
+!utils/typescript-polyfils.js
+!react-mdl/ReactMDL.js
+!react-mdl/classname.js
+!react-mdl/material.js

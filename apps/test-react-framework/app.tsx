@@ -120,9 +120,8 @@ class AppRootStore extends flux.StoreDispatcher {
       <RouteHook state={this.routeHookDefault}/>
       <hr/>
       <RouteHook state={this.otherHook}/>
-      {/*
       <hr/>
-      <FABButton primary='xxx'/>*/}
+      <FABButton />
     </div>;
   }
 }
