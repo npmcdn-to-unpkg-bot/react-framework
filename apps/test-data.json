@@ -3,31 +3,38 @@
     "playList": [
       {
         "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.1/testReactFramework.ChildStore",
-        "actionId": 0
+        "actionId": 0,
+        "descr": "click"
       },
       {
         "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2/testReactFramework.ChildStore",
-        "actionId": 0
+        "actionId": 0,
+        "descr": "click"
       },
       {
         "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
-        "actionId": 0
+        "actionId": 0,
+        "descr": "click"
       },
       {
         "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
-        "actionId": 1
-      },
-      {
-        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2/testReactFramework.ChildStore",
-        "actionId": 0
+        "actionId": 1,
+        "descr": "navigate"
       },
       {
         "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.1/testReactFramework.ChildStore",
-        "actionId": 0
+        "actionId": 0,
+        "descr": "click"
       },
       {
         "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
-        "actionId": 0
+        "actionId": 0,
+        "descr": "click"
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2/testReactFramework.ChildStore",
+        "actionId": 0,
+        "descr": "click"
       }
     ],
     "store": {

@@ -51,7 +51,7 @@ class LoginStore extends flux.Store {
   returnUrl: string;
   render(): JSX.Element {
     return <div>
-      <a href='#' onClick={ev => this.clickAction<ILoginRouteActionPar>(ev, TActions.login, { returnUrl: this.returnUrl }) }>LOGIN</a>
+      <a href='#' onClick={ev => this.clickAction<ILoginRouteActionPar>(ev, TActions.login, 'login', { returnUrl: this.returnUrl }) }>LOGIN</a>
     </div>;
   }
 }
@@ -59,7 +59,7 @@ class LoginStore extends flux.Store {
 //****************** AppRoot component
 export class AppRoot extends flux.Component<AppRootStore> { }
 
-enum TActions { click, navigate, login, refreshState };
+enum TActions { appClick, childClick, navigate, login, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 class AppRootStore extends flux.Store {
@@ -74,7 +74,7 @@ class AppRootStore extends flux.Store {
   otherHook: flux.StoreRouteHook;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case TActions.click:
+      case TActions.appClick:
         setTimeout(() => { this.modify(st => st.title += 'x'); completed(null); }, 200);
         break;
       case TActions.refreshState:
@@ -100,8 +100,8 @@ class AppRootStore extends flux.Store {
   }
   render(): JSX.Element {
     return <div>
-      <h2 onClick={ev => this.clickAction(ev, TActions.click) }>{this.title}</h2>
-      <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate) }>Navigate</a>
+      <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
+      <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       {/*
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.refreshState) }>Refresh State</a>*/}
@@ -125,7 +125,7 @@ class ChildStore extends flux.Store {
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case TActions.click:
+      case TActions.childClick:
         flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
         //this.modify(st => st.title += 'x'); completed();
         break;
@@ -137,6 +137,6 @@ class ChildStore extends flux.Store {
     setTimeout(() => { Object.assign(this, par); completed(null); }, 200);
   }
   render(): JSX.Element {
-    return <h3 onClick={ev => this.clickAction(ev, TActions.click) }>{this.title}</h3>;
+    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;
   }
 }

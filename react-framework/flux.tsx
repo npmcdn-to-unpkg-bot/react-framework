@@ -41,6 +41,7 @@ export interface IStoreMeta {
 export interface IAction<T extends IActionPar> { //flux action
   dispPath: string; //Dispatcher.path, identifying action dispatcher
   actionId: number; //action id (use enum for it)
+  descr:string;
   par: T; //action parameter
 }
 export interface IActionPar { } //flux action parameter
@@ -50,8 +51,8 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
   return rx.Observable.from(actions).concatMap((act: TAction) =>
     rx.Observable.timer(300).concat(
     rx.Observable.create((obs: rx.Subscriber<any>) => {
-      var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new utils.Exception(`Cannot find store ${act.dispPath}`)); return; }
-      actStore.action(act.actionId, act.par, err => {
+        var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new utils.Exception(`Cannot find store ${act.dispPath}`)); return; }
+        actStore.action(act.actionId, act.descr, act.par, err => {
         if (err) obs.error(err); else obs.complete();
       });
       return () => { };
@@ -99,13 +100,13 @@ export abstract class Store implements ITypedObj {
     hookStore.bindRouteToHookStore(isRestore, rPar, completed);
   }
 
-  action<T extends IActionPar>(id: number, par?: T, completed?: TExceptionCallback) { //call action
+  action<T extends IActionPar>(id: number, descr:string, par?: T, completed?: TExceptionCallback) { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);
-    store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par }; });
+    store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr:descr }; });
     this.doDispatchAction(id, par, completed ? completed : utils.noop);
   }
-  clickAction<T extends IActionPar>(ev: React.MouseEvent, id: number, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
-    this.action<T>(id, par, completed);
+  clickAction<T extends IActionPar>(ev: React.MouseEvent, id:number, descr:string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
+    this.action<T>(id, this.getMeta().id + ': ' + descr, par, completed);
     ev.preventDefault();
   }
 }
