@@ -2,7 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Exception, ENotImplemented} from '../utils/low-utils';
-import {TExceptionCallback, IRouteActionPar, TRouteActionPar, routeParIgnores, routeHookDefault, TStoreClass, IActionPar, TStoreAppClass, act_routeBindTo, Store, StoreRouteHook, store} from './flux';
+import {TExceptionCallback, IRouteActionPar, TRouteActionPar, routeParIgnores, routeHookDefault, TStoreClass, IActionPar, TStoreAppClass, Store, StoreRouteHook, store} from './flux';
 
 export function subNavigate<T extends IActionPar>(store: Store, modify: (st: IRouteActionPar<T>) => void, completed?: TExceptionCallback) {
   if (!store || !(store instanceof StoreRouteHook)) throw new Exception(`Wrong subNavigate parameter: store is not StoreRouteHook`);

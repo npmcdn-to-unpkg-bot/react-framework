@@ -1,0 +1,85 @@
+﻿{
+  "test1": {
+    "playList": [
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.1/testReactFramework.ChildStore",
+        "actionId": 0
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2/testReactFramework.ChildStore",
+        "actionId": 0
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
+        "actionId": 0
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
+        "actionId": 1
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2/testReactFramework.ChildStore",
+        "actionId": 0
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.1/testReactFramework.ChildStore",
+        "actionId": 0
+      },
+      {
+        "dispPath": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
+        "actionId": 0
+      }
+    ],
+    "store": {
+      "_type": "testReactFramework.AppStore",
+      "path": "testReactFramework.AppStore",
+      "unique": 4,
+      "routeHookDefault": {
+        "_type": "store.StoreRouteHook",
+        "path": "testReactFramework.AppStore/store.StoreRouteHook",
+        "hookedStore": {
+          "_type": "testReactFramework.AppRootStore",
+          "path": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore",
+          "title": "Hello world",
+          "routeHookDefault": {
+            "instanceId": "1",
+            "_type": "store.StoreRouteHook",
+            "path": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.1",
+            "hookedStore": {
+              "_type": "testReactFramework.ChildStore",
+              "path": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.1/testReactFramework.ChildStore",
+              "title": "Child1"
+            }
+          },
+          "otherHook": {
+            "instanceId": "2",
+            "_type": "store.StoreRouteHook",
+            "path": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2",
+            "hookedStore": {
+              "_type": "testReactFramework.ChildStore",
+              "path": "testReactFramework.AppStore/store.StoreRouteHook/testReactFramework.AppRootStore/store.StoreRouteHook.2/testReactFramework.ChildStore",
+              "title": "Child2"
+            }
+          }
+        }
+      },
+      "isLogged": true,
+      "saveRoute": {
+        "storeId": "testReactFramework.AppRootStore",
+        "otherHook": {
+          "storeId": "testReactFramework.ChildStore",
+          "par": {
+            "title": "Child2"
+          },
+          "hookId": "otherHook"
+        },
+        "routeHookDefault": {
+          "storeId": "testReactFramework.ChildStore",
+          "par": {
+            "title": "Child1"
+          }
+        }
+      }
+    }
+  }
+}

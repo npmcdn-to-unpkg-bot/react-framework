@@ -52,12 +52,17 @@ class LoginStore extends flux.StoreDispatcher {
         (flux.store as AppStore).isLogged = true;
         flux.navigate(flux.decodeFullUrl(this.returnUrl));
         break;
-      case flux.act_routeInitForBind:
-        var p = par as ILoginRouteActionPar;
-        this.returnUrl = p.returnUrl;
-        completed(null);
-        break;
+      //case flux.act_routeInitForBind:
+      //  var p = par as ILoginRouteActionPar;
+      //  this.returnUrl = p.returnUrl;
+      //  completed(null);
+      //  break;
     }
+  }
+  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
+    var p = par as ILoginRouteActionPar;
+    this.returnUrl = p.returnUrl;
+    completed(null);
   }
   returnUrl: string;
   render(): JSX.Element {
@@ -102,12 +107,15 @@ class AppRootStore extends flux.StoreDispatcher {
           completed
         );
         break;
-      case flux.act_routeInitForBind:
-        setTimeout(() => completed(null), 200);
-        break;
+      //case flux.act_routeInitForBind:
+      //  setTimeout(() => completed(null), 200);
+      //  break;
       default:
         super.doDispatchAction(id, par, completed)
     }
+  }
+  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
+    setTimeout(() => completed(null), 200);
   }
   render(): JSX.Element {
     return <div>
@@ -136,9 +144,9 @@ class ChildStore extends flux.StoreDispatcher {
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case flux.act_routeInitForBind:
-        setTimeout(() => { Object.assign(this, par); completed(null); }, 200);
-        break;
+      //case flux.act_routeInitForBind:
+      //  setTimeout(() => { Object.assign(this, par); completed(null); }, 200);
+      //  break;
       case TActions.click:
         flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
         //this.modify(st => st.title += 'x'); completed();
@@ -146,6 +154,9 @@ class ChildStore extends flux.StoreDispatcher {
       default:
         super.doDispatchAction(id, par, completed)
     }
+  }
+  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
+    setTimeout(() => { Object.assign(this, par); completed(null); }, 200);
   }
   render(): JSX.Element {
     return <h3 onClick={ev => this.clickAction(ev, TActions.click) }>{this.title}</h3>;

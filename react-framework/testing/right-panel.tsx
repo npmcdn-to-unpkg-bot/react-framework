@@ -25,14 +25,17 @@ export interface IAppRootRouteActionPar { mode: AppRootMode; dumpKey: string; }
 class AppRootStore extends flux.StoreDispatcher implements IAppRootRouteActionPar {
   dumpKey: string;
   mode: AppRootMode;
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
-    switch (id) {
-      case flux.act_routeInitForBind:
-        Object.assign(this, par as IAppRootRouteActionPar); completed(null);
-        break;
-      default:
-        super.doDispatchAction(id, par, completed)
-    }
+  //doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  //  switch (id) {
+  //    case flux.act_routeInitForBind:
+  //      Object.assign(this, par as IAppRootRouteActionPar); completed(null);
+  //      break;
+  //    default:
+  //      super.doDispatchAction(id, par, completed)
+  //  }
+  //}
+  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
+    Object.assign(this, par as IAppRootRouteActionPar); completed(null);
   }
   import(ev: React.MouseEvent) {
     ev.preventDefault();
