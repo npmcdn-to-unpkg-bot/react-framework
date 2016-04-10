@@ -52,6 +52,7 @@
     <TypeScriptCompile Include="Typings\react-global.d.ts" />
     <TypeScriptCompile Include="Typings\react.d.ts" />
     <TypeScriptCompile Include="Typings\rxjs.d.ts" />
+    <TypeScriptCompile Include="utils\exports.ts" />
     <TypeScriptCompile Include="utils\low-utils.ts" />
   </ItemGroup>
   <ItemGroup>

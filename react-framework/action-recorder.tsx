@@ -1,10 +1,7 @@
 ﻿import * as rx from 'rxjs/Rx';
-//import * as React from 'react';
-//import * as ReactDOM from 'react-dom';
-import {Exception, ENotImplemented, TCallback} from '../utils/low-utils';
-
 import * as flux from './exports';
-//import {flux.ITypedObj, createStore, flux.StoreApp, flux.Store, flux.TAction, TExceptionCallback, playActions} from './flux';
+import * as utils from '../utils/exports';
+
 
 export const enum TPlayRecordStatus { no, playing, recording } 
 
@@ -67,10 +64,10 @@ export class ActionRecorder {
 
   //***** playing
   static startPlaying(saveId: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) {
-    var str = ActionRecorder.getRecording(saveId); if (!str) { completed(new Exception(`Recording not found: ${saveId}`)); return; }
+    var str = ActionRecorder.getRecording(saveId); if (!str) { completed(new utils.Exception(`Recording not found: ${saveId}`)); return; }
     var data: IData = JSON.parse(str);
     var playList = data.playList;
-    if (!playList || playList.length <= 0) { completed(new Exception(`Empty Recording playlist: ${saveId}`)); return; }
+    if (!playList || playList.length <= 0) { completed(new utils.Exception(`Empty Recording playlist: ${saveId}`)); return; }
     var len = playList.length; var pos = 1; 
     flux.StoreApp.bootApp(data.store, err => {
       if (err) { completed(err); return; }
@@ -88,7 +85,7 @@ export function saveAppStateToJSON(st: flux.StoreApp, indent?: number): string {
 }
 
 export function replaceByStore(parentStore: flux.Store, toRepl: flux.ITypedObj): flux.Store {
-  if (!toRepl || !toRepl._type) throw new Exception(JSON.stringify(toRepl));
+  if (!toRepl || !toRepl._type) throw new utils.Exception(JSON.stringify(toRepl));
   var st = flux.createStore(parentStore, toRepl._type, true);
   Object.assign(st, toRepl);
   traverseToRepl(st, st);

@@ -1,8 +1,8 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
+
 import {RouteHook} from '../../react-framework/exports';
-import {ENotImplemented, Exception, getClassName} from '../../utils/low-utils';
 import {Badge, Button, FABButton } from 'react-mdl';
 
 
@@ -27,12 +27,6 @@ export class AppStore extends flux.StoreApp {
   isLogged = false;
 }
 
-//setTimeout(() =>
-//  flux.navigate(flux.createRoute(AppRootStore, null,
-//    flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'Child1' }),
-//    { otherHook: flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'Child2' }) })),
-//  5000);
-
 //****************** Login page
 export class Login extends flux.Component<LoginStore> { }
 
@@ -41,22 +35,12 @@ export interface ILoginRouteActionPar { returnUrl: string; }
 @flux.StoreDef({ moduleId: moduleId, componentClass: Login, loginNeeded: false })
 class LoginStore extends flux.Store {
 
-  //constructor($parent: flux.Store) {
-  //  super($parent);
-  //  debugger;
-  //}
-
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.login:
         (flux.store as AppStore).isLogged = true;
         flux.navigate(flux.decodeFullUrl(this.returnUrl));
         break;
-      //case flux.act_routeInitForBind:
-      //  var p = par as ILoginRouteActionPar;
-      //  this.returnUrl = p.returnUrl;
-      //  completed(null);
-      //  break;
     }
   }
   prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
@@ -107,9 +91,6 @@ class AppRootStore extends flux.Store {
           completed
         );
         break;
-      //case flux.act_routeInitForBind:
-      //  setTimeout(() => completed(null), 200);
-      //  break;
       default:
         super.doDispatchAction(id, par, completed)
     }
@@ -144,9 +125,6 @@ class ChildStore extends flux.Store {
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      //case flux.act_routeInitForBind:
-      //  setTimeout(() => { Object.assign(this, par); completed(null); }, 200);
-      //  break;
       case TActions.click:
         flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
         //this.modify(st => st.title += 'x'); completed();

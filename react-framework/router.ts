@@ -2,12 +2,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
-
-import {Exception, ENotImplemented} from '../utils/low-utils';
-
+import * as utils from '../utils/exports';
 
 export function subNavigate<T extends flux.IActionPar>(st: flux.Store, modify: (st: flux.IRouteActionPar<T>) => void, completed?: flux.TExceptionCallback) {
-  if (!st || !(st instanceof flux.StoreRouteHook)) throw new Exception(`Wrong subNavigate parameter: flux.store is not flux.StoreRouteHook`);
+  if (!st || !(st instanceof flux.StoreRouteHook)) throw new utils.Exception(`Wrong subNavigate parameter: flux.store is not flux.StoreRouteHook`);
   var routeHook = st as flux.StoreRouteHook;
   modify(routeHook.$routePar as flux.IRouteActionPar<T>);
   routeHook.routeBind(completed);
@@ -37,7 +35,7 @@ export function decodeUrlPart(url?: string): string {
   if (!url) url = window.location.href;
   if (!url.toLowerCase().startsWith(flux.store.$basicUrl)) {
     //url = flux.store.$basicUrl; history.pushState(null, null, url);
-    throw new Exception(`location.href does not start with ${flux.store.$basicUrl}`);
+    throw new utils.Exception(`location.href does not start with ${flux.store.$basicUrl}`);
   }
   return clearSlashes(url.substr(flux.store.$basicUrl.length));
 }
@@ -67,7 +65,7 @@ function decodeUrlLow(url: string): flux.TRouteActionPar {
   let parseRoute = (endIdx: number, st: IDecodeStack) => {
     var s = url.substring(st.openIdx, endIdx - 1);
     var parts = s.split(';');
-    var propComp = parts[0].split('-'); if (propComp.length > 2) throw new Exception('propComp.length > 2');
+    var propComp = parts[0].split('-'); if (propComp.length > 2) throw new utils.Exception('propComp.length > 2');
     st.hookId = propComp.length == 1 ? null : propComp[0];
     st.route = { storeId: propComp.length == 1 ? propComp[0] : propComp[1] };
     for (let i = 1; i < parts.length; i++) {

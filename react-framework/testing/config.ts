@@ -1,6 +1,6 @@
 ﻿import * as rx from 'rxjs/Rx';
 import * as flux from '../flux';
-import * as utils from '../../utils/low-utils';
+import * as utils from '../../utils/exports';
 import * as testRF from '../../apps/test-react-framework/app';
 
 export class Test {

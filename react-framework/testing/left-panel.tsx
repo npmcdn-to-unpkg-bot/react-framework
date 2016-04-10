@@ -2,7 +2,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
-import {ENotImplemented, Exception} from '../../utils/low-utils';
 import * as right from './right-panel';
 import * as cfg from './config';
 
@@ -113,11 +112,6 @@ class TestItemStore extends flux.Store {
 }
 
 ////**************** inter panel communication
-//export class LeftClient {
-//  test() { alert('LeftClient.call'); }
-//}
-//export var leftClient = new LeftClient();
-
 var rightClient: right.RightClient;
 var sys = window.parent['right'].System;
 sys.import(sys['baseURL'] + 'right-panel.js').then(m => {
