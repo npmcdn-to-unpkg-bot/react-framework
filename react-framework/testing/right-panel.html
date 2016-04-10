@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>TypeScript HTML App</title>
+  <script type="text/javascript" src="../../utils/typescript-polyfils.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.0/es6-shim.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.24/system-polyfills.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.24/system.js"></script>
+  <script src="../../node_modules/react-mdl/extra/material.js"></script>
+  <script src="https://npmcdn.com/dialog-polyfill/dialog-polyfill.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="../../node_modules/react-mdl/extra/material.css">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/dialog-polyfill/dialog-polyfill.css" />
+</head>
+<body style="margin:10px;">
+  <div id="app"></div>
+
+  <script>
+    System.defaultJSExtensions = true;
+    System.paths['classnames'] = '../../node_modules/classname/classname.js';
+    System.paths['rxjs/Rx'] = 'https://npmcdn.com/rxjs@5.0.0-beta.5/bundles/Rx.js';
+    System.paths['react-mdl'] = '../../node_modules/react-mdl/out/ReactMDL.js';
+    System.paths['react'] =     'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.8/react.js';
+    System.paths['react-dom'] =     'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.8/react-dom.js';
+    System.import('right-panel.js').then(function(m) { m.init(); }, function(m) { debugger; });
+  </script>
+</body>
+</html>

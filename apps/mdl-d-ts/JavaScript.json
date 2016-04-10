@@ -1,0 +1,559 @@
+﻿[
+  {
+    "comp": "Badge",
+    "props": {
+      "children": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "element" },
+          { "type": "string" }
+        ]
+      },
+      "text": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "number" }
+        ]
+      },
+      "overlap": { "type": "bool" },
+      "noBackground": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Button",
+    "props": {
+      "accent": { "type": "bool" },
+      "className": { "type": "string" },
+      "colored": { "type": "bool" },
+      "component": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" },
+          { "type": "func" }
+        ]
+      },
+      "href": { "type": "string" },
+      "primary": { "type": "bool" },
+      "raised": { "type": "bool" },
+      "ripple": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Card",
+    "props": {
+      "className": { "type": "string" },
+      "shadow": { "type": "number" }
+    }
+  },
+  {
+    "comp": "CardActions",
+    "props": {
+      "border": { "type": "bool" },
+      "className": { "type": "string" }
+    }
+  },
+  {
+    "comp": "CardMedia",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "CardMenu",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "CardText",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "CardTitle",
+    "props": {
+      "className": { "type": "string" },
+      "expand": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Cell",
+    "props": {
+      "align": {
+        "type": "oneOf",
+        "value": [ "top", "middle", "bottom", "stretch" ]
+      },
+      "className": { "type": "string" },
+      "col": {
+        "type": "number",
+        "required": true
+      },
+      "component": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" },
+          { "type": "func" }
+        ]
+      },
+      "phone": { "type": "number" },
+      "tablet": { "type": "number" },
+      "hideDesktop": { "type": "bool" },
+      "hidePhone": { "type": "bool" },
+      "hideTablet": { "type": "bool" },
+      "shadow": { "type": "number" }
+    }
+  },
+  {
+    "comp": "Checkbox",
+    "props": {
+      "checked": { "type": "bool" },
+      "className": { "type": "string" },
+      "disabled": { "type": "bool" },
+      "label": { "type": "string" },
+      "onChange": { "type": "func" },
+      "ripple": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Content",
+    "props": {
+      "className": { "type": "string" },
+      "component": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" },
+          { "type": "func" }
+        ]
+      }
+    }
+  },
+  {
+    "comp": "DataTable",
+    "props": { "sortable": { "type": "bool" } }
+  },
+  {
+    "comp": "Dialog",
+    "props": {
+      "className": { "type": "string" },
+      "onCancel": { "type": "func" },
+      "open": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "DialogActions",
+    "props": {
+      "className": { "type": "string" },
+      "fullWidth": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "DialogContent",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "DialogTitle",
+    "props": {
+      "className": { "type": "string" },
+      "component": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" },
+          { "type": "func" }
+        ]
+      }
+    }
+  },
+  {
+    "comp": "Drawer",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "FABButton",
+    "props": {
+      "className": { "type": "string" },
+      "mini": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Footer",
+    "props": {
+      "className": { "type": "string" },
+      "size": {
+        "type": "oneOf",
+        "value": [ "mini", "mega" ]
+      }
+    }
+  },
+  {
+    "comp": "FooterDropDownSection",
+    "props": {
+      "className": { "type": "string" },
+      "size": {
+        "type": "oneOf",
+        "value": [ "mini", "mega" ]
+      }
+    }
+  },
+  {
+    "comp": "FooterLinkList",
+    "props": {
+      "className": { "type": "string" },
+      "size": {
+        "type": "oneOf",
+        "value": [ "mini", "mega" ]
+      }
+    }
+  },
+  {
+    "comp": "FooterSection",
+    "props": {
+      "className": { "type": "string" },
+      "size": {
+        "type": "oneOf",
+        "value": [ "mini", "mega" ]
+      },
+      "type": {
+        "type": "oneOf",
+        "value": [ "top", "middle", "bottom", "left", "right" ]
+      }
+    }
+  },
+  {
+    "comp": "Grid",
+    "props": {
+      "className": { "type": "string" },
+      "component": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" },
+          { "type": "func" }
+        ]
+      },
+      "noSpacing": { "type": "bool" },
+      "shadow": { "type": "number" }
+    }
+  },
+  {
+    "comp": "Header",
+    "props": {
+      "className": { "type": "string" },
+      "scroll": { "type": "bool" },
+      "seamed": { "type": "bool" },
+      "transparent": { "type": "bool" },
+      "waterfall": { "type": "bool" },
+      "hideTop": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "HeaderRow",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "HeaderTabs",
+    "props": {
+      "activeTab": { "type": "number" },
+      "className": { "type": "string" },
+      "onChange": { "type": "func" },
+      "ripple": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Icon",
+    "props": {
+      "className": { "type": "string" },
+      "name": {
+        "type": "string",
+        "required": true
+      }
+    }
+  },
+  {
+    "comp": "IconButton",
+    "props": {
+      "className": { "type": "string" },
+      "name": {
+        "type": "string",
+        "required": true
+      }
+    }
+  },
+  {
+    "comp": "IconToggle",
+    "props": {
+      "checked": { "type": "bool" },
+      "className": { "type": "string" },
+      "disabled": { "type": "bool" },
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "onChange": { "type": "func" },
+      "ripple": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Layout",
+    "props": {
+      "className": { "type": "string" },
+      "fixedDrawer": { "type": "bool" },
+      "fixedHeader": { "type": "bool" },
+      "fixedTabs": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "List",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "ListItem",
+    "props": {
+      "className": { "type": "string" },
+      "twoLine": { "type": "bool" },
+      "threeLine": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "ListItemAction",
+    "props": {
+      "children": { "type": "element" },
+      "className": { "type": "string" },
+      "info": { "type": "string" }
+    }
+  },
+  {
+    "comp": "ListItemContent",
+    "props": {
+      "avatar": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" }
+        ]
+      },
+      "className": { "type": "string" },
+      "icon": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" }
+        ]
+      },
+      "useBodyClass": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Menu",
+    "props": {
+      "align": {
+        "type": "oneOf",
+        "value": [ "left", "right" ]
+      },
+      "className": { "type": "string" },
+      "ripple": { "type": "bool" },
+      "target": {
+        "type": "string",
+        "required": true
+      },
+      "valign": {
+        "type": "oneOf",
+        "value": [ "bottom", "top" ]
+      }
+    }
+  },
+  {
+    "comp": "MenuItem",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "Navigation",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "ProgressBar",
+    "props": {
+      "buffer": { "type": "number" },
+      "className": { "type": "string" },
+      "indeterminate": { "type": "bool" },
+      "progress": { "type": "number" }
+    }
+  },
+  {
+    "comp": "Radio",
+    "props": {
+      "checked": { "type": "bool" },
+      "className": { "type": "string" },
+      "disabled": { "type": "bool" },
+      "name": { "type": "string" },
+      "onChange": { "type": "func" },
+      "ripple": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "RadioGroup",
+    "props": {
+      "childContainer": { "type": "string" },
+      "children": { "type": "arrayOf" },
+      "container": { "type": "string" },
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "onChange": { "type": "func" }
+    }
+  },
+  {
+    "comp": "Slider",
+    "props": {
+      "className": { "type": "string" },
+      "max": { "type": "number" },
+      "min": { "type": "number" },
+      "onChange": { "type": "func" },
+      "value": { "type": "number" }
+    }
+  },
+  {
+    "comp": "Snackbar",
+    "props": {
+      "action": { "type": "string" },
+      "active": {
+        "type": "bool",
+        "required": true
+      },
+      "className": { "type": "string" },
+      "onActionClick": { "type": "func" },
+      "onTimeout": {
+        "type": "func",
+        "required": true
+      },
+      "timeout": { "type": "number" }
+    }
+  },
+  {
+    "comp": "Spacer",
+    "props": { "className": { "type": "string" } }
+  },
+  {
+    "comp": "Spinner",
+    "props": {
+      "className": { "type": "string" },
+      "singleColor": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Switch",
+    "props": {
+      "checked": { "type": "bool" },
+      "className": { "type": "string" },
+      "disabled": { "type": "bool" },
+      "onChange": { "type": "func" },
+      "ripple": { "type": "bool" }
+    }
+  },
+  {
+    "comp": "Tab",
+    "props": {
+      "active": { "type": "bool" },
+      "className": { "type": "string" },
+      "component": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "element" },
+          { "type": "func" }
+        ]
+      },
+      "cssPrefix": { "type": "string" },
+      "onTabClick": { "type": "func" },
+      "style": { "type": "object" },
+      "tabId": { "type": "number" }
+    }
+  },
+  {
+    "comp": "TabBar",
+    "props": {
+      "activeTab": { "type": "number" },
+      "className": { "type": "string" },
+      "cssPrefix": {
+        "type": "string",
+        "required": true
+      },
+      "onChange": { "type": "func" }
+    }
+  },
+  {
+    "comp": "Table",
+    "props": { "sortable": { "type": "bool" } }
+  },
+  {
+    "comp": "TableHeader",
+    "props": {
+      "cellFormatter": { "type": "func" },
+      "className": { "type": "string" },
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "numeric": { "type": "bool" },
+      "onClick": { "type": "func" },
+      "nosort": { "type": "bool" },
+      "sortFn": { "type": "func" }
+    }
+  },
+  {
+    "comp": "Tabs",
+    "props": {
+      "activeTab": { "type": "number" },
+      "children": {
+        "type": "oneOfType",
+        "value": [
+          null,
+          { "type": "arrayOf" }
+        ]
+      },
+      "className": { "type": "string" },
+      "onChange": { "type": "func" },
+      "ripple": { "type": "bool" },
+      "tabBarProps": { "type": "object" }
+    }
+  },
+  {
+    "comp": "Textfield",
+    "props": {
+      "className": { "type": "string" },
+      "disabled": { "type": "bool" },
+      "expandable": { "type": "bool" },
+      "expandableIcon": { "type": "string" },
+      "floatingLabel": { "type": "bool" },
+      "id": { "type": "string" },
+      "inputClassName": { "type": "string" },
+      "label": {
+        "type": "string",
+        "required": true
+      },
+      "maxRows": { "type": "number" },
+      "onChange": { "type": "func" },
+      "pattern": { "type": "string" },
+      "required": { "type": "bool" },
+      "rows": { "type": "number" },
+      "style": { "type": "object" },
+      "value": {
+        "type": "oneOfType",
+        "value": [
+          { "type": "string" },
+          { "type": "number" }
+        ]
+      }
+    }
+  },
+  {
+    "comp": "Tooltip",
+    "props": {
+      "large": { "type": "bool" },
+      "position": {
+        "type": "oneOf",
+        "value": [ "left", "right", "top", "bottom" ]
+      }
+    }
+  }
+]
