@@ -41,7 +41,7 @@ export interface IStoreMeta {
 export interface IAction<T extends IActionPar> { //flux action
   dispPath: string; //Dispatcher.path, identifying action dispatcher
   actionId: number; //action id (use enum for it)
-  descr:string;
+  descr: string;
   par: T; //action parameter
 }
 export interface IActionPar { } //flux action parameter
@@ -50,16 +50,21 @@ export type TAction = IAction<IActionPar>;
 export function playActions(actions: Array<TAction>): rx.Observable<any> {
   return rx.Observable.from(actions).concatMap((act: TAction) =>
     rx.Observable.timer(300).concat(
-    rx.Observable.create((obs: rx.Subscriber<any>) => {
+      rx.Observable.create((obs: rx.Subscriber<any>) => {
         var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new utils.Exception(`Cannot find store ${act.dispPath}`)); return; }
-        actStore.action(act.actionId, act.descr, act.par, err => {
-        if (err) obs.error(err); else obs.complete();
-      });
-      return () => { };
-    })));
+        try {
+          actStore.action(act.actionId, act.descr, act.par, err => { if (err) obs.error(err); else obs.complete(); });
+        } catch (err) {
+          obs.error(new utils.Exception(err));
+        }
+        return () => { };
+      })));
 }
 
 //****************** STORE
+export interface IStore {
+}
+
 @StoreDef({ moduleId: moduleId })
 export abstract class Store implements ITypedObj {
   constructor(public $parent: Store, public instanceId?: string) {
@@ -100,12 +105,12 @@ export abstract class Store implements ITypedObj {
     hookStore.bindRouteToHookStore(isRestore, rPar, completed);
   }
 
-  action<T extends IActionPar>(id: number, descr:string, par?: T, completed?: TExceptionCallback) { //call action
+  action<T extends IActionPar>(id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);
     store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr: this.getMeta().id + ': ' + descr }; });
     this.doDispatchAction(id, par, completed ? completed : utils.noop);
   }
-  clickAction<T extends IActionPar>(ev: React.MouseEvent, id:number, descr:string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
+  clickAction<T extends IActionPar>(ev: React.MouseEvent, id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
     this.action<T>(id, descr, par, completed);
     ev.preventDefault();
   }

@@ -31,6 +31,7 @@
     <Content Include="react-mdl\material.css" />
     <Content Include="react-mdl\material.js" />
     <Content Include="react-mdl\ReactMDL.js" />
+    <None Include="trash\json.json" />
     <Content Include="utils\typescript-polyfils.js" />
     <Content Include="web.config" />
   </ItemGroup>

@@ -69,6 +69,12 @@ export class RightClient {
   hasRecording(key: string) { return flux.hasRecording(key); }
   startPlaying(key: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) { flux.startPlaying(key, progress, completed); }
   service(mode: AppRootMode, dumpKey?: string) { flux.StoreApp.bootApp(AppStore, null, flux.createRoute<IAppRootRouteActionPar>(AppRootStore, { mode: mode, dumpKey: dumpKey })); }
-  getActStatus(): string { return flux.store ? flux.appStateToJSON(flux.store, 2) : ''; } 
+  getActStatus(): string {
+    if (!flux.store) return '';
+    flux.store['actUrl'] = window.location.href;
+    try {
+      return flux.store ? flux.appStateToJSON(flux.store, 2) : '';
+    } finally { delete flux.store['actUrl']; }
+  } 
 }
 export var rightClient = new RightClient();

@@ -31,7 +31,7 @@ class AppRootStore extends flux.Store {
   render(): JSX.Element {
     var shoDumpEl = null;
     if (this.showDump) {
-      this.showDump = false; shoDumpEl = [<br/>, <textarea rows={2} value={rightClient.getActStatus() }/>];
+      this.showDump = false; shoDumpEl = [<br/>, <textarea rows={2} style={{ width: '100%' }} value={rightClient.getActStatus() }/>];
     }
     return <div>
       <a href='#' onClick={this.export.bind(this) }>Export All</a> |
