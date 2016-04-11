@@ -28,12 +28,15 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** Login page
-export class Login extends flux.Component<LoginStore> { }
+export interface IStoreLogin extends flux.IStore { returnUrl: string }
+export interface IPropsExLogin extends flux.IPropsEx { returnUrl?: string }
 
-export interface ILoginRouteActionPar { returnUrl: string; }
+export class Login extends flux.Component<LoginStore, IPropsExLogin> { }
+
+export interface ILoginRouteActionPar extends IPropsExLogin { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Login, loginNeeded: false })
-class LoginStore extends flux.Store {
+class LoginStore extends flux.Store implements IStoreLogin {
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -57,12 +60,14 @@ class LoginStore extends flux.Store {
 }
 
 //****************** AppRoot component
-export class AppRoot extends flux.Component<AppRootStore> { }
+export interface IStoreApp extends flux.IStore { title: string }
+export interface IPropsExApp extends flux.IPropsEx { title?: string }
+export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 enum TActions { appClick, childClick, navigate, login, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-class AppRootStore extends flux.Store {
+class AppRootStore extends flux.Store implements IStoreApp {
   constructor($parent: flux.Store) {
     super($parent);
     this.routeHookDefault = new flux.StoreRouteHook(this, '1');
@@ -102,9 +107,8 @@ class AppRootStore extends flux.Store {
     return <div>
       <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
-      {/*
       <hr/>
-      <a href='#' onClick={ev => this.clickAction(ev, TActions.refreshState) }>Refresh State</a>*/}
+      <Child title='Not routed child' state={null} $parent={this} />
       <hr/>
       <RouteHook state={this.routeHookDefault}/>
       <hr/>
@@ -116,18 +120,25 @@ class AppRootStore extends flux.Store {
 }
 
 //****************** Child component
-export class Child extends flux.Component<ChildStore> { }
+export interface IStoreChild extends flux.IStore { title: string }
+export interface IPropsExChild extends flux.IPropsEx { title?: string }
+
+export class Child extends flux.Component<ChildStore, IPropsExChild> { }
 
 export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child, loginNeeded: true })
-class ChildStore extends flux.Store {
+class ChildStore extends flux.Store implements IStoreChild {
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.childClick:
-        flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
-        //this.modify(st => st.title += 'x'); completed();
+        if (this.$parent instanceof flux.StoreRouteHook)
+          flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
+        else {
+          this.modify(st => st.title += 'x');
+          completed(null);
+        }
         break;
       default:
         super.doDispatchAction(id, par, completed)
@@ -140,3 +151,36 @@ class ChildStore extends flux.Store {
     return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;
   }
 }
+
+//interface IStorex { instanceId: string; }
+//interface IPropsEx { instanceId?: string; }
+//interface IPropsx<T extends Storex> { state: T; }
+
+//class Storex implements IStorex { instanceId: string; }
+//class Component<T extends Storex, P extends IPropsEx> extends React.Component<IPropsx<T> & P, any>{ }
+
+//interface IStoreChildx extends IStorex { title: string; }
+//interface IChilsPropsEx extends IPropsEx { title?: string; }
+//class StoreChildx extends Storex implements IStoreChildx { title: string; }
+//export class Childx extends Component<StoreChildx, IChilsPropsEx>{ }
+
+//var ch = <Childx state={null}/>
+
+declare var __extends: any;
+__extends(Component, React.Component);
+function Component(props, ctx) {
+  React.Component.call(this, props, ctx);
+  props.state.trace('create');
+  props.state.subscribe(this);
+}
+Component.prototype.componentWillUnmount = function () {
+  //undo adjustComponentState
+  if (this.props.$parent && this.props.$parent.childStores && this.props.state)
+    delete this.props.$parent.childStores[this.props.state.getIdInParent()];
+  this.props.state.unSubscribe(this);
+  this.props.state.trace('destroy');
+};
+Component.prototype.render = function () {
+  return this.props.state.render();
+};
+

@@ -1,5 +1,9 @@
 ﻿export class Exception extends Error {
-  constructor(msg: string) { super(msg); debugger; }
+  constructor(msg: string) {
+    super(msg);
+    debugger;
+    console.error(msg);
+  }
 }
 export class ENotImplemented extends Exception {
   constructor(msg: string) { super(`Missing ${msg} override`); }

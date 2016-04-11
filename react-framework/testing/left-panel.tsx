@@ -14,10 +14,13 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-export class AppRoot extends flux.Component<AppRootStore> { }
+export interface IStoreApp extends flux.IStore { }
+export interface IPropsExApp extends flux.IPropsEx { }
+
+export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-class AppRootStore extends flux.Store {
+class AppRootStore extends flux.Store implements IStoreApp {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);
     this.items = Object.keys(cfg.tests).map(k => { return { key: k, value: cfg.tests[k] }; }).map((kv, idx) => new TestItemStore(this, idx.toString(), kv.key, kv.value));
@@ -47,7 +50,7 @@ class AppRootStore extends flux.Store {
 //****************** TestItem component
 enum TItemState { no, playing, recording }
 
-export class TestItem extends flux.Component<TestItemStore> { }
+export class TestItem extends flux.Component<TestItemStore, flux.IPropsEx> { }
 
 @flux.StoreDef({ moduleId: moduleId })
 class TestItemStore extends flux.Store {

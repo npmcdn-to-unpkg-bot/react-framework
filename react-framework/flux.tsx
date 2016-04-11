@@ -14,15 +14,18 @@ export interface ITypedObj { _type: string; }
 
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
 export function StoreDef(meta: IStoreMeta): ClassDecorator {
-  return (target: TStoreClass) => {
-    if (!meta.id) meta.id = meta.moduleId + '.' + utils.getClassName(target);
-    target.prototype[prototypeMeta] = meta;
-    storeConstructors[meta.id] = target;
-    return target;
+  return (storeClass: TStoreClass) => {
+    if (!meta.id) meta.id = meta.moduleId + '.' + utils.getClassName(storeClass);
+    meta.storeClass = storeClass;
+    storeClass.prototype[prototypeMeta] = meta;
+    storeConstructors[meta.id] = storeClass;
+    storeClasseMetas.push(meta);
+    return storeClass;
   }
 }
 const prototypeMeta = 'meta';
 var storeConstructors: { [id: string]: TStoreClass; } = {};
+var storeClasseMetas: Array<IStoreMeta> = [];
 export function createStore<T extends Store>(parent: Store, storeId: string, ignoreLogin?: boolean): T {
   var constr = storeConstructors[storeId]; if (!constr) throw new utils.Exception(`Store ${storeId} not registered`);
   if (!ignoreLogin && store.loginNeeded(constr)) return null;
@@ -34,7 +37,13 @@ export interface IStoreMeta {
   id?: string; //<moduleId>.<class name>
   //pro komponenty, co se binduji do route hook
   componentClass?: TComponentClass; //class nabindovana do route hook
+  storeClass?: TStoreClass; //
   loginNeeded?: boolean; //true x false. Iff undefined => bere se store.defaultLoginNeeded.
+}
+function findStoreClass(componentClass: TComponentClass): TStoreClass {
+  var res = storeClasseMetas.find(m => m.componentClass == componentClass);
+  if (!res || !res.storeClass) throw new utils.Exception(`Missing StoreDef componentClass info: ${utils.getClassName(componentClass)}`);
+  return res.storeClass;
 }
 
 //****************** ACTION INTERFACES
@@ -62,22 +71,34 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 }
 
 //****************** STORE
-export interface IStore {
+export type IChildStores = { [path: string]: Store; };
+export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; }
+export interface IPropsEx { $parent?: Store; instanceId?: string; }
+export interface IProps<T extends Store> {
+  state: T; //cast globalniho stavy aplikace, ktery je stavem stateless komponenty
 }
+export type TProps = IProps<Store>;
+
 
 @StoreDef({ moduleId: moduleId })
-export abstract class Store implements ITypedObj {
+export abstract class Store implements IStore, ITypedObj {
   constructor(public $parent: Store, public instanceId?: string) {
-    var name = this._type = this.getMeta().id; if (instanceId) name += '.' + instanceId;
-    this.path = ($parent ? $parent.path + '/' : '') + name;
+    this._type = this.getMeta().id;
+    var idInParent = this.getIdInParent();
+    this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
   $subscribers: Array<string> = []; //components path's, using this store as a status
   getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
+  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); }
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
     var res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new utils.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
+  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string {
+    return Store.getClassMeta(storeClass).id + (instanceId ? '.' + instanceId : '');
+  }
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
+  childStores: IChildStores;
   modify(modifyProc?: (st: this) => void) { //modify store and rerender all $subscribers
     if (modifyProc) modifyProc(this);
     this.$subscribers.forEach(path => {
@@ -120,32 +141,46 @@ export type TStoreClass = new ($parent: Store, instanceId?: string) => Store;
 export type TDispatchCallback = (store: Store) => void;
 
 //******************  REACT COMPONENTS
-export interface IProps<T extends Store> {
-  state: T; //cast globalniho stavy aplikace, ktery je stavem stateless komponenty
-}
-export type TProps = IProps<Store>;
-export class Component<T extends Store> extends React.Component<IProps<T>, any> { //generic React component
-  constructor(props: IProps<T>, ctx) {
+export class Component<T extends Store, P extends IPropsEx> extends React.Component<IProps<T> & P, any> { //generic React component
+  constructor(props: IProps<T> & P, ctx) {
     super(props, ctx);
-    props.state.trace('create');
-    props.state.subscribe(this);
+    this.state = props.state;
+    this.adjustComponentState();
+    this.state.trace('create');
+    this.state.subscribe(this);
   }
-  componentWillUnmount = () => {
-    this.props.state.unSubscribe(this);
-    this.props.state.trace('destroy');
+  state: T;
+  componentWillUnmount() {
+    if (this.props.$parent && this.props.$parent.childStores && this.state) delete this.props.$parent.childStores[this.state.getIdInParent()]; //undo adjustComponentState
+    this.state.unSubscribe(this);
+    this.state.trace('destroy');
   }
   render(): JSX.Element {
-    return this.props.state.render();
+    return this.state.render();
   }
+  private adjustComponentState() {
+    if (this.state) return;
+    var parent = this.props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
+    var storeCls: TStoreClass = findStoreClass(this.constructor as TComponentClass);
+    this.state = new storeCls(parent, this.props.instanceId) as T;
+    Object.assign(this.state, this.props);
+    if (!parent.childStores) parent.childStores = {};
+    parent.childStores[this.state.getIdInParent()] = this.state;
+  }
+
 }
-export type TComponent = Component<Store>;
+
+export type TComponent = Component<Store, IPropsEx>;
 export type TComponentClass = React.ComponentClass<TProps>;
 
 //****************** ROUTER HOOK STORE
-export class RouteHook extends Component<StoreRouteHook> { }
+export interface IStoreRouteHook extends IStore { }
+export interface IPropsExRouteHook extends IPropsEx { }
+
+export class RouteHook extends Component<StoreRouteHook, IPropsExRouteHook> { }
 
 @StoreDef({ moduleId: moduleId, componentClass: RouteHook })
-export class StoreRouteHook extends Store { //Route Hook component
+export class StoreRouteHook extends Store implements IStoreRouteHook { //Route Hook component
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
