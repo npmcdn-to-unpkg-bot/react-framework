@@ -6,6 +6,7 @@ import * as utils from '../utils/exports';
 
 var moduleId = 'store';
 export type TExceptionCallback = (exp: Error) => void;
+export type TCreateStoreCallback = (res: Error | Store) => void;
 export class ELoginNeeded extends Error {
   constructor() { super(); this.returnUrl = store.actRoutes(); }
   returnUrl: TRouteActionPar;
@@ -18,30 +19,24 @@ export function StoreDef(meta: IStoreMeta): ClassDecorator {
     if (!meta.id) meta.id = meta.moduleId + '.' + utils.getClassName(storeClass);
     meta.storeClass = storeClass;
     storeClass.prototype[prototypeMeta] = meta;
-    storeConstructors[meta.id] = storeClass;
-    storeClasseMetas.push(meta);
+    storeMetasDir[meta.id] = meta;
+    storeMetas.push(meta);
     return storeClass;
   }
 }
-const prototypeMeta = 'meta';
-var storeConstructors: { [id: string]: TStoreClass; } = {};
-var storeClasseMetas: Array<IStoreMeta> = [];
-export function createStore<T extends Store>(parent: Store, storeId: string, ignoreLogin?: boolean): T {
-  var constr = storeConstructors[storeId]; if (!constr) throw new utils.Exception(`Store ${storeId} not registered`);
-  if (!ignoreLogin && store.loginNeeded(constr)) return null;
-  var res = new constr(parent);
-  return res as T;
-}
+const prototypeMeta = 'meta'; //v prototype[prototypeMeta] jsou store meta informace
+var storeMetasDir: { [id: string]: IStoreMeta; } = {};
+var storeMetas: Array<IStoreMeta> = [];
 export interface IStoreMeta {
   moduleId: string;
   id?: string; //<moduleId>.<class name>
   //pro komponenty, co se binduji do route hook
   componentClass?: TComponentClass; //class nabindovana do route hook
   storeClass?: TStoreClass; //
-  loginNeeded?: boolean; //true x false. Iff undefined => bere se store.defaultLoginNeeded.
+  loginNeeded?: boolean; //true x false. Iff undefined => bere se StoreApp.defaultLoginNeeded.
 }
-function findStoreClass(componentClass: TComponentClass): TStoreClass {
-  var res = storeClasseMetas.find(m => m.componentClass == componentClass);
+function componentToStore(componentClass: TComponentClass): TStoreClass {
+  var res = storeMetas.find(m => m.componentClass == componentClass);
   if (!res || !res.storeClass) throw new utils.Exception(`Missing StoreDef componentClass info: ${utils.getClassName(componentClass)}`);
   return res.storeClass;
 }
@@ -72,10 +67,10 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 
 //****************** STORE
 export type IChildStores = { [path: string]: Store; };
-export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; }
+export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
 export interface IPropsEx { $parent?: Store; instanceId?: string; }
 export interface IProps<T extends Store> {
-  state: T; //cast globalniho stavy aplikace, ktery je stavem stateless komponenty
+  state?: T; //cast globalniho stavy aplikace, ktery je stavem stateless komponenty
 }
 export type TProps = IProps<Store>;
 
@@ -87,15 +82,29 @@ export abstract class Store implements IStore, ITypedObj {
     var idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
+  static createStore<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, routePar?: IActionPar) {
+    var cls: TStoreClass;
+    if (typeof storeId === 'string') {
+      let meta = storeMetasDir[storeId]; if (!meta) throw new utils.Exception(`Store ${storeId} not registered`);
+      cls = meta.storeClass;
+    } else
+      cls = storeId;
+    if (store.loginNeeded(cls)) return completed(new ELoginNeeded());
+    var res = new cls(parent);
+    res.initStore(routePar, completed);
+  }
+  static createStoreJSON(parent: Store, _type: string): Store {
+    var meta = storeMetasDir[_type]; if (!meta) throw new utils.Exception(`Store ${_type} not registered`);
+    return new meta.storeClass(parent);
+  }
+
   $subscribers: Array<string> = []; //components path's, using this store as a status
   getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
-  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); }
+  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
     var res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new utils.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
-  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string {
-    return Store.getClassMeta(storeClass).id + (instanceId ? '.' + instanceId : '');
-  }
+  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string { return Store.getClassMeta(storeClass).id + (instanceId ? '.' + instanceId : ''); }
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
@@ -114,9 +123,9 @@ export abstract class Store implements IStore, ITypedObj {
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
   //************** Action Binding
-  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new utils.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
+  initStore(par: IActionPar, completed: TCreateStoreCallback) { completed(this); } //inicializace store po jeho vytvoreni. Muze byt asynchronni
 
-  prepareBindRouteToStore(par: IActionPar, completed: TExceptionCallback) { completed(null); }
+  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new utils.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
   bindRouteToStore(isRestore: boolean, par: IActionPar, completed: TExceptionCallback) {
     let rPar = par as TRouteActionPar;
@@ -161,7 +170,7 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
   private adjustComponentState() {
     if (this.state) return;
     var parent = this.props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
-    var storeCls: TStoreClass = findStoreClass(this.constructor as TComponentClass);
+    var storeCls: TStoreClass = componentToStore(this.constructor as TComponentClass);
     this.state = new storeCls(parent, this.props.instanceId) as T;
     Object.assign(this.state, this.props);
     if (!parent.childStores) parent.childStores = {};
@@ -188,16 +197,17 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
       flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], utils.noop));
       completed(null);
     } else {
-      this.hookedStore = createStore<Store>(this, par.storeId); //vytvori store (po kontrole na loginNeeded)
-      if (!this.hookedStore) { /*debugger; console.log(JSON.stringify(store.actRoutes(), null, 2));*/ completed(new ELoginNeeded()); return; } //je potreba login
-      this.hookedStore.prepareBindRouteToStore(par.par, err => {
-        if (err) { completed(err); return; }
-        //process child routes
-        let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
-        //hookedStore.action(routeHookActionId) for all child routes:
-        var childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => this.hookedStore.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
-        rx.Observable.concat.apply(this, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
-      });
+      Store.createStore<Store>(this, par.storeId, res => {
+        if (res instanceof Store) {
+          this.hookedStore = res;
+          //process child routes
+          let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
+          var childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
+          rx.Observable.concat.apply(this, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
+        } else {
+          completed(res);
+        }
+      }, par.par);
     }
   }
 

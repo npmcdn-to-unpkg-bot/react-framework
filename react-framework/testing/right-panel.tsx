@@ -24,8 +24,8 @@ export interface IAppRootRouteActionPar { mode: AppRootMode; dumpKey: string; }
 class AppRootStore extends flux.Store implements IStoreApp {
   dumpKey: string;
   mode: AppRootMode;
-  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
-    Object.assign(this, par as IAppRootRouteActionPar); completed(null);
+  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
+    Object.assign(this, par as IAppRootRouteActionPar); completed(this);
   }
   import(ev: React.MouseEvent) {
     ev.preventDefault();

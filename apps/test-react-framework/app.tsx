@@ -46,10 +46,10 @@ class LoginStore extends flux.Store implements IStoreLogin {
         break;
     }
   }
-  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
     var p = par as ILoginRouteActionPar;
     this.returnUrl = p.returnUrl;
-    completed(null);
+    completed(this);
   }
   returnUrl: string;
   render(): JSX.Element {
@@ -64,7 +64,7 @@ export interface IStoreApp extends flux.IStore { title: string }
 export interface IPropsExApp extends flux.IPropsEx { title?: string }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
-enum TActions { appClick, childClick, navigate, login, refreshState };
+enum TActions { appClick, childClick, navigate, login };//, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 class AppRootStore extends flux.Store implements IStoreApp {
@@ -82,12 +82,12 @@ class AppRootStore extends flux.Store implements IStoreApp {
       case TActions.appClick:
         setTimeout(() => { this.modify(st => st.title += 'x'); completed(null); }, 200);
         break;
-      case TActions.refreshState:
-        var stateStr = flux.appStateToJSON(flux.store, 2);
-        ReactDOM.unmountComponentAtNode(document.getElementById('app'));
-        history.pushState(null, null, 'http://localhost:53159/apps/test-react-framework/index.html');
-        setTimeout(() => flux.StoreApp.bootApp(JSON.parse(stateStr)), 1000);
-        break;
+      //case TActions.refreshState:
+      //  var stateStr = flux.appStateToJSON(flux.store, 2);
+      //  ReactDOM.unmountComponentAtNode(document.getElementById('app'));
+      //  history.pushState(null, null, 'http://localhost:53159/apps/test-react-framework/index.html');
+      //  setTimeout(() => flux.StoreApp.bootApp(JSON.parse(stateStr)), 1000);
+      //  break;
       case TActions.navigate:
         flux.navigate(
           flux.createRoute(AppRootStore, null,
@@ -100,15 +100,15 @@ class AppRootStore extends flux.Store implements IStoreApp {
         super.doDispatchAction(id, par, completed)
     }
   }
-  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
-    setTimeout(() => completed(null), 200);
+  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
+    setTimeout(() => completed(this), 200);
   }
   render(): JSX.Element {
     return <div>
       <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       <hr/>
-      <Child title='Not routed child' state={null} $parent={this} />
+      <Child title='Not routed child' $parent={this} />
       <hr/>
       <RouteHook state={this.routeHookDefault}/>
       <hr/>
@@ -144,8 +144,8 @@ class ChildStore extends flux.Store implements IStoreChild {
         super.doDispatchAction(id, par, completed)
     }
   }
-  prepareBindRouteToStore(par: flux.IActionPar, completed: flux.TExceptionCallback) {
-    setTimeout(() => { Object.assign(this, par); completed(null); }, 200);
+  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
+    setTimeout(() => { Object.assign(this, par); completed(this); }, 200);
   }
   render(): JSX.Element {
     return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;
