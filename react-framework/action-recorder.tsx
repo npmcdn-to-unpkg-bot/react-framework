@@ -100,7 +100,7 @@ interface IData {
 
 function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flux.Store {
   if (!literal || !literal._type) throw new utils.Exception(JSON.stringify(literal));
-  var st = flux.Store.createStoreJSON(parentStore, literal._type);
+  var st = flux.Store.createJSON(parentStore, literal._type);
   Object.assign(st, literal);
   traverseToRepl(st, st);
   return st;

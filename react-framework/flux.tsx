@@ -82,18 +82,16 @@ export abstract class Store implements IStore, ITypedObj {
     var idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
-  static createStore<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, routePar?: IActionPar) {
-    var cls: TStoreClass;
-    if (typeof storeId === 'string') {
-      let meta = storeMetasDir[storeId]; if (!meta) throw new utils.Exception(`Store ${storeId} not registered`);
-      cls = meta.storeClass;
-    } else
-      cls = storeId;
+  static createPull<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
+    var cls = Store.getStoreClass(storeId);
     if (store.loginNeeded(cls)) return completed(new ELoginNeeded());
-    var res = new cls(parent);
+    var res = new cls(parent, instanceId);
     res.initStore(routePar, completed);
   }
-  static createStoreJSON(parent: Store, _type: string): Store {
+  static createPush<T extends Store>(parent: Store, storeId: string | TStoreClass, instanceId?: string): T {
+    return new (Store.getStoreClass(storeId))(parent, instanceId) as T;
+  }
+  static createJSON(parent: Store, _type: string): Store {
     var meta = storeMetasDir[_type]; if (!meta) throw new utils.Exception(`Store ${_type} not registered`);
     return new meta.storeClass(parent);
   }
@@ -103,6 +101,13 @@ export abstract class Store implements IStore, ITypedObj {
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
     var res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new utils.Exception('Maybe missing @StoreDef() store decorator'); return res;
+  }
+  static getStoreClass(storeId: string | TStoreClass): TStoreClass {
+    if (typeof storeId === 'string') {
+      let meta = storeMetasDir[storeId]; if (!meta) throw new utils.Exception(`Store ${storeId} not registered`);
+      return meta.storeClass;
+    } else
+      return storeId;
   }
   static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string { return Store.getClassMeta(storeClass).id + (instanceId ? '.' + instanceId : ''); }
   _type: string; //kvuli JSON deserializaci
@@ -171,7 +176,7 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
     if (this.state) return;
     var parent = this.props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
     var storeCls: TStoreClass = componentToStore(this.constructor as TComponentClass);
-    this.state = new storeCls(parent, this.props.instanceId) as T;
+    this.state = Store.createPush<T>(parent, storeCls, this.props.instanceId);
     Object.assign(this.state, this.props);
     if (!parent.childStores) parent.childStores = {};
     parent.childStores[this.state.getIdInParent()] = this.state;
@@ -197,7 +202,7 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
       flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], utils.noop));
       completed(null);
     } else {
-      Store.createStore<Store>(this, par.storeId, res => {
+      Store.createPull<Store>(this, par.storeId, res => {
         if (res instanceof Store) {
           this.hookedStore = res;
           //process child routes
@@ -207,7 +212,7 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
         } else {
           completed(res);
         }
-      }, par.par);
+      }, null, par.par);
     }
   }
 
