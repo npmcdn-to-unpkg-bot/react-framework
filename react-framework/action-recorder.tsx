@@ -1,6 +1,5 @@
 ﻿import * as rx from 'rxjs/Rx';
 import * as flux from './exports';
-import * as utils from '../utils/exports';
 
 export class ActionRecorder {
   status: TPlayRecordStatus;
@@ -100,7 +99,7 @@ interface IData {
 
 function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flux.Store {
   if (!literal || !literal._type) throw new utils.Exception(JSON.stringify(literal));
-  var st = flux.Store.createJSON(parentStore, literal._type);
+  var st = flux.Store.createInJSON(parentStore, literal._type);
   Object.assign(st, literal);
   traverseToRepl(st, st);
   return st;

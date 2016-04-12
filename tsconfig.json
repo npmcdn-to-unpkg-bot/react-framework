@@ -1,7 +1,6 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    //"declaration": true,
     "target": "es5",
     //"module": "amd",
     "module": "system",
@@ -9,13 +8,14 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noEmitHelpers": true,
-    //"outFile": "index.js"
+    //"declaration": true,
+    "outFile": "react-framework.js",
     "inlineSourceMap": true,
     "inlineSources": true,
     "jsx": "react"
   }
   //"exclude": [
-    //"node_modules"
-    //"typings"
+  //"node_modules"
+  //"typings"
   //]
 }

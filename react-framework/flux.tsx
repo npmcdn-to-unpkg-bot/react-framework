@@ -82,13 +82,13 @@ export abstract class Store implements IStore, ITypedObj {
     var idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
-  static createPull<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
+  static createInStore<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
     var cls = Store.getStoreClass(storeId);
     if (store.loginNeeded(cls)) return completed(new ELoginNeeded());
     var res = new cls(parent, instanceId);
     res.initStore(routePar, completed);
   }
-  static createPush<T extends Store>(props: TProps & IPropsEx, storeId: string | TStoreClass, instanceId?: string): T {
+  static createInRender<T extends Store>(props: TProps & IPropsEx, storeId: string | TStoreClass, instanceId?: string): T {
     var parent = props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
     var cls = Store.getStoreClass(storeId);
     var idInParent = Store.getClassIdInParent(cls, instanceId);
@@ -101,7 +101,7 @@ export abstract class Store implements IStore, ITypedObj {
     return res as T;
 
   }
-  static createJSON(parent: Store, _type: string): Store {
+  static createInJSON(parent: Store, _type: string): Store {
     var meta = storeMetasDir[_type]; if (!meta) throw new utils.Exception(`Store ${_type} not registered`);
     return new meta.storeClass(parent);
   }
@@ -169,7 +169,7 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
   constructor(props: IProps<T> & P, ctx) {
     super(props, ctx);
     this.state = props.initState;
-    if (!this.state) { this.state = Store.createPush<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
+    if (!this.state) { this.state = Store.createInRender<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
     this.state.trace('create');
     this.state.subscribe(this);
   }
@@ -203,7 +203,7 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
       flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], utils.noop));
       completed(null);
     } else {
-      Store.createPull<Store>(this, par.storeId, res => {
+      Store.createInStore<Store>(this, par.storeId, res => {
         if (res instanceof Store) {
           this.hookedStore = res;
           //process child routes
@@ -389,8 +389,31 @@ export abstract class StoreApp extends Store { //global Application store (root 
   }
 
 }
+
+//***************** POPSTATE EVENT
 window.addEventListener("popstate", ev => {
   if (!store) return;
   console.log(`> popstate: ${window.location.href}`);
   store.routeBind(flux.decodeFullUrl(), false);
 });
+
+//***************** UTILS
+export class Exception extends Error {
+  constructor(msg: string) {
+    super(msg);
+    debugger;
+    console.error(msg);
+  }
+}
+export class ENotImplemented extends Exception {
+  constructor(msg: string) { super(`Missing ${msg} override`); }
+}
+export type TCallback = () => void;
+
+export function getClassName(constructor: Function): string {
+  var res = constructor['name']; if (res) return res;
+  var arr = constructor.toString().match(/function\s*(\w+)/);
+  return arr && arr.length == 2 ? arr[1] : undefined;
+}
+
+export function noop() { }
