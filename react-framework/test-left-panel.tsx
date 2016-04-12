@@ -1,9 +1,8 @@
 ﻿import * as rx from 'rxjs/Rx';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as flux from '../../react-framework/exports';
-import * as right from './right-panel';
-import * as cfg from '../../apps/test-config';
+import * as flux from './exports';
+import * as right from './test-right-panel';
 
 var moduleId = 'testingLeftPanel';
 export function init() { flux.StoreApp.bootApp(AppStore); }
@@ -23,10 +22,10 @@ export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 class AppRootStore extends flux.Store implements IStoreApp {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);
-    this.items = Object.keys(cfg.tests).map(k => { return { key: k, value: cfg.tests[k] }; }).map((kv, idx) => new TestItemStore(this, idx.toString(), kv.key, kv.value));
+    this.items = Object.keys(flux.Tests.tests).map(k => { return { key: k, value: flux.Tests.tests[k] }; }).map((kv, idx) => new TestItemStore(this, idx.toString(), kv.key, kv.value));
   }
   showDump: boolean;
-  exportImport(ev: React.MouseEvent, isExport: boolean) { ev.preventDefault(); rightClient.service(isExport ? right.AppRootMode.export : right.AppRootMode.import); }
+  exportImport(ev: React.MouseEvent, isExport: boolean) { ev.preventDefault(); rightClient().service(isExport ? right.AppRootMode.export : right.AppRootMode.import); }
   export(ev: React.MouseEvent) { this.exportImport(ev, true); }
   import(ev: React.MouseEvent) { this.exportImport(ev, false); }
   dump(ev: React.MouseEvent) { ev.preventDefault(); this.modify(st => st.showDump = true); }
@@ -34,7 +33,7 @@ class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     var shoDumpEl = null;
     if (this.showDump) {
-      this.showDump = false; shoDumpEl = [<br/>, <textarea rows={2} style={{ width: '100%' }} value={rightClient.getActStatus() }/>];
+      this.showDump = false; shoDumpEl = [<br/>, <textarea rows={2} style={{ width: '100%' }} value={rightClient().getActStatus() }/>];
     }
     return <div>
       <a href='#' onClick={this.export.bind(this) }>Export All</a> |
@@ -63,7 +62,7 @@ class TestItemStore extends flux.Store {
   playProgress: string;
   toogleSelected(ev: React.MouseEvent) {
     ev.preventDefault();
-    rightClient.init(null);
+    rightClient().init(null);
     var unselect = (st: TestItemStore) => { st.selected = false; st.state = TItemState.no; }
     if (this.selected) { this.modify(st => unselect(st)); return; }
     this.$parent.modify(p => {
@@ -73,14 +72,14 @@ class TestItemStore extends flux.Store {
     this.run();
   }
 
-  noStatus(ev?: React.MouseEvent) { if (ev) ev.preventDefault(); rightClient.init(null); this.modify(st => st.state = TItemState.no); }
-  hasRecording(): boolean { return rightClient.hasRecording(this.key); }
+  noStatus(ev?: React.MouseEvent) { if (ev) ev.preventDefault(); rightClient().init(null); this.modify(st => st.state = TItemState.no); }
+  hasRecording(): boolean { return rightClient().hasRecording(this.key); }
 
-  run(ev?: React.MouseEvent) { if (ev) ev.preventDefault(); rightClient.init(this.key); }
+  run(ev?: React.MouseEvent) { if (ev) ev.preventDefault(); rightClient().init(this.key); }
   startPlaying(ev: React.MouseEvent) {
     ev.preventDefault();
     this.modify(st => { st.state = TItemState.playing; st.playProgress = '-'; });
-    rightClient.startPlaying(this.key,
+    rightClient().startPlaying(this.key,
       (pos, len) => this.modify(st => st.playProgress = `${pos} / ${len}`),
       err => this.modify(st => st.playProgress += ' - ' + (err ? `*** ERROR: ${err.message}` : 'DONE'))
     );
@@ -88,10 +87,10 @@ class TestItemStore extends flux.Store {
   startRecording(ev: React.MouseEvent) {
     ev.preventDefault();
     this.modify(st => st.state = TItemState.recording);
-    rightClient.startRecording();
+    rightClient().startRecording();
   }
-  saveRecording(ev: React.MouseEvent) { ev.preventDefault(); rightClient.saveRecording(this.key); this.noStatus(); }
-  dumpRecording(ev: React.MouseEvent) { ev.preventDefault(); rightClient.service(right.AppRootMode.dump, this.key); }
+  saveRecording(ev: React.MouseEvent) { ev.preventDefault(); rightClient().saveRecording(this.key); this.noStatus(); }
+  dumpRecording(ev: React.MouseEvent) { ev.preventDefault(); rightClient().service(right.AppRootMode.dump, this.key); }
 
   render(): JSX.Element {
     var detail: React.ReactNode = null;
@@ -123,10 +122,16 @@ class TestItemStore extends flux.Store {
 }
 
 ////**************** inter panel communication
-var rightClient: right.RightClient;
+function rightClient(): right.RightClient {
+  if (_rightClient) return _rightClient;
+  throw new flux.Exception('');
+}
+var _rightClient: right.RightClient;
+
 var sys = window.parent['right'].System;
-sys.import(sys['baseURL'] + 'right-panel.js').then(m => {
-  rightClient = m.rightClient as right.RightClient;
-  //rightClient.test();
+sys.import(sys['baseURL'] + sys.paths['test-right-panel']).then(m => {
+  _rightClient = m.rightClient as right.RightClient;
+  //_rightClient.test();
 }, function (m) { debugger; });
+
 

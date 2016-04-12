@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "noEmitHelpers": true,
     //"declaration": true,
-    "outFile": "react-framework.js",
+    //"outFile": "react-framework.js",
     "inlineSourceMap": true,
     "inlineSources": true,
     "jsx": "react"

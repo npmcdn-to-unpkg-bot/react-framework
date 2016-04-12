@@ -34,7 +34,11 @@ export interface ITest {
   descr: string;
   storeAppClass: flux.TStoreAppClass;
   startUrl?: flux.TRouteActionPar;
-  resetServer?: (compl: utils.TCallback) => void
+  resetServer?: (compl: flux.TCallback) => void
+}
+
+export class Tests {
+  static tests: { [id: string]: flux.ITest; };
 }
 
 export function hasRecording(saveId: string): boolean {
@@ -57,10 +61,10 @@ export function saveAllRecordings(obj: {}) {
 
 //***** playing
 export function startPlaying(saveId: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) {
-  var str = getRecording(saveId); if (!str) { completed(new utils.Exception(`Recording not found: ${saveId}`)); return; }
+  var str = getRecording(saveId); if (!str) { completed(new flux.Exception(`Recording not found: ${saveId}`)); return; }
   var data: IData = JSON.parse(str);
   var playList = data.playList;
-  if (!playList || playList.length <= 0) { completed(new utils.Exception(`Empty Recording playlist: ${saveId}`)); return; }
+  if (!playList || playList.length <= 0) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
   var len = playList.length; var pos = 1;
   flux.StoreApp.bootApp(data.store, err => {
     if (err) { completed(err); return; }
@@ -98,7 +102,7 @@ interface IData {
 }
 
 function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flux.Store {
-  if (!literal || !literal._type) throw new utils.Exception(JSON.stringify(literal));
+  if (!literal || !literal._type) throw new flux.Exception(JSON.stringify(literal));
   var st = flux.Store.createInJSON(parentStore, literal._type);
   Object.assign(st, literal);
   traverseToRepl(st, st);

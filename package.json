@@ -1,0 +1,12 @@
+{
+  "name": "react-framework",
+  "description": "Simple TypeScript replacement for redux, react-router, react-router-redux, react-redux (less than 1000 lines of TypeScript code)",
+  "author": "PavelPZ <pzika@langmaster.cz> (https://github.com/PavelPZ)",
+  "version": "0.1.3",
+  "main": "react-framework.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PavelPZ/react-framework"
+  },
+  "license": "WTFPL"
+}

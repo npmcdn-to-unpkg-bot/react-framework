@@ -1,7 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as flux from '../../react-framework/exports';
-import * as cfg from '../../apps/test-config';
+import * as flux from './exports';
 
 //******************* GUI for Dump
 var moduleId = 'testingRightPanel';
@@ -62,7 +61,7 @@ export class RightClient {
   get store(): flux.StoreApp { return flux.store; }
   init(key: string, compl?: flux.TExceptionCallback) {
     if (!key) { flux.StoreApp.bootApp(null); if (compl) compl(null); return; }
-    var test = cfg.tests[key];
+    var test = flux.Tests.tests[key];
     var boot = () => flux.StoreApp.bootApp(test.storeAppClass, compl, test.startUrl ? test.startUrl : null /*default route*/);
     if (test.resetServer) test.resetServer(boot); else boot();
   }

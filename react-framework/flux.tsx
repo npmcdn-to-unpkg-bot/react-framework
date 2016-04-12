@@ -2,7 +2,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
-import * as utils from '../utils/exports';
 
 var moduleId = 'store';
 export type TExceptionCallback = (exp: Error) => void;
@@ -16,7 +15,7 @@ export interface ITypedObj { _type: string; }
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
 export function StoreDef(meta: IStoreMeta): ClassDecorator {
   return (storeClass: TStoreClass) => {
-    if (!meta.id) meta.id = meta.moduleId + '.' + utils.getClassName(storeClass);
+    if (!meta.id) meta.id = meta.moduleId + '.' + flux.getClassName(storeClass);
     meta.storeClass = storeClass;
     storeClass.prototype[prototypeMeta] = meta;
     storeMetasDir[meta.id] = meta;
@@ -37,7 +36,7 @@ export interface IStoreMeta {
 }
 function componentToStore(componentClass: TComponentClass): TStoreClass {
   var res = storeMetas.find(m => m.componentClass == componentClass);
-  if (!res || !res.storeClass) throw new utils.Exception(`Missing StoreDef componentClass info: ${utils.getClassName(componentClass)}`);
+  if (!res || !res.storeClass) throw new flux.Exception(`Missing StoreDef componentClass info: ${flux.getClassName(componentClass)}`);
   return res.storeClass;
 }
 
@@ -55,11 +54,11 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
   return rx.Observable.from(actions).concatMap((act: TAction) =>
     rx.Observable.timer(300).concat(
       rx.Observable.create((obs: rx.Subscriber<any>) => {
-        var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new utils.Exception(`Cannot find store ${act.dispPath}`)); return; }
+        var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new flux.Exception(`Cannot find store ${act.dispPath}`)); return; }
         try {
           actStore.action(act.actionId, act.descr, act.par, err => { if (err) obs.error(err); else obs.complete(); });
         } catch (err) {
-          obs.error(new utils.Exception(err));
+          obs.error(new flux.Exception(err));
         }
         return () => { };
       })));
@@ -89,7 +88,7 @@ export abstract class Store implements IStore, ITypedObj {
     res.initStore(routePar, completed);
   }
   static createInRender<T extends Store>(props: TProps & IPropsEx, storeId: string | TStoreClass, instanceId?: string): T {
-    var parent = props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
+    var parent = props.$parent; if (!parent) throw new flux.Exception(`"${flux.getClassName(this.constructor)}" component: missing $parent property`);
     var cls = Store.getStoreClass(storeId);
     var idInParent = Store.getClassIdInParent(cls, instanceId);
     var res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
@@ -102,7 +101,7 @@ export abstract class Store implements IStore, ITypedObj {
 
   }
   static createInJSON(parent: Store, _type: string): Store {
-    var meta = storeMetasDir[_type]; if (!meta) throw new utils.Exception(`Store ${_type} not registered`);
+    var meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
     return new meta.storeClass(parent);
   }
 
@@ -110,11 +109,11 @@ export abstract class Store implements IStore, ITypedObj {
   getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
-    var res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new utils.Exception('Maybe missing @StoreDef() store decorator'); return res;
+    var res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
   static getStoreClass(storeId: string | TStoreClass): TStoreClass {
     if (typeof storeId === 'string') {
-      let meta = storeMetasDir[storeId]; if (!meta) throw new utils.Exception(`Store ${storeId} not registered`);
+      let meta = storeMetasDir[storeId]; if (!meta) throw new flux.Exception(`Store ${storeId} not registered`);
       return meta.storeClass;
     } else
       return storeId;
@@ -134,18 +133,18 @@ export abstract class Store implements IStore, ITypedObj {
   subscribe(comp: TComponent) { store.doSubscribe(this, comp, true); } //called in React.Component constructor
   unSubscribe(comp: TComponent) { store.doSubscribe(this, comp, false); } //called in React.Component componentWillUnmount
 
-  abstract render(): JSX.Element; // { throw new utils.ENotImplemented('Missing render override'); } //React.Component render
+  abstract render(): JSX.Element; // { throw new flux.ENotImplemented('Missing render override'); } //React.Component render
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
   //************** Action Binding
   initStore(par: IActionPar, completed: TCreateStoreCallback) { completed(this); } //inicializace store po jeho vytvoreni. Muze byt asynchronni
 
-  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new utils.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
+  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
   bindRouteToStore(isRestore: boolean, par: IActionPar, completed: TExceptionCallback) {
     let rPar = par as TRouteActionPar;
     let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
-    let hookStore = this[hookId] as StoreRouteHook; if (!hookStore) throw new utils.Exception(`Missing route hook ${rPar.hookId}`);
+    let hookStore = this[hookId] as StoreRouteHook; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
     console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefaultName}, storeId=${rPar.storeId}`);
     hookStore.bindRouteToHookStore(isRestore, rPar, completed);
   }
@@ -153,7 +152,7 @@ export abstract class Store implements IStore, ITypedObj {
   action<T extends IActionPar>(id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);
     store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr: this.getMeta().id + ': ' + descr }; });
-    this.doDispatchAction(id, par, completed ? completed : utils.noop);
+    this.doDispatchAction(id, par, completed ? completed : flux.noop);
   }
   clickAction<T extends IActionPar>(ev: React.MouseEvent, id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
     this.action<T>(id, descr, par, completed);
@@ -200,7 +199,7 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
     if (isRestore) {
-      flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], utils.noop));
+      flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], flux.noop));
       completed(null);
     } else {
       Store.createInStore<Store>(this, par.storeId, res => {
@@ -280,10 +279,10 @@ export abstract class StoreApp extends Store { //global Application store (root 
   protected getStartRoute(): TRouteActionPar { return null; } //difotni route
 
   //**** login configuration
-  getLoginRoute(returnUrl: TRouteActionPar): TRouteActionPar { throw new utils.ENotImplemented('getLoginRoute'); } //dej login page URL
+  getLoginRoute(returnUrl: TRouteActionPar): TRouteActionPar { throw new flux.ENotImplemented('getLoginRoute'); } //dej login page URL
   protected getDefaultLoginNeeded(): boolean { return false; } //je x neni potreba login pro neoznaceny store
   $defaultLoginNeeded: boolean;
-  getIsLogged(): boolean { throw new utils.ENotImplemented('isLogged'); } //dej info o zalogovani
+  getIsLogged(): boolean { throw new flux.ENotImplemented('isLogged'); } //dej info o zalogovani
 
   //**** action player
   saveRoute: TRouteActionPar;
@@ -353,21 +352,21 @@ export abstract class StoreApp extends Store { //global Application store (root 
   routeHookDefault: StoreRouteHook; //hook for root React component
 
   getUnique(): number { return this.unique++; }
-  findComponent(path: string): TComponent { var comp = this.$components[path]; if (!comp) throw new utils.Exception(`Component ${path} does not exist`); return comp; }
+  findComponent(path: string): TComponent { var comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }
 
   doSubscribe(st: Store, comp: TComponent, isSubscribe: boolean) { //prihlas x odhlas se k notifikaci o zmene stavu. Volano v TComponent konstructoru x TComponent.unmount.
     if (isSubscribe) { //konstructor
       //kontroly
-      if (this.$components[st.path]) throw new utils.Exception(`Dve komponenty stejneho jmena: ${st.path}`); //komponenta je jiz zaevidovana => dve komponenty stejneho jmena
-      if (st.$subscribers.indexOf(st.path) >= 0) throw new utils.Exception(`${st.path}: st.$componentIds && st.$componentIds.indexOf(p) >= 0`); //ta sama komponenta je prihlasena dvakrat
+      if (this.$components[st.path]) throw new flux.Exception(`Dve komponenty stejneho jmena: ${st.path}`); //komponenta je jiz zaevidovana => dve komponenty stejneho jmena
+      if (st.$subscribers.indexOf(st.path) >= 0) throw new flux.Exception(`${st.path}: st.$componentIds && st.$componentIds.indexOf(p) >= 0`); //ta sama komponenta je prihlasena dvakrat
       //evidence
       this.$components[st.path] = comp;
       st.$subscribers.push(st.path);
     } else { //unmount
       //kontroly
-      if (!this.$components[st.path]) throw new utils.Exception(`${st.path}: !Sync.path2Component[p]`);
+      if (!this.$components[st.path]) throw new flux.Exception(`${st.path}: !Sync.path2Component[p]`);
       //st.path nemusi byt v st.$subscribers, protoze st muze byt vytvoreno uplne znova (v ramci zmen parenta).
-      //var idx: number; if ((idx = st.$subscribers.indexOf(st.path)) < 0) throw new utils.Exception(`${st.path}: !st.$componentIds || (idx = st.$componentIds.indexOf(p)) < 0`);
+      //var idx: number; if ((idx = st.$subscribers.indexOf(st.path)) < 0) throw new flux.Exception(`${st.path}: !st.$componentIds || (idx = st.$componentIds.indexOf(p)) < 0`);
       var idx = st.$subscribers.indexOf(st.path);
       //undo evidence
       delete this.$components[st.path];
@@ -377,7 +376,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
 
   render(): JSX.Element { return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
 
-  findStore(path: string): Store { var res = this._findStore(path, this); if (!res) throw new utils.Exception(`Cannot find store ${path}`); return res; }
+  findStore(path: string): Store { var res = this._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
 
   private $components: { [path: string]: TComponent; } = {}; //all existing app component
 

@@ -2,7 +2,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
-import * as utils from '../utils/exports';
 
 export function encodeUrl(st: flux.TRouteActionPar): string {
   var res: Array<string> = [];
@@ -24,7 +23,7 @@ export function decodeUrlPart(url?: string): string {
   if (!url) url = window.location.href;
   if (!url.toLowerCase().startsWith(flux.store.$basicUrl)) {
     //url = flux.store.$basicUrl; history.pushState(null, null, url);
-    throw new utils.Exception(`location.href does not start with ${flux.store.$basicUrl}`);
+    throw new flux.Exception(`location.href does not start with ${flux.store.$basicUrl}`);
   }
   return clearSlashes(url.substr(flux.store.$basicUrl.length));
 }
@@ -56,7 +55,7 @@ function decodeUrlLow(url: string): flux.TRouteActionPar {
   let parseRoute = (endIdx: number, st: IDecodeStack) => {
     var s = url.substring(st.openIdx, endIdx - 1);
     var parts = s.split(';');
-    var propComp = parts[0].split('-'); if (propComp.length > 2) throw new utils.Exception('propComp.length > 2');
+    var propComp = parts[0].split('-'); if (propComp.length > 2) throw new flux.Exception('propComp.length > 2');
     st.hookId = propComp.length == 1 ? null : propComp[0];
     st.route = { storeId: propComp.length == 1 ? propComp[0] : propComp[1] };
     for (let i = 1; i < parts.length; i++) {

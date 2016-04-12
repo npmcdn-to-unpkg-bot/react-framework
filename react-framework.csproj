@@ -23,9 +23,9 @@
   <ItemGroup>
     <Content Include="apps\mdl-d-ts\index.html" />
     <None Include="apps\test-data.json" />
-    <Content Include="react-framework\testing\index.html" />
-    <Content Include="react-framework\testing\right-panel.html" />
-    <Content Include="react-framework\testing\left-panel.html" />
+    <Content Include="apps\index.html" />
+    <Content Include="apps\right-panel.html" />
+    <Content Include="apps\left-panel.html" />
     <Content Include="apps\test-react-framework\index.html" />
     <Content Include="react-mdl\classname.js" />
     <Content Include="react-mdl\material.css" />
@@ -40,10 +40,11 @@
     <TypeScriptCompile Include="apps\test-react-framework\app.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
+    <TypeScriptCompile Include="react-framework\js.ts" />
     <TypeScriptCompile Include="react-framework\router.ts" />
     <TypeScriptCompile Include="apps\test-config.ts" />
-    <TypeScriptCompile Include="react-framework\testing\right-panel.tsx" />
-    <TypeScriptCompile Include="react-framework\testing\left-panel.tsx" />
+    <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
+    <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />
     <TypeScriptCompile Include="trash\flux.tsx" />
     <TypeScriptCompile Include="react-framework\flux.tsx" />
@@ -53,8 +54,6 @@
     <TypeScriptCompile Include="Typings\react-global.d.ts" />
     <TypeScriptCompile Include="Typings\react.d.ts" />
     <TypeScriptCompile Include="Typings\rxjs.d.ts" />
-    <TypeScriptCompile Include="utils\exports.ts" />
-    <TypeScriptCompile Include="utils\low-utils.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="apps\mdl-d-ts\JavaScript.json" />

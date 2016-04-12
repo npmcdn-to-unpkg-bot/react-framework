@@ -1,6 +1,7 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
+import * as tests from '../test-config';
 
 import {RouteHook} from '../../react-framework/exports';
 import {Badge, Button, FABButton } from 'react-mdl';
@@ -9,7 +10,9 @@ import {Badge, Button, FABButton } from 'react-mdl';
 var moduleId = 'testReactFramework';
 
 //****************** Main Entry Point
-export function init() { flux.StoreApp.bootApp(AppStore); }
+export function init() {
+  flux.StoreApp.bootApp(AppStore);
+}
 
 //****************** App Store
 @flux.StoreDef({ moduleId: moduleId })
