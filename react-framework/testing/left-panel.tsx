@@ -42,7 +42,7 @@ class AppRootStore extends flux.Store implements IStoreApp {
       <a href='#' onClick={this.dump.bind(this) }>Dump</a>
       {shoDumpEl}
       <hr/>
-      {this.items.map(item => <TestItem state={item} key={item.instanceId}/>) }
+      {this.items.map(item => <TestItem initState={item} key={item.instanceId}/>) }
     </div>;
   }
 }

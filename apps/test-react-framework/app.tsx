@@ -110,9 +110,9 @@ class AppRootStore extends flux.Store implements IStoreApp {
       <hr/>
       <Child title='Not routed child' $parent={this} />
       <hr/>
-      <RouteHook state={this.routeHookDefault}/>
+      <RouteHook initState={this.routeHookDefault}/>
       <hr/>
-      <RouteHook state={this.otherHook}/>
+      <RouteHook initState={this.otherHook}/>
       <hr/>
       <FABButton />
     </div>;

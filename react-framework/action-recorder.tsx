@@ -109,18 +109,15 @@ function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flu
 function traverseToRepl(parentStore: flux.Store, obj: Object) {
   for (var p in obj) {
     if (p.startsWith('$')) continue;
-    let res = obj[p];
-    if (res && res._type) {
-      obj[p] = literalsToStores(parentStore, res); continue;
-    }
+    let res = obj[p]; if (!res) continue;
     if (Array.isArray(res)) {
       var arr = res as Array<any>;
       for (var i = 0; i < arr.length; i++) {
-        let subRes = arr[i];
-        if (subRes && subRes._type) { arr[i] = literalsToStores(parentStore, subRes); continue; }
-        traverseToRepl(parentStore, subRes);
+        let subRes = arr[i]; if (!subRes) continue;
+        if (subRes._type) arr[i] = literalsToStores(parentStore, subRes); else traverseToRepl(parentStore, subRes);
       }
-      continue;
+    } else if (typeof res === 'object') {
+      if (res._type) obj[p] = literalsToStores(parentStore, res); else traverseToRepl(parentStore, res);
     }
   }
 }

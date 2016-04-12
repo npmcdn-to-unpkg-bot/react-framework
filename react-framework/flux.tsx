@@ -70,7 +70,7 @@ export type IChildStores = { [path: string]: Store; };
 export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
 export interface IPropsEx { $parent?: Store; instanceId?: string; }
 export interface IProps<T extends Store> {
-  state?: T; //cast globalniho stavy aplikace, ktery je stavem stateless komponenty
+  initState?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
 }
 export type TProps = IProps<Store>;
 
@@ -88,8 +88,18 @@ export abstract class Store implements IStore, ITypedObj {
     var res = new cls(parent, instanceId);
     res.initStore(routePar, completed);
   }
-  static createPush<T extends Store>(parent: Store, storeId: string | TStoreClass, instanceId?: string): T {
-    return new (Store.getStoreClass(storeId))(parent, instanceId) as T;
+  static createPush<T extends Store>(props: TProps & IPropsEx, storeId: string | TStoreClass, instanceId?: string): T {
+    var parent = props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
+    var cls = Store.getStoreClass(storeId);
+    var idInParent = Store.getClassIdInParent(cls, instanceId);
+    var res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
+    if (res) return res;
+    res = new cls(parent, instanceId) as T;
+    Object.assign(res, props);
+    if (!parent.childStores) parent.childStores = {};
+    parent.childStores[idInParent] = res;
+    return res as T;
+
   }
   static createJSON(parent: Store, _type: string): Store {
     var meta = storeMetasDir[_type]; if (!meta) throw new utils.Exception(`Store ${_type} not registered`);
@@ -158,8 +168,8 @@ export type TDispatchCallback = (store: Store) => void;
 export class Component<T extends Store, P extends IPropsEx> extends React.Component<IProps<T> & P, any> { //generic React component
   constructor(props: IProps<T> & P, ctx) {
     super(props, ctx);
-    this.state = props.state;
-    this.adjustComponentState();
+    this.state = props.initState;
+    if (!this.state) { this.state = Store.createPush<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
     this.state.trace('create');
     this.state.subscribe(this);
   }
@@ -171,15 +181,6 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
   }
   render(): JSX.Element {
     return this.state.render();
-  }
-  private adjustComponentState() {
-    if (this.state) return;
-    var parent = this.props.$parent; if (!parent) throw new utils.Exception(`"${utils.getClassName(this.constructor)}" component: missing $parent property`);
-    var storeCls: TStoreClass = componentToStore(this.constructor as TComponentClass);
-    this.state = Store.createPush<T>(parent, storeCls, this.props.instanceId);
-    Object.assign(this.state, this.props);
-    if (!parent.childStores) parent.childStores = {};
-    parent.childStores[this.state.getIdInParent()] = this.state;
   }
 
 }
@@ -226,7 +227,7 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
   }
   $routePar: TRouteActionPar;
   render(): JSX.Element {
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { state: this.hookedStore, key: store.getUnique() }) : <div>Loading...</div>;
+    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { initState: this.hookedStore, key: store.getUnique() }) : <div>Loading...</div>;
   }
   hookedStore: Store;
 }
@@ -365,7 +366,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
     }
   }
 
-  render(): JSX.Element { return React.createElement(RouteHook, { state: this.routeHookDefault }); }
+  render(): JSX.Element { return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
 
   findStore(path: string): Store { var res = this._findStore(path, this); if (!res) throw new utils.Exception(`Cannot find store ${path}`); return res; }
 
