@@ -4,17 +4,6 @@ import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
 import * as utils from '../utils/exports';
 
-export function subNavigate<T extends flux.IActionPar>(st: flux.Store, modify: (st: flux.IRouteActionPar<T>) => void, completed?: flux.TExceptionCallback) {
-  if (!st || !(st instanceof flux.StoreRouteHook)) throw new utils.Exception(`Wrong subNavigate parameter: flux.store is not flux.StoreRouteHook`);
-  var routeHook = st as flux.StoreRouteHook;
-  modify(routeHook.$routePar as flux.IRouteActionPar<T>);
-  routeHook.routeBind(completed);
-}
-
-export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback) {
-  flux.store.routeBind(routes, true, completed);
-}
-
 export function encodeUrl(st: flux.TRouteActionPar): string {
   var res: Array<string> = [];
   encodeUrlLow(res, st, null);

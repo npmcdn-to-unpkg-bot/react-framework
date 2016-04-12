@@ -134,7 +134,8 @@ class ChildStore extends flux.Store implements IStoreChild {
     switch (id) {
       case TActions.childClick:
         if (this.$parent instanceof flux.StoreRouteHook)
-          flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
+          (this.$parent as flux.StoreRouteHook).subNavigate<IChildRouteActionPar>(st => st.par.title += 'x', completed);
+          //flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
         else {
           this.modify(st => st.title += 'x');
           completed(null);

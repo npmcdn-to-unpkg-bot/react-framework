@@ -1,4 +1,4 @@
-﻿export {encodeUrl, encodeFullUrl, decodeUrl, decodeFullUrl, createRoute, navigate, subNavigate, getChildRoutes} from './router';
+﻿export {encodeUrl, encodeFullUrl, decodeUrl, decodeFullUrl, createRoute, getChildRoutes} from './router';
 export {appStateToJSON, literalToAppState, ActionRecorder, startPlaying, saveAllRecordings, getAllRecordings, getRecording, hasRecording, ITest} from './action-recorder';
-export {StoreApp, TStoreAppClass, StoreRouteHook, TComponent, IProps, Component, RouteHook, StoreDef, TAction, ITypedObj, playActions, 
+export {StoreApp, TStoreAppClass, StoreRouteHook, TComponent, IProps, Component, RouteHook, StoreDef, TAction, ITypedObj, playActions, navigate,
 IActionPar, Store, TRouteActionPar, TExceptionCallback, TCreateStoreCallback, store, ELoginNeeded, IRouteActionPar, TStoreClass, routeParIgnores, routeHookDefaultName, IPropsEx, IStore} from './flux';

@@ -217,6 +217,11 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
     }
   }
 
+  subNavigate<T extends flux.IActionPar>(modify: (st: flux.IRouteActionPar<T>) => void, completed?: flux.TExceptionCallback) {
+    modify(this.$routePar as flux.IRouteActionPar<T>);
+    this.routeBind(completed);
+  }
+
   routeBind(completed?: TExceptionCallback) {
     this.bindRouteToHookStore(false, this.$routePar, err => {
       if (err) { store.navigateError(err, completed); return; }
@@ -241,6 +246,10 @@ export interface IRouteActionPar<T extends IActionPar> extends IActionPar {
 export type TRouteActionPar = IRouteActionPar<IActionPar>;
 export var routeParIgnores = ['storeId', 'hookId', 'par'];
 export var routeHookDefaultName = 'routeHookDefault';
+
+export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback) {
+  store.routeBind(routes, true, completed);
+}
 
 //****************** ROOT STORE
 export var store: StoreApp;
