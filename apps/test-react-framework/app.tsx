@@ -39,7 +39,7 @@ export class Login extends flux.Component<LoginStore, IPropsExLogin> { }
 export interface ILoginRouteActionPar extends IPropsExLogin { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Login, loginNeeded: false })
-class LoginStore extends flux.Store implements IStoreLogin {
+export class LoginStore extends flux.Store implements IStoreLogin {
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -70,7 +70,7 @@ export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 enum TActions { appClick, childClick, navigate, login };//, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-class AppRootStore extends flux.Store implements IStoreApp {
+export class AppRootStore extends flux.Store implements IStoreApp {
   constructor($parent: flux.Store) {
     super($parent);
     this.routeHookDefault = new flux.StoreRouteHook(this, '1');
@@ -131,7 +131,7 @@ export class Child extends flux.Component<ChildStore, IPropsExChild> { }
 export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child, loginNeeded: true })
-class ChildStore extends flux.Store implements IStoreChild {
+export class ChildStore extends flux.Store implements IStoreChild {
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {

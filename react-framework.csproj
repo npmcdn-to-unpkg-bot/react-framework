@@ -27,10 +27,16 @@
     <Content Include="apps\right-panel.html" />
     <Content Include="apps\left-panel.html" />
     <Content Include="apps\test-react-framework\index.html" />
+    <None Include="package.json" />
+    <Content Include="apps\test-react-semantic\index.html" />
     <Content Include="react-mdl\classname.js" />
     <Content Include="react-mdl\material.css" />
     <Content Include="react-mdl\material.js" />
     <Content Include="react-mdl\ReactMDL.js" />
+    <Content Include="react-semantic\icons.code.txt" />
+    <Content Include="README.md" />
+    <Content Include="react-semantic\README.md" />
+    <Content Include="react-semantic\package.json" />
     <None Include="trash\json.json" />
     <Content Include="utils\typescript-polyfils.js" />
     <Content Include="web.config" />
@@ -38,6 +44,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="apps\mdl-d-ts\mdl-d-ts.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\app.tsx" />
+    <TypeScriptCompile Include="apps\test-react-semantic\app.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
     <TypeScriptCompile Include="react-framework\js.ts" />
@@ -45,6 +52,10 @@
     <TypeScriptCompile Include="apps\test-config.ts" />
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
+    <TypeScriptCompile Include="react-semantic\icons.ts" />
+    <TypeScriptCompile Include="react-semantic\exports.ts" />
+    <TypeScriptCompile Include="react-semantic\elements\label.tsx" />
+    <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />
     <TypeScriptCompile Include="trash\flux.tsx" />
     <TypeScriptCompile Include="react-framework\flux.tsx" />
@@ -65,7 +76,9 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>

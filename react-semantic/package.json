@@ -1,0 +1,12 @@
+{
+  "name": "react-semantic",
+  "description": "React components for Semantic-UI (without JQuery dependency)",
+  "author": "PavelPZ <pzika@langmaster.cz> (https://github.com/PavelPZ)",
+  "version": "0.1.1",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PavelPZ/react-framework"
+  },
+  "license": "WTFPL"
+}

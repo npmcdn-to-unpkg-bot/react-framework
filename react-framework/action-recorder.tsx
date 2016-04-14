@@ -89,14 +89,14 @@ const prefix = 'action-recorder.';
 function storageKey(objKey: string): string { return `${prefix}${objKey}` }
 function objKey(storageKey: string): string { if (!storageKey || !storageKey.startsWith(prefix)) return null; return storageKey.substr(prefix.length); }
 
-const enum TPlayRecordStatus { no, playing, recording }
+export const enum TPlayRecordStatus { no, playing, recording }
 
 function doSaveRecording(saveId: string, obj: {}) {
   var res = JSON.stringify(obj, null, 2);
   localStorage.setItem(storageKey(saveId), res);
 }
 
-interface IData {
+export interface IData {
   store?: flux.ITypedObj;
   playList?: Array<flux.TAction>;
 }

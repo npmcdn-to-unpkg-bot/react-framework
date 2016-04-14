@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
+import {ActionRecorder} from './action-recorder';
 
 var moduleId = 'store';
 export type TExceptionCallback = (exp: Error) => void;
@@ -286,7 +287,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
 
   //**** action player
   saveRoute: TRouteActionPar;
-  $recorder = new flux.ActionRecorder();
+  $recorder = new ActionRecorder();
 
   //************************** 
   routeBind(routes: TRouteActionPar, withPustState: boolean, completed?: TExceptionCallback) {
