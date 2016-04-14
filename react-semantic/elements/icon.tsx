@@ -1,4 +1,8 @@
-﻿export enum Icons {
+﻿import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as ui from '../exports';
+
+export enum iconId {
   add,
   addCircle,
   addSquare,
@@ -669,3 +673,60 @@
   zoomOut,
 
 }
+export enum flipped {
+  no,
+  flippedHorizontally,
+  flippedVertically,
+}
+
+export enum rotated {
+  no,
+  rotatedClockwise ,
+  rotatedCounterclockwise ,
+}
+
+export enum circular {
+  no,
+  circular,
+  circularInverted,
+}
+
+export enum bordered {
+  no,
+  bordered,
+  borderedInverted,
+}
+
+export interface IconProps extends ui.IProps {
+  iconId: iconId;
+  disabled?: boolean;
+  loading?: boolean;
+  fitted?: boolean;
+  link?: boolean;
+  inverted?: boolean;
+  flipped?: flipped;
+  rotated?: rotated;
+  colorId?: ui.colorId;
+  circular?: circular;
+  size?: ui.size;
+}
+var iconPropsDescr = ui.createDescr<IconProps>(val => {
+  return {
+    iconId: new ui.enumConverter<iconId>(iconId, val.iconId),
+    flipped: new ui.enumConverter<flipped>(flipped, val.flipped),
+    rotated: new ui.enumConverter<rotated>(rotated, val.rotated),
+    color: new ui.enumConverter<ui.colorId>(ui.colorId, val.colorId),
+    circular: new ui.enumConverter<circular>(circular, val.circular),
+    size: new ui.enumConverter<ui.size>(ui.size, val.size),
+    disabled: new ui.boolConverter(val.disabled),
+    loading: new ui.boolConverter(val.loading),
+    fitted: new ui.boolConverter(val.fitted),
+    link: new ui.boolConverter(val.link),
+  };
+});
+
+export const Icon: ui.StatelessComponent<IconProps> = props => {
+  var rest = ui.propsToClasses(['icon'], ui.projection(props, iconPropsDescr));
+  return <i {...rest}/>;
+}
+

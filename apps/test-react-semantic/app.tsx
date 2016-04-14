@@ -35,8 +35,48 @@ export class AppRootStore extends flux.Store implements IStoreApp {
   }
   render(): JSX.Element {
     return <div>
-      <h3>testReactSemantic</h3>
-      <ui.ButtonAnimated animateTo={{ animate: ui.animate.fade, to: 'Hidden' }}>Follow</ui.ButtonAnimated>
+      <ui.ButtonLabeled colorId={ui.colorId.blue} pointing left labelElement={<ui.Label colorId={ui.colorId.blue} basic>2.048</ui.Label>}>
+        <ui.Icon iconId={ui.iconId.heart}/> Like
+      </ui.ButtonLabeled> <br/><br/>
+      <div className="ui left labeled button" tabindex="0">
+        <a className="ui basic right pointing label">
+          2,048
+        </a>
+        <div className="ui button">
+          <i className="heart icon"></i> Like
+        </div>
+      </div><br/><br/>
+      <div className="ui left labeled button">
+        <a className="ui label basic right pointing ">
+          2.048
+        </a>
+        <div className="ui button blue">
+          <i className="icon"></i>Like
+        </div>
+      </div>
+      {/*
+      <ui.IconTest/><hr/>
+      <ui.ButtonTest/><hr/>
+      <ui.ButtonAnimatedTest/><hr/>
+      */}
     </div>;
   }
 }
+
+var x = <div class="ui labeled button left">
+  <a class="ui label basic pointing right">
+    2.048
+  </a>
+  <div class="ui button blue">
+    <i class="icon"></i>Like
+  </div>
+</div>
+
+var y = <div class="ui left labeled button" tabindex="0">
+  <a class="ui basic right pointing label">
+    2,048
+  </a>
+  <div class="ui button">
+    <i class="heart icon"></i> Like
+  </div>
+</div>;
