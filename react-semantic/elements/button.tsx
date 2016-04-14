@@ -83,7 +83,7 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
 });
 export const Button: ui.StatelessComponent<ButtonProps> = props => {
   var rest = ui.propsToClasses(['ui button'], ui.projection(props, buttonPropsDescr));
-  return <div {...rest}/>;
+  return <button {...rest}/>;
 }
 
 //******************* ButtonAnimated
@@ -109,10 +109,10 @@ export const ButtonAnimated: ui.StatelessComponent<ButtonAnimatedProps> = props 
   var projection = ui.projection(props, buttonAnimatePropsDescr);
   var initCls = ['ui animated button', ui.enumToClass<animate>(animate, props.animateTo.animate)];
   var rest = ui.propsToClasses(initCls, projection);
-  return <div {...rest}>
+  return <button {...rest}>
     <div className="visible content">{props.children}</div>
     <div className="hidden content">{props.animateTo.to}</div>
-  </div>;
+  </button>;
 }
 
 //****************** ButtonLabeled
@@ -151,7 +151,19 @@ export interface ButtonIconProps extends ButtonProps {
   iconUI: iconUI;
   iconLabel?: iconLabel;
 }
-
-export class ButtonIcon extends React.Component<ButtonIconProps, any> {
+var buttonIconDescr = ui.createDescr<ButtonIconProps>(val => {
+  return {
+    iconUI: null, //new ui.enumConverter<iconUI>(iconUI, val.iconUI),
+    iconLabel:null
+  }
+}, buttonPropsDescr);
+export const ButtonIcon: ui.StatelessComponent<ButtonIconProps> = props => {
+  var rest = ui.propsToClasses(['ui', { right: props.iconLabel === iconLabel.right }, props.iconLabel ? 'labeled' : null, 'icon button'], ui.projection(props, buttonPropsDescr));
+  var iconProps: ui.IconProps = { iconUI: props.iconUI };
+  if (props.iconLabel == iconLabel.right) iconProps.className = 'right';
+  var icon = <Icon {...iconProps}/>
+  return <button {...rest}>
+    {icon} {props.children}
+  </button>;
 }
-//var buttonIconTest = <ButtonIcon icon={Icons.alarm} iconLabel={iconLabel.left} > Text</ButtonIcon>
+

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 
 import {
   colorUI, size,
-  Button, ButtonAnimated, ButtonLabeled, colorButton, state, social, floated, attachedButton, animate,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, colorButton, state, social, floated, attachedButton, animate, iconLabel,
   Label, pointing, corner, attachedLabel, circular,
   Icon, iconUI
 } from '../exports';
@@ -81,6 +81,15 @@ export const ButtonLabeledTest: ui.StatelessComponent<ui.IProps> = props => {
     <h1>ButtonLabeled</h1>
     <ButtonLabeled pointing colorUI={colorUI.blue} labelUI={<Label basic colorUI={colorUI.blue}>2.048</Label>}><Icon iconUI={iconUI.heart}/> Like</ButtonLabeled> <br/><br/>
     <ButtonLabeled left labelUI={<Label basic><Icon iconUI={iconUI.heart}/></Label>}> Left</ButtonLabeled> <br/> <br/>
-    <ButtonLabeled left pointing labelUI={<Label basic>2.048</Label>}></ButtonLabeled> <br/> <br/>
+    <ButtonLabeled left pointing labelUI={<Label basic>2.048</Label>}> Left Pointing</ButtonLabeled> <br/> <br/>
   </div >;
+}
+
+export const ButtonIconTest: ui.StatelessComponent<ui.IProps> = props => {
+  return <div>
+    <h1>ButtonIcon</h1>
+    <ButtonIcon iconLabel={iconLabel.right} basic={true} colorUI={colorUI.teal} iconUI={iconUI.user}>Add Friend</ButtonIcon> <br/><br/>
+    <ButtonIcon iconLabel={iconLabel.left} colorUI={colorUI.orange} iconUI={iconUI.user}>Add Friend</ButtonIcon> <br/><br/>
+    <ButtonIcon colorUI={colorUI.pink} iconUI={iconUI.user}></ButtonIcon> <br/><br/>
+  </div>;
 }

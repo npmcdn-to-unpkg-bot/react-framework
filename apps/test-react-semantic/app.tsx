@@ -8,7 +8,7 @@ import {
   Button, ButtonAnimated, ButtonLabeled, colorButton, state, social, floated, attachedButton, animate,
   Label, pointing, corner, attachedLabel, circular,
   Icon, iconUI,
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, IconTest
+  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest,
 } from '../../react-semantic/exports';
 
 //import * as ui from '../exports';
@@ -45,6 +45,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
   }
   render(): JSX.Element {
     return <div>
+      <ButtonIconTest/><hr/>
       <ButtonLabeledTest/><hr/>
       <IconTest/><hr/>
       <ButtonTest/><hr/>
