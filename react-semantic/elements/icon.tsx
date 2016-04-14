@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as ui from '../exports';
 
-export enum iconId {
+export enum iconUI {
   add,
   addCircle,
   addSquare,
@@ -698,7 +698,7 @@ export enum bordered {
 }
 
 export interface IconProps extends ui.IProps {
-  iconId: iconId;
+  iconUI: iconUI;
   disabled?: boolean;
   loading?: boolean;
   fitted?: boolean;
@@ -706,16 +706,16 @@ export interface IconProps extends ui.IProps {
   inverted?: boolean;
   flipped?: flipped;
   rotated?: rotated;
-  colorId?: ui.colorId;
+  colorUI?: ui.colorUI;
   circular?: circular;
   size?: ui.size;
 }
 var iconPropsDescr = ui.createDescr<IconProps>(val => {
   return {
-    iconId: new ui.enumConverter<iconId>(iconId, val.iconId),
+    iconUI: new ui.enumConverter<iconUI>(iconUI, val.iconUI),
     flipped: new ui.enumConverter<flipped>(flipped, val.flipped),
     rotated: new ui.enumConverter<rotated>(rotated, val.rotated),
-    color: new ui.enumConverter<ui.colorId>(ui.colorId, val.colorId),
+    color: new ui.enumConverter<ui.colorUI>(ui.colorUI, val.colorUI),
     circular: new ui.enumConverter<circular>(circular, val.circular),
     size: new ui.enumConverter<ui.size>(ui.size, val.size),
     disabled: new ui.boolConverter(val.disabled),

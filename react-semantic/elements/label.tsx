@@ -11,24 +11,24 @@ export enum pointing {
 
 export enum corner {
   no,
-  cornerLeft,
-  cornerRight,
+  leftCorner,
+  rightCorner,
 }
 
 export enum attachedLabel {
   no,
-  attachedTop,
-  attachedBottom,
-  attachedTopRight,
-  attachedTopLeft,
-  attachedBottomRight,
-  attachedBottomLeft,
+  topAttached,
+  bottomAttached,
+  topRightAttached,
+  topLeftAttached,
+  bottomRightAttached,
+  bottomLeftAttached,
 }
 
 export enum circular {
   no,
   circular,
-  circularEmpty,
+  emptyCircular,
 }
 
 export interface LabelProps extends ui.IProps {
@@ -39,7 +39,7 @@ export interface LabelProps extends ui.IProps {
   horizontal?: boolean;
   floating?: boolean;
   pointing?: pointing;
-  colorId?: ui.colorId;
+  colorUI?: ui.colorUI;
   corner?: corner;
   attached?: attachedLabel;
   size?: ui.size;
@@ -55,7 +55,7 @@ var labelPropsDescr = ui.createDescr<LabelProps>(val => {
     horizontal: new ui.boolConverter(val.horizontal),
     floating: new ui.boolConverter(val.floating),
     pointing: new ui.enumConverter<pointing>(pointing, val.pointing),
-    colorId: new ui.enumConverter<ui.colorId>(ui.colorId, val.colorId),
+    colorUI: new ui.enumConverter<ui.colorUI>(ui.colorUI, val.colorUI),
     corner: new ui.enumConverter<corner>(corner, val.corner),
     attached: new ui.enumConverter<attachedLabel>(attachedLabel, val.attached),
     size: new ui.enumConverter<ui.size>(ui.size, val.size),

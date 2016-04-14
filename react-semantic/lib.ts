@@ -74,7 +74,7 @@ export function propsToClasses(init: Array<convertResult>, src: projectionResult
   return src.rest;
 }
 
-export enum colorId {
+export enum colorUI {
   standard,
   red,
   orange,

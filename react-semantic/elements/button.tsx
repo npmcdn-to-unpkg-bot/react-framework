@@ -1,8 +1,8 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ui from '../exports';
-import {Label} from '../exports';
-import { iconId } from '../exports';
+import {Label, pointing, corner, attachedLabel, circular} from '../exports';
+import {Icon, iconUI} from '../exports';
 
 export enum colorButton {
   standard,
@@ -45,20 +45,20 @@ export enum floated {
   left,
   right
 }
-export enum attached {
+export enum attachedButton {
   no,
-  left,
-  right,
-  top,
-  bottom
+  leftAttached,
+  rightAttached,
+  topAttached,
+  bottomAttached
 }
 export interface ButtonProps extends ui.IProps {
-  colorId?: colorButton;
+  colorUI?: colorButton;
   size?: ui.size;
   state?: state;
   social?: social;
   floated?: floated;
-  attached?: attached;
+  attached?: attachedButton;
   basic?: boolean;
   inverted?: boolean;
   compact?: boolean;
@@ -68,7 +68,7 @@ export interface ButtonProps extends ui.IProps {
 }
 var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
   return {
-    colorId: new ui.enumConverter<colorButton>(colorButton, val.colorId),
+    colorUI: new ui.enumConverter<colorButton>(colorButton, val.colorUI),
     size: new ui.enumConverter<ui.size>(ui.size, val.size),
     state: new ui.enumConverter<state>(state, val.state),
     social: new ui.enumConverter<social>(social, val.social),
@@ -117,7 +117,7 @@ export const ButtonAnimated: ui.StatelessComponent<ButtonAnimatedProps> = props 
 
 //****************** ButtonLabeled
 export interface ButtonLabeledProps extends ButtonProps {
-  labelElement: React.ReactElement<ui.LabelProps>;
+  labelUI: React.ReactElement<ui.LabelProps>;
   left?: boolean;
   pointing?: boolean;
 }
@@ -134,7 +134,7 @@ export const ButtonLabeled: ui.StatelessComponent<ButtonLabeledProps> = props =>
   var projection = ui.projection(props, buttonPropsDescr);
   var btn = <Button {...ui.propsToClasses(null, projection) }/>;
   //kopie a uprava label props
-  var labelProps: ui.LabelProps = Object.assign({}, props.labelElement.props); 
+  var labelProps: ui.LabelProps = Object.assign({}, props.labelUI.props); 
   if (props.pointing) labelProps.pointing = props.left ? ui.pointing.rightPointing : ui.pointing.leftPointing;
   labelProps.outerTag = 'a';
   var label = <Label {...labelProps}/>;
@@ -145,20 +145,10 @@ export const ButtonLabeled: ui.StatelessComponent<ButtonLabeledProps> = props =>
   </div>
 };
 
-export const ButtonLabeledTest: ui.StatelessComponent<ui.IProps> = props => {
-  return <div>
-    <h1>ButtonLabeled</h1>
-    <ui.ButtonLabeled labelElement={<ui.Label basic>2.048</ui.Label>}><ui.Icon iconId={ui.iconId.heart}/> Like</ui.ButtonLabeled> <br/><br/>
-    {/*<ui.ButtonLabeled left label={[<ui.Icon icon={ui.icon.heart}/>, 'like']} labelProps={{ basic: true, pointing:true}}></ui.ButtonLabeled> <br/> <br/>
-    <ui.ButtonLabeled left label={'text'} labelProps={{pointing: true}}></ui.ButtonLabeled> <br/> <br/>*/}
-  </div >;
-}
-
-
 //******************* ButtonIcon
 export enum iconLabel { no, right, left }
 export interface ButtonIconProps extends ButtonProps {
-  iconId: ui.iconId;
+  iconUI: iconUI;
   iconLabel?: iconLabel;
 }
 
