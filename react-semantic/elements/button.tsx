@@ -2,28 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as ui from '../exports';
 import {Label, pointing, corner, attachedLabel, circular} from '../exports';
-import {Icon, iconUI} from '../exports';
-
-export enum colorButton {
-  standard,
-  red,
-  orange,
-  yellow,
-  olive,
-  green,
-  teal,
-  blue,
-  violet,
-  purple,
-  pink,
-  brown,
-  grey,
-  black,
-  primary,
-  secondary,
-  positive,
-  negative,
-}
+import {Icon, iconUI, colorUI, size} from '../exports';
 
 export enum state {
   standard,
@@ -31,19 +10,10 @@ export enum state {
   disabled,
   loading
 }
-export enum social {
-  facebook,
-  twitter,
-  google,
-  vk,
-  linkedin,
-  instagram,
-  youtube
-}
 export enum floated {
   no,
-  left,
-  right
+  leftFloated,
+  rightFloated
 }
 export enum attachedButton {
   no,
@@ -53,36 +23,50 @@ export enum attachedButton {
   bottomAttached
 }
 export interface ButtonProps extends ui.IProps {
-  colorUI?: colorButton;
+  colorUI?: colorUI;
   size?: ui.size;
   state?: state;
-  social?: social;
   floated?: floated;
   attached?: attachedButton;
   basic?: boolean;
   inverted?: boolean;
   compact?: boolean;
-  toogle?: boolean;
+  //toggle?: boolean;
   fluid?: boolean;
   circular?: boolean;
+  labeled?: boolean;
+  hasIcon?: boolean;
+  activeUI?: boolean;
+  loading?: boolean,
+  primary?: boolean,
+  secondary?: boolean,
+  positive?: boolean,
+  negative?: boolean,
 }
 var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
   return {
-    colorUI: new ui.enumConverter<colorButton>(colorButton, val.colorUI),
+    colorUI: new ui.enumConverter<colorUI>(colorUI, val.colorUI),
     size: new ui.enumConverter<ui.size>(ui.size, val.size),
     state: new ui.enumConverter<state>(state, val.state),
-    social: new ui.enumConverter<social>(social, val.social),
     floated: new ui.enumConverter<floated>(floated, val.floated),
     basic: new ui.boolConverter(val.basic),
     inverted: new ui.boolConverter(val.inverted),
     compact: new ui.boolConverter(val.compact),
-    toogle: new ui.boolConverter(val.toogle),
+    //toggle: new ui.boolConverter(val.toggle),
     fluid: new ui.boolConverter(val.fluid),
     circular: new ui.boolConverter(val.circular),
+    labeled: new ui.boolConverter(val.labeled),
+    loading: new ui.boolConverter(val.loading),
+    primary: new ui.boolConverter(val.primary),
+    secondary: new ui.boolConverter(val.secondary),
+    positive: new ui.boolConverter(val.positive),
+    negative: new ui.boolConverter(val.negative),
+    activeUI: null,
+    hasIcon: null
   };
 });
 export const Button: ui.StatelessComponent<ButtonProps> = props => {
-  var rest = ui.propsToClasses(['ui button'], ui.projection(props, buttonPropsDescr));
+  var rest = ui.propsToClasses(['ui button', { icon: props.hasIcon, active: props.activeUI }], ui.projection(props, buttonPropsDescr));
   return <button {...rest}/>;
 }
 
@@ -125,7 +109,7 @@ var buttonLabeledDescr = ui.createDescr<ButtonProps>(val => {
   return { //props se zporacovavaji rucne
     labelElement: null,
     left: null,
-    pointing:null,
+    pointing: null,
   };
 }, buttonPropsDescr);
 
@@ -134,7 +118,7 @@ export const ButtonLabeled: ui.StatelessComponent<ButtonLabeledProps> = props =>
   var projection = ui.projection(props, buttonPropsDescr);
   var btn = <Button {...ui.propsToClasses(null, projection) }/>;
   //kopie a uprava label props
-  var labelProps: ui.LabelProps = Object.assign({}, props.labelUI.props); 
+  var labelProps: ui.LabelProps = Object.assign({}, props.labelUI.props);
   if (props.pointing) labelProps.pointing = props.left ? ui.pointing.rightPointing : ui.pointing.leftPointing;
   labelProps.outerTag = 'a';
   var label = <Label {...labelProps}/>;
@@ -154,7 +138,7 @@ export interface ButtonIconProps extends ButtonProps {
 var buttonIconDescr = ui.createDescr<ButtonIconProps>(val => {
   return {
     iconUI: null, //new ui.enumConverter<iconUI>(iconUI, val.iconUI),
-    iconLabel:null
+    iconLabel: null
   }
 }, buttonPropsDescr);
 export const ButtonIcon: ui.StatelessComponent<ButtonIconProps> = props => {
@@ -167,3 +151,81 @@ export const ButtonIcon: ui.StatelessComponent<ButtonIconProps> = props => {
   </button>;
 }
 
+//******************* Buttons
+export enum eqWidth {
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine,
+  ten,
+  eleven,
+  twelve
+}
+
+export interface ButtonsProps extends ui.IProps {
+  vertical?: boolean;
+  labeled?: boolean;
+  basic?: boolean;
+  hasIcon?: boolean;
+  eqWidth?: eqWidth;
+  colorUI?: colorUI;
+  size?: size;
+}
+var buttonsPropsDescr = ui.createDescr<ButtonsProps>(val => {
+  return {
+    vertical: new ui.boolConverter(val.vertical),
+    labeled: new ui.boolConverter(val.labeled),
+    basic: new ui.boolConverter(val.basic),
+    hasIcon: null, //osetri se rucne
+    eqWidth: new ui.enumConverter<eqWidth>(eqWidth, val.eqWidth),
+    colorUI: new ui.enumConverter<colorUI>(colorUI, val.colorUI),
+    size: new ui.enumConverter<size>(size, val.size),
+  }
+});
+
+export const Buttons: ui.StatelessComponent<ButtonsProps> = props => {
+  var rest = ui.propsToClasses(['ui buttons', { icon: props.hasIcon }], ui.projection(props, buttonsPropsDescr));
+  return <div {...rest}/>;
+};
+
+//******************* Social
+export enum social {
+  facebook,
+  twitter,
+  googlePlus,
+  vk,
+  linkedin,
+  instagram,
+  youtube
+}
+export interface ButtonSocialProps extends ButtonProps {
+  social: social;
+}
+var buttonSocialPropsDescr = ui.createDescr<ButtonSocialProps>(val => {
+  return {
+    social: new ui.enumConverter<social>(social, val.social),
+  }
+});
+
+export const ButtonSocial: ui.StatelessComponent<ButtonSocialProps> = props => {
+  var rest = ui.propsToClasses(['ui button'], ui.projection(props, buttonSocialPropsDescr));
+  var label = '';
+  switch (props.social) {
+    case social.facebook: label = 'Facebook'; break;
+    case social.twitter: label = 'Twitter'; break;
+    case social.googlePlus: label = 'Google Plus'; break;
+    case social.vk: label = 'VK'; break;
+    case social.linkedin: label = 'Linked In'; break;
+    case social.instagram: label = 'Instagram'; break;
+    case social.youtube: label = 'YouTube'; break;
+  }
+  var socClass = classNames(['icon', new ui.enumConverter<social>(social, social.facebook).convert(null, props.social)]);
+  return <div {...rest}>
+    <i className={socClass}/>
+    {label}
+  </div>;
+};
