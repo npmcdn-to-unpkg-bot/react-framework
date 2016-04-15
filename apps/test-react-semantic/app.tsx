@@ -44,15 +44,15 @@ export class AppRootStore extends flux.Store implements IStoreApp {
   }
   render(): JSX.Element {
     return <div>
+      <ButtonSocialTest/><hr/>
       <ButtonLabeledTest/><hr/>
       <ButtonAnimatedTest/><hr/>
       <ButtonIconTest/><hr/>
-      <ButtonSocialTest/><hr/>
       <ButtonTest/><hr/>
       <ButtonsTest/><hr/>
       <LabelTest/><hr/>
       <IconTest/><hr/>
-      {/* 
+      {/*
       */}
     </div>;
   }

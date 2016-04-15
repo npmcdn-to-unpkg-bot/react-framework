@@ -32,9 +32,8 @@ export class enumConverter<T> extends propConverter {
   constructor(public enumType, valueExample: T) { super(); }
   convert(propName: string, val): convertResult {
     let res = typeof val == 'number' ? this.enumType[val] as string : val as string; if (res == 'standard' || res == 'no') return res;
-    var temp = classGenReplaces[res]; res = temp ? temp : res; //nahrada spatne hodnoty spravnou, napr. IPropsPointing.pointingAbove => pointing
+    var temp = propsToHTMLClass[res]; res = temp ? temp : res; //nahrada spatne hodnoty spravnou, napr. IPropsPointing.pointingAbove => pointing
     if (res[0] == '$') res = res.substr(1);
-    //var newVal = enumExcepts[val]; if (!newVal) newVal = res; //nahrada spatne hodnoty spravnou, napr. IPropsPointing.pointingAbove => pointing
     let parts = res.split(/(?=[A-Z])/);
     return parts.map(p => p.toLowerCase()).join(' ');
   }
@@ -74,9 +73,8 @@ export function projection(source: {}, mask: TPropsDescr): projectionResult {
 export function enumValToProp<T extends IProps>(props: T): T {
   var res = Object.assign({}, props);
   for (var propId in res) {
-    var propInfo = enumValueToProp[propId]; 
-    if (!propInfo) continue;
-    res[propInfo.propName] = propId; delete res[propId]; continue
+    var propInfo = enumValueToProp[propId]; if (!propInfo) continue;
+    res[propInfo.propName] = propInfo.enumType[propId]; delete res[propId]; 
   }
   return res;
 }
@@ -87,12 +85,12 @@ export function propsToClasses(init: Array<convertResult>, src: projectionResult
     var val = src.used[p]; var converter: propConverter = src.maskUsed[p];
     parts.push(converter.convert(p, val));
   }
-  if (src.rest['className']) { parts.push(src.rest['className']); delete src.rest['className']; }
+  if (src.rest['className']) { parts.push(src.rest['className']); } //delete src.rest['className']; }
   src.rest['className'] = classNames.apply(null, parts);
   return src.rest;
 }
 
-export function registerEnum(enumType, propName: string, classGenReplace?: { [wrong: string]: string;}) {
+export function registerEnum(enumType, propName: string, propToHTMLClass?: { [wrong: string]: string;}) {
   for (var p in enumType) {
     var val = enumType[p]; if (typeof val == 'number' || val === 'no' || val === 'standard') continue;
     var item = enumValueToProp[val]; var numValue: number = enumType[val];
@@ -101,69 +99,71 @@ export function registerEnum(enumType, propName: string, classGenReplace?: { [wr
         debugger; throw '';
       }
     }
-    enumValueToProp[val] = { propName: propName, numValue: numValue }
+    enumValueToProp[val] = { propName: propName, numValue: numValue, enumType: enumType }
   }
-  if (classGenReplace) Object.assign(classGenReplaces, classGenReplace);
+  if (propToHTMLClass) Object.assign(propsToHTMLClass, propToHTMLClass);
 }
-interface IEnumItem { propName: string, numValue: number; }
+interface IEnumItem { propName: string, numValue: number; enumType }
 var enumValueToProp: { [short: string]: IEnumItem; } = {};
-var classGenReplaces: { [wrong: string]: string; } = {};
+var propsToHTMLClass: { [wrong: string]: string; } = {};
 
 export interface IPropsColor {
-  $red?: boolean;
-  $orange?: boolean;
-  $yellow?: boolean;
-  $olive?: boolean;
-  $green?: boolean;
-  $teal?: boolean;
-  $blue?: boolean;
-  $violet?: boolean;
-  $purple?: boolean;
-  $pink?: boolean;
-  $brown?: boolean;
-  $grey?: boolean;
-  $black?: boolean;
+  $colRed?: boolean;
+  $colOrange?: boolean;
+  $colYellow?: boolean;
+  $colOlive?: boolean;
+  $colGreen?: boolean;
+  $colTeal?: boolean;
+  $colBlue?: boolean;
+  $colViolet?: boolean;
+  $colPurple?: boolean;
+  $colPink?: boolean;
+  $colBrown?: boolean;
+  $colGrey?: boolean;
+  $colBlack?: boolean;
 }
 
 export enum color {
   standard,
-  $red,
-  $orange,
-  $yellow,
-  $olive,
-  $green,
-  $teal,
-  $blue,
-  $violet,
-  $purple,
-  $pink,
-  $brown,
-  $grey,
-  $black
+  $colRed,
+  $colOrange,
+  $colYellow,
+  $colOlive,
+  $colGreen,
+  $colTeal,
+  $colBlue,
+  $colViolet,
+  $colPurple,
+  $colPink,
+  $colBrown,
+  $colGrey,
+  $colBlack
 }
-registerEnum(color, '$Color');
+registerEnum(color, '$Color', {
+  $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue',
+  $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black'
+});
 
 export interface IPropsSize {
-  standard?: boolean;
-  $mini?: boolean;
-  $tiny?: boolean;
-  $small?: boolean;
-  $medium?: boolean;
-  $large?: boolean;
-  $big?: boolean;
-  $huge?: boolean;
-  $massive?: boolean;
+  $s3?: boolean;
+  $s2?: boolean;
+  $s1?: boolean;
+  //$medium?: boolean;
+  $1?: boolean;
+  $2?: boolean;
+  $3?: boolean;
+  $4?: boolean;
 }
 
 export enum size {
   standard,
-  $ini,
-  $tiny,
-  $small,
-  $medium,
-  $large,
-  $big,
-  $huge,
-  $massive
+  $s3,
+  $s2,
+  $s1,
+  //$medium,
+  $1,
+  $2,
+  $3,
+  $4
 }
-registerEnum(size, '$Size');
+registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive'});

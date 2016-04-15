@@ -1,9 +1,9 @@
 ﻿import * as React from 'react';
 
 import {
-  //colorUI, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, //state, floated, attachedButton, iconLabel, 
-  Label, //pointing, corner, attachedLabel, circular,
+  color, size,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, state, floated, attachedButton, iconLabel, 
+  Label, pointing, corner, attachedLabel, circular,
   Icon, icon
 } from '../exports';
 
@@ -16,35 +16,35 @@ export const ButtonTest: ui.StatelessComponent<ui.IProps> = props => {
     <Button tabIndex={0}>Focusable</Button> <br/><br/>
     <h2>Basic</h2>
     <Button $basic>Standard</Button>
-    <Button $basic $red>Red</Button>
-    <Button $basic $orange>Orange</Button>
-    <Button $basic $yellow>Yellow</Button>
-    <Button $basic $olive>Olive</Button>
-    <Button $basic $green>Green</Button>
-    <Button $basic $teal>Teal</Button>
-    <Button $basic $blue>Blue</Button>
-    <Button $basic $violet>Violet</Button>
-    <Button $basic $purple>Purple</Button>
-    <Button $basic $pink>Pink</Button>
-    <Button $basic $brown>Brown</Button>
-    <Button $basic $grey>Grey</Button>
-    <Button $basic $black>Black</Button> <br/><br/>
+    <Button $basic $colRed>Red</Button>
+    <Button $basic $colOrange>Orange</Button>
+    <Button $basic $colYellow>Yellow</Button>
+    <Button $basic $colOlive>Olive</Button>
+    <Button $basic $colGreen>Green</Button>
+    <Button $basic $colTeal>Teal</Button>
+    <Button $basic $colBlue>Blue</Button>
+    <Button $basic $colViolet>Violet</Button>
+    <Button $basic $colPurple>Purple</Button>
+    <Button $basic $colPink>Pink</Button>
+    <Button $basic $colBrown>Brown</Button>
+    <Button $basic $colGrey>Grey</Button>
+    <Button $basic $colBlack>Black</Button> <br/><br/>
     <h2>Inverted</h2>
     <div className="ui inverted segment">
       <Button $inverted>Standard</Button>
-      <Button $inverted $red>Red</Button>
-      <Button $inverted $orange>Orange</Button>
-      <Button $inverted $yellow>Yellow</Button>
-      <Button $inverted $olive>Olive</Button>
-      <Button $inverted $green>Green</Button>
-      <Button $inverted $teal>Teal</Button>
-      <Button $inverted $blue>Blue</Button>
-      <Button $inverted $violet>Violet</Button>
-      <Button $inverted $purple>Purple</Button>
-      <Button $inverted $pink>Pink</Button>
-      <Button $inverted $brown>Brown</Button>
-      <Button $inverted $grey>Grey</Button>
-      <Button $inverted $black>Black</Button>
+      <Button $inverted $colRed>Red</Button>
+      <Button $inverted $colOrange>Orange</Button>
+      <Button $inverted $colYellow>Yellow</Button>
+      <Button $inverted $colOlive>Olive</Button>
+      <Button $inverted $colGreen>Green</Button>
+      <Button $inverted $colTeal>Teal</Button>
+      <Button $inverted $colBlue>Blue</Button>
+      <Button $inverted $colViolet>Violet</Button>
+      <Button $inverted $colPurple>Purple</Button>
+      <Button $inverted $colPink>Pink</Button>
+      <Button $inverted $colBrown>Brown</Button>
+      <Button $inverted $colGrey>Grey</Button>
+      <Button $inverted $colBlack>Black</Button>
     </div> <br/><br/>
     <h2>Variants</h2>
     <Button $primary>primary</Button>
@@ -53,30 +53,30 @@ export const ButtonTest: ui.StatelessComponent<ui.IProps> = props => {
     <Button $positive>positive</Button>
     <h2>Colored</h2>
     <Button>Standard</Button>
-    <Button $red>Red</Button>
-    <Button $orange>Orange</Button>
-    <Button $yellow>Yellow</Button>
-    <Button $olive>Olive</Button>
-    <Button $green>Green</Button>
-    <Button $teal>Teal</Button>
-    <Button $blue>Blue</Button>
-    <Button $violet>Violet</Button>
-    <Button $purple>Purple</Button>
-    <Button $pink>Pink</Button>
-    <Button $brown>Brown</Button>
-    <Button $grey>Grey</Button>
-    <Button $black>Black</Button> <br/><br/>
+    <Button $colRed>Red</Button>
+    <Button $colOrange>Orange</Button>
+    <Button $colYellow>Yellow</Button>
+    <Button $colOlive>Olive</Button>
+    <Button $colGreen>Green</Button>
+    <Button $colTeal>Teal</Button>
+    <Button $colBlue>Blue</Button>
+    <Button $colViolet>Violet</Button>
+    <Button $colPurple>Purple</Button>
+    <Button $colPink>Pink</Button>
+    <Button $colBrown>Brown</Button>
+    <Button $colGrey>Grey</Button>
+    <Button $colBlack>Black</Button> <br/><br/>
     <h2>Floated</h2>
     <Button $floatedLeft>Left</Button><Button $floatedRight>Right</Button> <br/><br/>
     <h2>Size</h2>
-    <Button $mini>mini</Button>
-    <Button $tiny>tiny</Button>
-    <Button $small>small</Button>
-    <Button $medium>medium</Button>
-    <Button $large>large</Button>
-    <Button $big>big</Button>
-    <Button $huge>huge</Button>
-    <Button $massive>massive</Button>
+    <Button $s3>mini</Button>
+    <Button $s2>tiny</Button>
+    <Button $s1>small</Button>
+    <Button>medium</Button>
+    <Button $1>large</Button>
+    <Button $2>big</Button>
+    <Button $3>huge</Button>
+    <Button $4>massive</Button>
     <h2>Compact</h2>
     <Button $compact>Compact</Button>
     <ButtonIcon $compact $Icon={icon.user}>Compact</ButtonIcon>
@@ -94,8 +94,8 @@ export const ButtonTest: ui.StatelessComponent<ui.IProps> = props => {
 export const ButtonAnimatedTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>ButtonAnimated</h1>
-    <ButtonAnimated $olive $animateTo={{ animate: animate.fade, to: <b>hidden</b> }} onClick={ev => alert('click') }>visible</ButtonAnimated> <br/><br/>
-    <ButtonAnimated $pink $basic $animateTo={{ animate: animate.vertical, to: 'hidden' }}>visible</ButtonAnimated> <br/><br/>
+    <ButtonAnimated $colOlive $animateTo={{ animate: animate.fade, to: <b>hidden</b> }} onClick={ev => alert('click') }>visible</ButtonAnimated> <br/><br/>
+    <ButtonAnimated $colPink $basic $animateTo={{ animate: animate.vertical, to: 'hidden' }}>visible</ButtonAnimated> <br/><br/>
     <ButtonAnimated $circular $animateTo={{ to: 'hidden' }}>visible</ButtonAnimated> <br/><br/>
   </div>;
 }
@@ -103,7 +103,7 @@ export const ButtonAnimatedTest: ui.StatelessComponent<ui.IProps> = props => {
 export const ButtonLabeledTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>ButtonLabeled</h1>
-    <ButtonLabeled $pointing $blue $label={<Label $basic $blue>2.048</Label>}><Icon $Icon={icon.heart}/> Like</ButtonLabeled> <br/><br/>
+    <ButtonLabeled $pointing $colBlue $label={<Label $basic $colBlue>2.048</Label>}><Icon $Icon={icon.heart}/> Like</ButtonLabeled> <br/><br/>
     <ButtonLabeled $left $label={<Label $basic><Icon $Icon={icon.heart}/></Label>}> Left</ButtonLabeled> <br/> <br/>
     <ButtonLabeled $left $pointing $label={<Label $basic>2.048</Label>}> Left Pointing</ButtonLabeled> <br/> <br/>
     <Button $labeled $hasIcon><Icon $Icon={icon.user} />Add Friend</Button>
@@ -113,10 +113,10 @@ export const ButtonLabeledTest: ui.StatelessComponent<ui.IProps> = props => {
 export const ButtonIconTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>ButtonIcon</h1>
-    <ButtonIcon $iconLabelRight $basic $teal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $IconLabel={ui.iconLabel.iconLabelRight} $basic $teal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $iconLabelLeft $orange $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $pink $Icon={icon.user}></ButtonIcon> <br/><br/>
+    <ButtonIcon $iconLabelRight $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
+    <ButtonIcon $IconLabel={ui.iconLabel.iconLabelRight} $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
+    <ButtonIcon $iconLabelLeft $colOrange $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
+    <ButtonIcon $colPink $Icon={icon.user}></ButtonIcon> <br/><br/>
   </div>;
 }
 
@@ -131,23 +131,23 @@ export const ButtonsTest: ui.StatelessComponent<ui.IProps> = props => {
       <Button><Icon $Icon={icon.user} />Add Friend</Button>
     </Buttons><br/><br/>
     <Buttons $EqWidth={eqWidth.three}><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
-    <Buttons $green><Button>One</Button> <Button>Two</Button> <Button>Three</Button></Buttons><br/><br/>
+    <Buttons $colGreen><Button>One</Button> <Button>Two</Button> <Button>Three</Button></Buttons><br/><br/>
     <Buttons $basic><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
     <Buttons $basic $vertical><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
-    <Buttons $huge> <Button>One</Button> <Button>Two</Button> <Button>Three</Button></Buttons><br/><br/>
-    <Buttons $hasIcon $small> <ButtonIcon $Icon={icon.alignLeft}/> <ButtonIcon $Icon={icon.alignRight}/> <ButtonIcon $Icon={icon.alignCenter}/></Buttons><br/><br/>
+    <Buttons $3> <Button>One</Button> <Button>Two</Button> <Button>Three</Button></Buttons><br/><br/>
+    <Buttons $hasIcon $s1> <ButtonIcon $Icon={icon.alignLeft}/> <ButtonIcon $Icon={icon.alignRight}/> <ButtonIcon $Icon={icon.alignCenter}/></Buttons><br/><br/>
   </div>;
 };
 
 export const ButtonSocialTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>Social</h1>
-    <ButtonSocial $Social={social.$facebook}/>
-    <ButtonSocial $Social={social.$googlePlus}/>
-    <ButtonSocial $Social={social.$instagram}/>
+    <ButtonSocial $facebook/>
+    <ButtonSocial $googlePlus/>
+    <ButtonSocial $instagram/>
     <ButtonSocial $Social={social.$linkedin}/>
-    <ButtonSocial $Social={social.$twitter}/>
-    <ButtonSocial $Social={social.$vk}/>
-    <ButtonSocial $Social={social.$youtube}/>
+    <ButtonSocial $twitter/>
+    <ButtonSocial $vk/>
+    <ButtonSocial $youtube/>
   </div>;
 };

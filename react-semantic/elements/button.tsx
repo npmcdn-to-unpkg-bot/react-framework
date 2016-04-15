@@ -5,7 +5,7 @@ import {Label, pointing, corner, attachedLabel, circular} from '../exports';
 import {Icon, icon, color, size} from '../exports';
 
 export enum state {
-  $standard,
+  no,
   $active,
   $disabled,
   $loading
@@ -235,8 +235,19 @@ export enum social {
   $instagram,
   $youtube
 }
-export interface ButtonSocialProps extends ButtonProps {
-  $Social: social;
+ui.registerEnum(social, '$Social');
+export interface IPropsSocial {
+  $facebook?: boolean;
+  $twitter?: boolean;
+  $googlePlus?: boolean;
+  $vk?: boolean;
+  $linkedin?: boolean;
+  $instagram?: boolean;
+  $youtube?: boolean;
+}
+
+export interface ButtonSocialProps extends ButtonProps, IPropsSocial {
+  $Social?: social;
 }
 var buttonSocialPropsDescr = ui.createDescr<ButtonSocialProps>(val => {
   return {
@@ -248,6 +259,7 @@ export const ButtonSocial: ui.StatelessComponent<ButtonSocialProps> = pr => {
   var props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui button'], ui.projection(props, buttonSocialPropsDescr));
   var label = '';
+  //switch (social[props.$Social] as any) {
   switch (props.$Social) {
     case social.$facebook: label = 'Facebook'; break;
     case social.$twitter: label = 'Twitter'; break;
