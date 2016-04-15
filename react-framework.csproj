@@ -55,6 +55,7 @@
     <TypeScriptCompile Include="react-semantic\elements\buttonTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\iconTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\icon.tsx" />
+    <TypeScriptCompile Include="react-semantic\elements\labelTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\segment.tsx" />
     <TypeScriptCompile Include="react-semantic\libTest.tsx" />
     <TypeScriptCompile Include="react-semantic\lib.ts" />
@@ -84,6 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="react-semantic\elements\testimg\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>

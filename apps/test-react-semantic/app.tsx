@@ -4,15 +4,14 @@ import * as flux from '../../react-framework/exports';
 import * as tests from '../test-config';
 
 import {
-  colorUI, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
-  Label, pointing, corner, attachedLabel, circular,
-  Icon, iconUI,
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest
+  color, size,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons,
+  Label, 
+  Icon, icon,
+  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest
 } from '../../react-semantic/exports';
 
-//import * as ui from '../exports';
-
+import * as ui from '../../react-semantic/exports';
 
 var moduleId = 'testReactSemantic';
 
@@ -45,13 +44,16 @@ export class AppRootStore extends flux.Store implements IStoreApp {
   }
   render(): JSX.Element {
     return <div>
-      <ButtonSocialTest/><hr/>
-      <ButtonsTest/><hr/>
-      <ButtonIconTest/><hr/>
       <ButtonLabeledTest/><hr/>
-      <IconTest/><hr/>
-      <ButtonTest/><hr/>
       <ButtonAnimatedTest/><hr/>
+      <ButtonIconTest/><hr/>
+      <ButtonSocialTest/><hr/>
+      <ButtonTest/><hr/>
+      <ButtonsTest/><hr/>
+      <LabelTest/><hr/>
+      <IconTest/><hr/>
+      {/* 
+      */}
     </div>;
   }
 }

@@ -5,6 +5,6 @@ import * as ui from '../exports';
 export const IconTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>Icon</h1>
-    <ui.Icon iconUI={ui.iconUI.alarmSlashOutline}/>
+    <ui.Icon $Icon={ui.icon.alarmSlashOutline}/>
   </div>;
 }

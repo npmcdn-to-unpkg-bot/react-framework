@@ -1988,7 +1988,7 @@ declare namespace __React {
     seamless?: boolean;
     selected?: boolean;
     shape?: string;
-    size?: number;
+    $Size?: number;
     sizes?: string;
     span?: number;
     spellCheck?: boolean;
@@ -2035,7 +2035,7 @@ declare namespace __React {
     unselectable?: boolean;
 
     // Allows aria- and data- Attributes
-    [key: string]: any;
+    //[key: string]: any;
   }
 
   interface SVGAttributes extends HTMLAttributes {

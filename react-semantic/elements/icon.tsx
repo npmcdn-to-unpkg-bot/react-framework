@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as ui from '../exports';
 
-export enum iconUI {
+export enum icon {
   add,
   addCircle,
   addSquare,
@@ -675,57 +675,84 @@ export enum iconUI {
 }
 export enum flipped {
   no,
-  flippedHorizontally,
-  flippedVertically,
+  $flippedHorizontally,
+  $flippedVertically,
 }
+ui.registerEnum(flipped, '$Flipped');
+export interface IPropsFlipped{
+  $flippedHorizontally?: boolean;
+  $flippedVertically?: boolean;
+}
+
 
 export enum rotated {
   no,
-  rotatedClockwise ,
-  rotatedCounterclockwise ,
+  $rotatedClockwise,
+  $rotatedCounterclockwise,
+}
+ui.registerEnum(rotated, '$Rotated');
+export interface IPropsRotated{
+  $rotatedClockwise?: boolean;
+  $rotatedCounterclockwise?: boolean;
 }
 
 export enum circular {
   no,
-  circular,
-  circularInverted,
+  $circularStandard,
+  $circularInverted,
 }
+ui.registerEnum(circular, '$Circular', { $circularStandard: 'circular' });
+export interface IPropsCircular {
+  $circularStandard?: boolean;
+  $circularInverted?: boolean;
+}
+
 
 export enum bordered {
   no,
-  bordered,
-  borderedInverted,
+  $borderedStandard,
+  $borderedInverted,
+}
+ui.registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
+export interface IPropsBordered{
+  $borderedStandard?: boolean;
+  $borderedInverted?: boolean;
 }
 
-export interface IconProps extends ui.IProps {
-  iconUI: iconUI;
-  disabled?: boolean;
-  loading?: boolean;
-  fitted?: boolean;
-  link?: boolean;
-  inverted?: boolean;
-  flipped?: flipped;
-  rotated?: rotated;
-  colorUI?: ui.colorUI;
-  circular?: circular;
-  size?: ui.size;
+
+export interface IconProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize, IPropsBordered, IPropsFlipped, IPropsRotated, IPropsCircular {
+  $Icon: icon;
+  $disabled?: boolean;
+  $loading?: boolean;
+  $fitted?: boolean;
+  $link?: boolean;
+  $inverted?: boolean;
+  $Flipped?: flipped;
+  $Rotated?: rotated;
+  $Color?: ui.color;
+  $Circular?: circular;
+  $Size?: ui.size;
+  $Bordered?: bordered;
 }
 var iconPropsDescr = ui.createDescr<IconProps>(val => {
   return {
-    iconUI: new ui.enumConverter<iconUI>(iconUI, val.iconUI),
-    flipped: new ui.enumConverter<flipped>(flipped, val.flipped),
-    rotated: new ui.enumConverter<rotated>(rotated, val.rotated),
-    color: new ui.enumConverter<ui.colorUI>(ui.colorUI, val.colorUI),
-    circular: new ui.enumConverter<circular>(circular, val.circular),
-    size: new ui.enumConverter<ui.size>(ui.size, val.size),
-    disabled: new ui.boolConverter(val.disabled),
-    loading: new ui.boolConverter(val.loading),
-    fitted: new ui.boolConverter(val.fitted),
-    link: new ui.boolConverter(val.link),
+    $Icon: new ui.enumConverter<icon>(icon, val.$Icon),
+    $Flipped: new ui.enumConverter<flipped>(flipped, val.$Flipped),
+    $Rotated: new ui.enumConverter<rotated>(rotated, val.$Rotated),
+    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Circular: new ui.enumConverter<circular>(circular, val.$Circular),
+    $Bordered: new ui.enumConverter<bordered>(bordered, val.$Bordered),
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
+
+    $disabled: new ui.boolConverter(val.$disabled),
+    $loading: new ui.boolConverter(val.$loading),
+    $fitted: new ui.boolConverter(val.$fitted),
+    $link: new ui.boolConverter(val.$link),
   };
 });
 
-export const Icon: ui.StatelessComponent<IconProps> = props => {
+export const Icon: ui.StatelessComponent<IconProps> = pr => {
+  var props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['icon'], ui.projection(props, iconPropsDescr));
   return <i {...rest}/>;
 }

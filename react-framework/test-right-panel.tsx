@@ -42,7 +42,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       <br/>
       <div>Paste exported JSON here and click <a href='#' onClick={this.import.bind(this) }><b>Import</b></a></div>
       <br/>
-      <textarea ref= {c => this.input = c} rows='40' style={{ width: '99%' }}></textarea>
+      <textarea ref= {c => this.input = c} rows={40} style={{ width: '99%' }}></textarea>
     </div>;
     var txt = '';
     switch (this.mode) {
