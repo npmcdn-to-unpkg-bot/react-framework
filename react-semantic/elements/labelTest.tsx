@@ -2,9 +2,10 @@
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, state, floated, attachedButton, iconLabel,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
-  Icon, icon
+  Icon, Icons, icon,
+  Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 } from '../exports';
 import * as ui from '../exports';
 
@@ -67,14 +68,14 @@ export const LabelTest: ui.StatelessComponent<ui.IProps> = props => {
       <img src="images/image.png"/>
     </div><br/>
     <h3>Ribbon</h3>
-    <div className="ui raised segment">
+    <Segment>
       <Label $colRed $ribbonLeft>Overview</Label><span>Account Details</span>
       <img className="ui wireframe image" src="images/paragraph.png"/>
       <p></p>
       <Label $colBlue $ribbonLeft>Community</Label> User Reviews
       <img className="ui wireframe image" src="images/paragraph.png"/>
       <p></p>
-    </div>
+    </Segment >
     <div className="ui fluid image" style={{ width: 200 }}>
       <Label $colBlack $ribbonLeft><Icon $Icon={icon.hotel} /></Label>
       <img src="images/image.png"/>
@@ -83,42 +84,42 @@ export const LabelTest: ui.StatelessComponent<ui.IProps> = props => {
     <div className="ui three column grid">
       <div className="row">
         <div className="column">
-          <div className="ui segment">
+          <Segment>
             <Label $attachedTop>HTML</Label>
             <img className="ui wireframe image" src="images/paragraph.png"/>
-          </div>
+          </Segment>
         </div>
         <div className="column">
-          <div className="ui segment">
+          <Segment>
             <Label $attachedBottom>HTML</Label>
             <img className="ui wireframe image" src="images/paragraph.png"/>
-          </div>
+          </Segment>
         </div>
         <div className="column">
-          <div className="ui segment">
+          <Segment>
             <Label $attachedTopRight>HTML</Label>
             <img className="ui wireframe image" src="images/paragraph.png"/>
-          </div>
+          </Segment>
         </div>
       </div>
       <div className="row">
         <div className="column">
-          <div className="ui segment">
+          <Segment>
             <Label $attachedTopLeft>HTML</Label>
             <img className="ui wireframe image" src="images/paragraph.png"/>
-          </div>
+          </Segment>
         </div>
         <div className="column">
-          <div className="ui segment">
+          <Segment>
             <Label $attachedBottomLeft>HTML</Label>
             <img className="ui wireframe image" src="images/paragraph.png"/>
-          </div>
+          </Segment>
         </div>
         <div className="column">
-          <div className="ui segment">
+          <Segment>
             <Label $attachedBottomRight>HTML</Label>
             <img className="ui wireframe image" src="images/paragraph.png"/>
-          </div>
+          </Segment >
         </div>
       </div>
     </div>
