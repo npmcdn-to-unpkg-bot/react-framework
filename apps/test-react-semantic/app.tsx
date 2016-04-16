@@ -40,22 +40,14 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <i className="icons"><i className="icon dont big red"></i><i className="icon user"></i></i>
-      <i className="huge icons">
-        <i className="big red dont icon"></i>
-        <i className="black user icon"></i>
-      </i>
-      <IconTest/><hr/>
-      {/* 
-      <IconTest/><hr/>
       <ButtonTest/><hr/>
+      <IconTest/><hr/>
       <LabelTest/><hr/>
       <ButtonSocialTest/><hr/>
       <ButtonLabeledTest/><hr/>
       <ButtonAnimatedTest/><hr/>
       <ButtonIconTest/><hr/>
       <ButtonsTest/><hr/>
-      */}
     </div>;
   }
 }

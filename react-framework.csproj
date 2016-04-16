@@ -36,6 +36,7 @@
     <Content Include="apps\test-react-semantic\images\image.png" />
     <Content Include="apps\test-react-semantic\images\joe.jpg" />
     <Content Include="apps\test-react-semantic\images\paragraph.png" />
+    <Content Include="react-semantic\elements\Semantic TODO.txt" />
     <Content Include="react-semantic\icons.code.txt" />
     <Content Include="README.md" />
     <Content Include="react-semantic\README.md" />

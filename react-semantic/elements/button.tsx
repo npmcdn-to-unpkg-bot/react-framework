@@ -68,6 +68,7 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
     $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
     $State: new ui.enumConverter<state>(state, val.$State),
     $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
+    $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
 
     $basic: new ui.boolConverter(val.$basic),
     $inverted: new ui.boolConverter(val.$inverted),
@@ -86,9 +87,9 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
   };
 });
 export const Button: ui.StatelessComponent<ButtonProps> = pr => {
-  var props = ui.enumValToProp(pr);
+  var props: ButtonProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$stateActive }], ui.projection(props, buttonPropsDescr));
-  return <button {...rest}/>;
+  return React.createElement(props.$Attached ? 'div' : 'button', rest);
 }
 
 //******************* ButtonAnimated

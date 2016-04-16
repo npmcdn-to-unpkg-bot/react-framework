@@ -1,0 +1,5 @@
+﻿Icons
+- funguje spatne grouping (pro mensi velikosti)
+
+Label
+- attach - zalezi na poradi retezeni classes

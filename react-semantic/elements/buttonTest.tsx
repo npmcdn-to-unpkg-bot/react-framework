@@ -86,7 +86,13 @@ export const ButtonTest: ui.StatelessComponent<ui.IProps> = props => {
     <Button disabled>Disabled</Button>
     <h2>Loading</h2>
     <Button $stateLoading>Loading</Button><Button $stateLoading $basic>Loading</Button><Button $stateLoading $primary>Loading</Button><Button $stateLoading $secondary>Loading</Button>
-
+    <h2>Attached</h2>
+    <div className="ui attached segment">
+      <Button $attachedTop>Top</Button>
+      <img src="images/paragraph.png" className="ui wireframe image"/>
+      <Button $attachedBottom>Top</Button>
+    </div><br/>
+    <Button $attachedLeft>Left</Button><Button $attachedRight>Right</Button>
   </div>;
 }
 
