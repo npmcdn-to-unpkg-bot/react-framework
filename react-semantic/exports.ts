@@ -1,10 +1,10 @@
 ﻿export {
 StatelessComponent, enumToClass, propConverter, boolConverter, enumConverter, TPropsDescr, IProps, createDescr, propsToClasses, color, size, projection,
-IPropsColor, enumValToProp, IPropsSize, registerEnum
+IPropsColor, enumValToProp, IPropsSize, registerEnum, IPropsFloated, floated
 } from './lib';
 export {Label, LabelProps, Labels, LabelsProps, pointing, corner, attachedLabel, circular, ribbon} from './elements/label';
 export {
-Button, state, floated, attachedButton, 
+Button, state, attachedButton, 
 ButtonLabeled, ButtonLabeledProps,
 ButtonIcon, iconLabel,
 ButtonAnimated, animate, animateTo,
@@ -15,7 +15,8 @@ export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, Butto
 export {Icon, Icons, icon, IconProps, IconsProps} from './elements/icon';
 export {IconTest} from './elements/iconTest';
 export {LabelTest} from './elements/labelTest';
-export {Segment} from './elements/segment';
+export {Segment, Segments, SegmentProps, SegmentsProps, raised, attachedSegment, padded, emphasis, aligned, raisedSegments, } from './elements/segment';
+export {SegmentTest} from './elements/segmentTest';
 
 
 import {
@@ -23,6 +24,7 @@ import {
   Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
+  Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest
+  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest
 } from './exports';

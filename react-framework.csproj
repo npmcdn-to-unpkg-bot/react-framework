@@ -59,6 +59,7 @@
     <TypeScriptCompile Include="react-semantic\elements\buttonTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\iconTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\icon.tsx" />
+    <TypeScriptCompile Include="react-semantic\elements\segmentTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\labelTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\segment.tsx" />
     <TypeScriptCompile Include="react-semantic\libTest.tsx" />

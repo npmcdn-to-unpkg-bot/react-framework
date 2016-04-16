@@ -6,7 +6,3 @@ export interface TestSectionProps extends ui.IProps {
   subTitle?: string;
 }
 
-export const TestSection: ui.StatelessComponent<TestSectionProps> = props => {
-  return <ui.Segment>
-  </ui.Segment>;
-};

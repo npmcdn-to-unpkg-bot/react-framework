@@ -3,3 +3,10 @@
 
 Label
 - attach - zalezi na poradi retezeni classes
+
+Segment
+- paddedVery - zalezi na poradi
+- alignLeft,... - zalezi na poradi
+
+Button, rightFloated
+- zalezi na poradi retezeni classes

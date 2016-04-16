@@ -16,16 +16,6 @@ export interface IPropsState {
   $stateDisabled?: boolean;
   $stateLoading?: boolean;
 }
-export enum floated {
-  no,
-  $floatedLeft,
-  $floatedRight
-}
-ui.registerEnum(floated, '$Floated');
-export interface IPropsFloated {
-  $floatedLeft?: boolean;
-  $floatedRight?: boolean;
-}
 export enum attachedButton {
   no,
   $attachedTop,
@@ -40,11 +30,11 @@ export interface IPropsAttached {
   $attachedLeft?: boolean;
   $attachedRight?: boolean;
 }
-export interface ButtonProps extends ui.IProps, IPropsAttached, IPropsFloated, IPropsState, ui.IPropsColor, ui.IPropsSize {
+export interface ButtonProps extends ui.IProps, IPropsAttached, ui.IPropsFloated, IPropsState, ui.IPropsColor, ui.IPropsSize {
   $Color?: color;
   $Size?: ui.size;
   $State?: state;
-  $Floated?: floated;
+  $Floated?: ui.floated;
   $Attached?: attachedButton;
 
   $basic?: boolean;
@@ -67,7 +57,7 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
     $Color: new ui.enumConverter<color>(color, val.$Color),
     $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
     $State: new ui.enumConverter<state>(state, val.$State),
-    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
+    $Floated: new ui.enumConverter<ui.floated>(ui.floated, val.$Floated),
     $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
 
     $basic: new ui.boolConverter(val.$basic),

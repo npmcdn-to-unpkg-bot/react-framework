@@ -1,78 +1,29 @@
 ﻿import * as React from 'react';
 import * as ui from '../exports';
 
-export enum pointing {
-  no,
-  $pointingAbove,
-  $pointingBelow,
-  $pointingLeft, 
-  $pointingRight,
-}
+export enum pointing { no, $pointingAbove, $pointingBelow, $pointingLeft,  $pointingRight }
 //in SemanticUI, class='... pointing left' does not work. Must be class='... left pointing',
 ui.registerEnum(pointing, '$Pointing', { $pointingAbove: 'pointing', $pointingLeft: 'leftPointing', $pointingRight: 'rightPointing' });
+export interface IPropsPointing { $pointingAbove?: boolean; $pointingBelow?: boolean; $pointingLeft?: boolean; $pointingRight?: boolean; }
 
-export interface IPropsPointing {
-  $pointingAbove?: boolean;
-  $pointingBelow?: boolean;
-  $pointingLeft?: boolean;
-  $pointingRight?: boolean;
-}
-
-export enum corner {
-  no,
-  $cornerLeft,
-  $cornerRight,
-}
+export enum corner { no, $cornerLeft, $cornerRight }
 ui.registerEnum(corner, '$Corner');
+export interface IPropsCorner { $cornerLeft?: boolean; $cornerRight?: boolean; }
 
-export interface IPropsCorner {
-  $cornerLeft?: boolean;
-  $cornerRight?: boolean;
-}
-
-export enum attachedLabel {
-  no,
-  $attachedTop,
-  $attachedBottom,
-  $attachedTopRight,
-  $attachedTopLeft,
-  $attachedBottomRight,
-  $attachedBottomLeft,
-}
+export enum attachedLabel { no, $attachedTop, $attachedBottom, $attachedTopRight, $attachedTopLeft, $attachedBottomRight, $attachedBottomLeft, }
 ui.registerEnum(attachedLabel, '$Attached', {
-  $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached',
-  $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft:'bottomLeftAttached'});
+  $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached',
+  $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached'
+});
+export interface IPropsAttached { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedTopRight?: boolean; $attachedTopLeft?: boolean; $attachedBottomRight?: boolean; $attachedBottomLeft?: boolean;  }
 
-export interface IPropsAttached {
-  $attachedTop?: boolean;
-  $attachedBottom?: boolean;
-  $attachedTopRight?: boolean;
-  $attachedTopLeft?: boolean;
-  $attachedBottomRight?: boolean;
-  $attachedBottomLeft?: boolean;
-}
-
-export enum circular {
-  no,
-  $circularStandard,
-  $circularEmpty,
-}
+export enum circular { no, $circularStandard, $circularEmpty, }
 ui.registerEnum(circular, '$Circular', { $circularStandard: 'circular' });
-export interface IPropsCircular {
-  $circularStandard?: boolean;
-  $circularEmpty?: boolean;
-}
+export interface IPropsCircular { $circularStandard?: boolean; $circularEmpty?: boolean; }
 
-export enum ribbon {
-  no,
-  $ribbonLeft,
-  $ribbonRight,
-}
+export enum ribbon { no, $ribbonLeft, $ribbonRight,}
 ui.registerEnum(ribbon, '$Ribbon', { $ribbonLeft: 'ribbon' });
-export interface IPropsRibbon {
-  $ribbonLeft?: boolean;
-  $ribbonRight?: boolean;
-}
+export interface IPropsRibbon { $ribbonLeft?: boolean; $ribbonRight?: boolean; }
 
 export interface LabelProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize, IPropsPointing, IPropsAttached, IPropsCircular, IPropsCorner, IPropsRibbon {
   $image?: boolean;

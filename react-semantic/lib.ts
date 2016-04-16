@@ -166,4 +166,15 @@ export enum size {
   $3, $huge,
   $4, $massive
 }
-registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive'});
+registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' });
+
+export enum floated {
+  no,
+  $floatedLeft,
+  $floatedRight
+}
+ui.registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight:'rightFloated'});
+export interface IPropsFloated {
+  $floatedLeft?: boolean;
+  $floatedRight?: boolean;
+}
