@@ -679,7 +679,7 @@ export enum flipped {
   $flippedVertically,
 }
 ui.registerEnum(flipped, '$Flipped');
-export interface IPropsFlipped{
+export interface IPropsFlipped {
   $flippedHorizontally?: boolean;
   $flippedVertically?: boolean;
 }
@@ -691,7 +691,7 @@ export enum rotated {
   $rotatedCounterclockwise,
 }
 ui.registerEnum(rotated, '$Rotated');
-export interface IPropsRotated{
+export interface IPropsRotated {
   $rotatedClockwise?: boolean;
   $rotatedCounterclockwise?: boolean;
 }
@@ -707,31 +707,31 @@ export interface IPropsCircular {
   $circularInverted?: boolean;
 }
 
-
 export enum bordered {
   no,
   $borderedStandard,
   $borderedInverted,
 }
 ui.registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
-export interface IPropsBordered{
+export interface IPropsBordered {
   $borderedStandard?: boolean;
   $borderedInverted?: boolean;
 }
 
-
 export interface IconProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize, IPropsBordered, IPropsFlipped, IPropsRotated, IPropsCircular {
-  $Icon: icon;
   $disabled?: boolean;
   $loading?: boolean;
   $fitted?: boolean;
   $link?: boolean;
   $inverted?: boolean;
+  $corner?: boolean;
+
+  $Icon: icon;
   $Flipped?: flipped;
+  $Size?: ui.size;
   $Rotated?: rotated;
   $Color?: ui.color;
   $Circular?: circular;
-  $Size?: ui.size;
   $Bordered?: bordered;
 }
 var iconPropsDescr = ui.createDescr<IconProps>(val => {
@@ -748,12 +748,31 @@ var iconPropsDescr = ui.createDescr<IconProps>(val => {
     $loading: new ui.boolConverter(val.$loading),
     $fitted: new ui.boolConverter(val.$fitted),
     $link: new ui.boolConverter(val.$link),
+    $corner: new ui.boolConverter(val.$link),
+    $inverted: new ui.boolConverter(val.$link),
   };
 });
 
 export const Icon: ui.StatelessComponent<IconProps> = pr => {
   var props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['icon'], ui.projection(props, iconPropsDescr));
-  return <i {...rest}/>;
+  return React.createElement('i', rest);
+}
+
+//********************** Icons
+
+export interface IconsProps extends ui.IProps, ui.IPropsSize {
+  $Size?: ui.size;
+}
+var iconsPropsDescr = ui.createDescr<IconsProps>(val => {
+  return {
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
+  }
+});
+
+export const Icons: ui.StatelessComponent<IconsProps> = pr => {
+  var props = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['icons'], ui.projection(props, iconPropsDescr));
+  return React.createElement('i', rest);
 }
 

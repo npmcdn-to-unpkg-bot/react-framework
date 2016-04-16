@@ -39,7 +39,9 @@ export enum attachedLabel {
   $attachedBottomRight,
   $attachedBottomLeft,
 }
-ui.registerEnum(attachedLabel, '$Attached');
+ui.registerEnum(attachedLabel, '$Attached', {
+  $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached',
+  $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft:'bottomLeftAttached'});
 
 export interface IPropsAttached {
   $attachedTop?: boolean;
@@ -58,16 +60,27 @@ export enum circular {
 ui.registerEnum(circular, '$Circular', { $circularStandard: 'circular' });
 export interface IPropsCircular {
   $circularStandard?: boolean;
-  $emptyCircular?: boolean;
+  $circularEmpty?: boolean;
 }
 
-export interface LabelProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize, IPropsPointing, IPropsAttached, IPropsCircular, IPropsCorner {
+export enum ribbon {
+  no,
+  $ribbonLeft,
+  $ribbonRight,
+}
+ui.registerEnum(ribbon, '$Ribbon', { $ribbonLeft: 'ribbon' });
+export interface IPropsRibbon {
+  $ribbonLeft?: boolean;
+  $ribbonRight?: boolean;
+}
+
+export interface LabelProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize, IPropsPointing, IPropsAttached, IPropsCircular, IPropsCorner, IPropsRibbon {
   $image?: boolean;
   $basic?: boolean;
   $tag?: boolean;
-  $ribbon?: boolean;
   $horizontal?: boolean;
   $floating?: boolean;
+  $Ribbon?: ribbon;
   $Pointing?: pointing;
   $Color?: ui.color;
   $Corner?: corner;
@@ -82,9 +95,9 @@ var labelPropsDescr = ui.createDescr<LabelProps>(val => {
     $basic: new ui.boolConverter(val.$basic),
     $image: new ui.boolConverter(val.$image),
     $tag: new ui.boolConverter(val.$tag),
-    $ribbon: new ui.boolConverter(val.$ribbon),
     $horizontal: new ui.boolConverter(val.$horizontal),
     $floating: new ui.boolConverter(val.$floating),
+    $Ribbon: new ui.enumConverter<ribbon>(ribbon, val.$Ribbon),
     $Pointing: new ui.enumConverter<pointing>(pointing, val.$Pointing),
     $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
     $Corner: new ui.enumConverter<corner>(corner, val.$Corner),
@@ -99,4 +112,25 @@ export const Label: ui.StatelessComponent<LabelProps> = pr => {
   var rest = ui.propsToClasses(['ui label'], ui.projection(props, labelPropsDescr));
   return React.createElement(props.$outerTag ? props.$outerTag : 'span', rest);
 }
+
+//* Labels
+export interface LabelsProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize {
+  $tag?: boolean;
+  $circular?: boolean;
+  $Size?: ui.size;
+  $Color?: ui.color;
+}
+var labelsPropsDescr = ui.createDescr<LabelsProps>(val => {
+  return {
+    $tag: new ui.boolConverter(val.$tag),
+    $circular: new ui.boolConverter(val.$circular),
+    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
+  }
+});
+export const Labels: ui.StatelessComponent<LabelsProps> = pr => {
+  var props = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui labels'], ui.projection(props, labelsPropsDescr));
+  return React.createElement('div', rest);
+};
 

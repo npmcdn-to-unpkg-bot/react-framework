@@ -6,15 +6,15 @@ import {Icon, icon, color, size} from '../exports';
 
 export enum state {
   no,
-  $active,
-  $disabled,
-  $loading
+  $stateActive,
+  $stateDisabled,
+  $stateLoading
 }
-ui.registerEnum(state, '$State');
+ui.registerEnum(state, '$State', { $stateActive: 'active', $stateDisabled: 'disabled', $stateLoading:'loading'});
 export interface IPropsState {
-  $active?: boolean;
-  $disabled?: boolean;
-  $loading?: boolean;
+  $stateActive?: boolean;
+  $stateDisabled?: boolean;
+  $stateLoading?: boolean;
 }
 export enum floated {
   no,
@@ -55,8 +55,8 @@ export interface ButtonProps extends ui.IProps, IPropsAttached, IPropsFloated, I
   $circular?: boolean;
   $labeled?: boolean;
   $hasIcon?: boolean;
-  $active?: boolean;
-  $loading?: boolean,
+  $stateActive?: boolean;
+  $stateLoading?: boolean,
   $primary?: boolean,
   $secondary?: boolean,
   $positive?: boolean,
@@ -76,7 +76,7 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
     $fluid: new ui.boolConverter(val.$fluid),
     $circular: new ui.boolConverter(val.$circular),
     $labeled: new ui.boolConverter(val.$labeled),
-    $loading: new ui.boolConverter(val.$loading),
+    $loading: new ui.boolConverter(val.$stateLoading),
     $primary: new ui.boolConverter(val.$primary),
     $secondary: new ui.boolConverter(val.$secondary),
     $positive: new ui.boolConverter(val.$positive),
@@ -87,7 +87,7 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
 });
 export const Button: ui.StatelessComponent<ButtonProps> = pr => {
   var props = ui.enumValToProp(pr);
-  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
+  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$stateActive }], ui.projection(props, buttonPropsDescr));
   return <button {...rest}/>;
 }
 

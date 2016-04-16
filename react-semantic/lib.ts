@@ -145,25 +145,25 @@ registerEnum(color, '$Color', {
 });
 
 export interface IPropsSize {
-  $s3?: boolean;
-  $s2?: boolean;
-  $s1?: boolean;
+  $s3?: boolean; $mini?: boolean;
+  $s2?: boolean; $tiny?: boolean;
+  $s1?: boolean; $small?: boolean;
   //$medium?: boolean;
-  $1?: boolean;
-  $2?: boolean;
-  $3?: boolean;
-  $4?: boolean;
+  $1?: boolean; $large?: boolean;
+  $2?: boolean; $big?: boolean;
+  $3?: boolean; $huge?: boolean;
+  $4?: boolean; $massive?: boolean;
 }
 
 export enum size {
   standard,
-  $s3,
-  $s2,
-  $s1,
+  $s3, $mini,
+  $s2, $tiny,
+  $s1, $small,
   //$medium,
-  $1,
-  $2,
-  $3,
-  $4
+  $1, $large,
+  $2, $big,
+  $3, $huge,
+  $4, $massive
 }
 registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive'});

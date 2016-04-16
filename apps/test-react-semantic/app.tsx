@@ -5,12 +5,11 @@ import * as tests from '../test-config';
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons,
-  Label, 
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, state, floated, attachedButton, iconLabel,
+  Label, pointing, corner, attachedLabel, circular,
   Icon, icon,
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest
 } from '../../react-semantic/exports';
-
 import * as ui from '../../react-semantic/exports';
 
 var moduleId = 'testReactSemantic';
@@ -39,20 +38,23 @@ enum TActions { };//, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store implements IStoreApp {
-  constructor($parent: flux.Store) {
-    super($parent);
-  }
   render(): JSX.Element {
     return <div>
+      <i className="icons"><i className="icon dont big red"></i><i className="icon user"></i></i>
+      <i className="huge icons">
+        <i className="big red dont icon"></i>
+        <i className="black user icon"></i>
+      </i>
+      <IconTest/><hr/>
+      {/* 
+      <IconTest/><hr/>
+      <ButtonTest/><hr/>
+      <LabelTest/><hr/>
       <ButtonSocialTest/><hr/>
       <ButtonLabeledTest/><hr/>
       <ButtonAnimatedTest/><hr/>
       <ButtonIconTest/><hr/>
-      <ButtonTest/><hr/>
       <ButtonsTest/><hr/>
-      <LabelTest/><hr/>
-      <IconTest/><hr/>
-      {/*
       */}
     </div>;
   }
