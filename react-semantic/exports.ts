@@ -18,9 +18,33 @@ export {LabelTest} from './elements/labelTest';
 export {Segment, Segments, SegmentProps, SegmentsProps, raised, attachedSegment, padded, emphasis, aligned, raisedSegments, } from './elements/segment';
 export {SegmentTest} from './elements/segmentTest';
 
+export {Ad, AdProps} from './views/ad';
+export {AdTest} from './views/adTest';
+export {Card, CardProps} from './views/card';
+export {CardTest} from './views/cardTest';
+export {Comment, CommentProps} from './views/comment';
+export {CommentTest} from './views/commentTest';
+export {Feed, FeedProps} from './views/feed';
+export {FeedTest} from './views/feedTest';
+export {Item, ItemProps} from './views/item';
+export {ItemTest} from './views/itemTest';
+export {Statistic, StatisticProps} from './views/statistic';
+export {StatisticTest} from './views/statisticTest';
+export {Breadcrumb, BreadcrumbProps} from './collections/breadcrumb';
+export {BreadcrumbTest} from './collections/breadcrumbTest';
+export {Form, FormProps} from './collections/form';
+export {FormTest} from './collections/formTest';
+export {Grid, GridProps} from './collections/grid';
+export {GridTest} from './collections/gridTest';
+export {Menu, MenuProps} from './collections/menu';
+export {MenuTest} from './collections/menuTest';
+export {Message, MessageProps} from './collections/message';
+export {MessageTest} from './collections/messageTest';
+export {Table, TableProps} from './collections/table';
+export {TableTest} from './collections/tableTest';
 export {Divider, DividerProps} from './elements/divider';
 export {DividerTest} from './elements/dividerTest';
-export {Flag, FlagProps, enumTest} from './elements/flag';
+export {Flag, FlagProps} from './elements/flag';
 export {FlagTest} from './elements/flagTest';
 export {Header, HeaderProps} from './elements/header';
 export {HeaderTest} from './elements/headerTest';
@@ -46,6 +70,6 @@ import {
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
+  AdTest, CardTest, CommentTest, FeedTest, ItemTest, StatisticTest, BreadcrumbTest, FormTest, GridTest, MenuTest, MessageTest, TableTest, 
   DividerTest, FlagTest, HeaderTest, ImageTest, InputTest, ListTest, LoaderTest, RailTest, RevealTest, StepTest
 } from './exports';

@@ -1,12 +1,14 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+enum componentType {views, collections, elements}
+
 export var codeData: Array<component> = [
   {
     name: 'flag',
     boolProps: ['boolTest'],
     enumProps: [
-      { name: 'enumTest', values: ['val1', 'val2'], alias: `, {$val2: 'xxx'}` },
+      //{ name: 'enumTest', values: ['val1', 'val2'], alias: `, {$val2: 'xxx'}` },
       { name: 'color', isSystem: true }
     ]
   },
@@ -64,8 +66,98 @@ export var codeData: Array<component> = [
     enumProps: [
     ]
   },
+  {
+    name: 'breadcrumb',
+    type: componentType.collections,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'form',
+    type: componentType.collections,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'grid',
+    type: componentType.collections,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'menu',
+    type: componentType.collections,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'message',
+    type: componentType.collections,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'table',
+    type: componentType.collections,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'ad',
+    type: componentType.views,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'card',
+    type: componentType.views,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'comment',
+    type: componentType.views,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'feed',
+    type: componentType.views,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'item',
+    type: componentType.views,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
+  {
+    name: 'statistic',
+    type: componentType.views,
+    boolProps: [],
+    enumProps: [
+    ]
+  },
 ];
-codeData = codeData.sort((a, b) => a.name.localeCompare(b.name));
+
+
+codeData.forEach(c => { if(c.type==undefined) c.type = componentType.elements;})
+codeData = codeData.sort((a, b) => { 
+  if (a.type!=b.type) return a.type>b.type ? 1 : -1;
+  return a.name.localeCompare(b.name); 
+});
 
 export const CodeGenerator: React.StatelessComponent<any> = dt => {
   return <div>
@@ -83,8 +175,10 @@ export const CodeGenerator: React.StatelessComponent<any> = dt => {
 };
 
 //*********************************
+
 interface component {
   name: string;
+  type?: componentType;
   boolProps: Array<string>;
   enumProps: Array<enumProp>;
 }
@@ -110,8 +204,8 @@ export const UsesExport: React.StatelessComponent<{ type: UsesExportType; }> = d
   let join = '';
   var res = codeData.map(c => {
     switch (dt.type) {
-      case UsesExportType.exports: join = '\r\n'; return `export {${up(c.name)}, ${up(c.name)}Props${myEnums(c)}} from './elements/${c.name}';
-export {${up(c.name)}Test} from './elements/${c.name}Test';`;
+      case UsesExportType.exports: join = '\r\n'; return `export {${up(c.name)}, ${up(c.name)}Props${myEnums(c)}} from './${tp(c)}/${c.name}';
+export {${up(c.name)}Test} from './${tp(c)}/${c.name}Test';`;
       case UsesExportType.import: join = ',\r\n'; return `  ${up(c.name)}${myEnums(c)}`;
       case UsesExportType.test: join = ', '; return `${up(c.name)}Test`;
     }
@@ -219,6 +313,7 @@ export interface IProps${up(en.name)}Prop { ${item(dt.enum.values, true)}}
 
 function en(pr: enumProp): string { return (pr.isSystem ? 'ui.' : '') + pr.name; }
 function up(val: string): string { return val[0].toUpperCase() + val.substr(1); }
+function tp(comp:component): string { return componentType[comp.type]; }
 
 export var genData: { [name: string]: component; } = {};
 codeData.forEach(c => genData[c.name] = c);
