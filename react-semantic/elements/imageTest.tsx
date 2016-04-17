@@ -6,16 +6,25 @@ import {
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
-  Test,
+  Divider,
+  Flag,
+  Header,
+  Image,
+  Input,
+  List,
+  Loader,
+  Rail,
+  Reveal,
+  Step
+
 } from '../exports';
 
 import * as ui from '../exports';
 
-export const TestTest: ui.StatelessComponent<ui.IProps> = props => {
+export const ImageTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
-    <h1>Test</h1>
-    <Test>
-    </Test>
+    <h1>Image</h1>
+    <Image>
+    </Image>
   </div>;
 }
-

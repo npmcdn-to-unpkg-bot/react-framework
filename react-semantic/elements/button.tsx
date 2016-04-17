@@ -1,8 +1,10 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ui from '../exports';
-import {Label, pointing, corner, attachedLabel, circular} from '../exports';
-import {Icon, icon, color, size} from '../exports';
+import {
+  Label, pointing, corner, attachedLabel, circular,
+  Icon, icon, color, size
+} from '../exports';
 
 export enum state {
   no,
@@ -118,7 +120,7 @@ export interface ButtonLabeledProps extends ButtonProps {
   $left?: boolean;
   $pointing?: boolean;
 }
-var buttonLabeledDescr = ui.createDescr<ButtonProps>(val => {
+var buttonLabeledDescr = ui.createDescr<ButtonLabeledProps>(val => {
   return { //props se zpracovavaji rucne
     $label: null,
     $left: null,

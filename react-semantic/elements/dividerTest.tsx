@@ -7,6 +7,16 @@ import {
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
   Divider,
+  Flag,
+  Header,
+  Image,
+  Input,
+  List,
+  Loader,
+  Rail,
+  Reveal,
+  Step
+
 } from '../exports';
 
 import * as ui from '../exports';
@@ -18,4 +28,3 @@ export const DividerTest: ui.StatelessComponent<ui.IProps> = props => {
     </Divider>
   </div>;
 }
-

@@ -3,16 +3,17 @@ import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 import * as tests from '../test-config';
 
+import {CodeGenerator} from '../../react-semantic/codeGenerator';
+
 import {
   color, size,
   Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
-  Divider,
-  Flag,
 
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest, DividerTest, FlagTest
+  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
+  DividerTest, FlagTest, HeaderTest, ImageTest, InputTest, ListTest, LoaderTest, RailTest, RevealTest, StepTest
 } from '../../react-semantic/exports';
 import * as ui from '../../react-semantic/exports';
 
@@ -32,7 +33,6 @@ export class AppStore extends flux.StoreApp {
   getIsHashRouter(): boolean { return true; }
 }
 
-
 //****************** AppRoot component
 export interface IStoreApp extends flux.IStore { }
 export interface IPropsExApp extends flux.IPropsEx { }
@@ -44,9 +44,9 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <FlagTest/>
-      <DividerTest/>
+      <CodeGenerator/>
       {/*
+      <ComponentGen comp={genData['divider']}/>
       <SegmentTest/>
       <IconTest/><hr/>
       <LabelTest/><hr/>

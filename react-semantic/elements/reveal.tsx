@@ -1,17 +1,19 @@
 ﻿import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as ui from '../exports';
 
-export interface TestProps extends ui.IProps {
+export interface RevealProps extends ui.IProps {
+
 }
 
-var dividerPropsDescr = ui.createDescr<TestProps>(val => {
+var revealPropsDescr = ui.createDescr<RevealProps>(val => {
   return {
-  }
+
+  };
 });
 
-export const Test: ui.StatelessComponent<TestProps> = pr => {
+export const Reveal: ui.StatelessComponent<RevealProps> = pr => {
   var props = ui.enumValToProp(pr);
-  var rest = ui.propsToClasses(['ui divider'], ui.projection(props, dividerPropsDescr));
+  var rest = ui.propsToClasses(['ui reveal'], ui.projection(props, revealPropsDescr));
   return React.createElement('div', rest);
 }
-
