@@ -17,6 +17,10 @@ export {IconTest} from './elements/iconTest';
 export {LabelTest} from './elements/labelTest';
 export {Segment, Segments, SegmentProps, SegmentsProps, raised, attachedSegment, padded, emphasis, aligned, raisedSegments, } from './elements/segment';
 export {SegmentTest} from './elements/segmentTest';
+export {Divider, DividerProps } from './elements/divider';
+export {DividerTest} from './elements/dividerTest';
+export {Flag, FlagProps} from './elements/flag';
+export {FlagTest} from './elements/flagTest';
 
 
 import {
@@ -25,6 +29,7 @@ import {
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
+  Divider,
 
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest
+  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest, TestTest
 } from './exports';

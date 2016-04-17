@@ -9,8 +9,10 @@ import {
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
+  Divider,
+  Flag,
 
-  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest
+  ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest, DividerTest, FlagTest
 } from '../../react-semantic/exports';
 import * as ui from '../../react-semantic/exports';
 
@@ -42,6 +44,9 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
+      <FlagTest/>
+      <DividerTest/>
+      {/*
       <SegmentTest/>
       <IconTest/><hr/>
       <LabelTest/><hr/>
@@ -51,6 +56,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       <ButtonAnimatedTest/><hr/>
       <ButtonIconTest/><hr/>
       <ButtonsTest/><hr/>
+      */}
     </div>;
   }
 }
