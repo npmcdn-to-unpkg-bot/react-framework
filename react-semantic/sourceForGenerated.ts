@@ -10,6 +10,8 @@ export interface genComponent {
   otherCode?: string;
   otherPropDescr?: string;
   otherProps?: string;
+  autoTag?: string; //tag pro automatickou generaci komponenty
+  autoClass?: string; //class pro automatickou generaci komponenty
 }
 
 export interface genBoolProp {
@@ -25,11 +27,12 @@ export interface genEnumProp {
   alias?: string;
 }
 
-export var genData: { [name: string]: genComponent; } = {};
 export var codeData: Array<genComponent> = [
   {
     name: 'button',
     locked: true,
+    autoClass: `'ui button', { icon: props.$hasIcon, active: props.$active }`,
+    autoTag: `props.$Attached ? 'div' : 'button'`,
     boolProps: [
       { name: 'basic' }, { name: 'inverted' }, { name: 'compact' }, { name: 'fluid' }, { name: 'circular' }, { name: 'labeled' }, { name: 'hasIcon', ignore: true },
       { name: 'active', ignore: true }, { name: 'loading' }, { name: 'disabled' }, { name: 'primary' }, { name: 'secondary' }, { name: 'positive' }, { name: 'negative' }],
@@ -42,6 +45,7 @@ export var codeData: Array<genComponent> = [
   },
   {
     name: 'buttonAnimated',
+    locked: true,
     otherCode: `
 export enum animate { standard, vertical, fade }
 export interface animateTo {
@@ -95,6 +99,8 @@ export interface animateTo {
   {
     name: 'label',
     locked: true,
+    autoClass: `'ui label'`,
+    autoTag: `props.$outerTag ? props.$outerTag : 'span'`,
     otherProps: '  $outerTag?: string;',
     boolProps: [{ name: 'image' }, { name: 'basic' }, { name: 'tag' }, { name: 'horizontal' }, { name: 'floating' }],
     enumProps: [
@@ -115,6 +121,8 @@ export interface animateTo {
   },
   {
     name: 'labels',
+    autoClass: `'ui labels'`,
+    autoTag: `'div'`,
     boolProps: [{ name: 'tag' }, { name: 'circular' }],
     enumProps: [
       { name: 'size', isSystem: true },
@@ -123,6 +131,8 @@ export interface animateTo {
   },
   {
     name: 'icon',
+    autoClass:`'icon'`,
+    autoTag:`'i'`,
     locked: true,
     boolProps: [{ name: 'disabled' }, { name: 'loading' }, { name: 'fitted' }, { name: 'link' }, { name: 'inverted' }, { name: 'corner' }],
     enumProps: [
@@ -136,7 +146,17 @@ export interface animateTo {
     ]
   },
   {
+    name: 'icons',
+    autoClass: `'icons'`,
+    autoTag: `'i'`,
+    boolProps: [],
+    enumProps: [
+      { name: 'size', isSystem: true },
+    ]
+  },  {
     name: 'segment',
+    autoClass:`'ui segment'`,
+    autoTag:`'div'`,
     locked: true,
     boolProps: [{ name: 'vertical' }, { name: 'disabled' }, { name: 'loading' }, { name: 'inverted' }, { name: 'compact' }, { name: 'circular' }, { name: 'clearing' }, { name: 'basic' }],
     enumProps: [
@@ -151,6 +171,8 @@ export interface animateTo {
   },
   {
     name: 'segments',
+    autoClass:`'ui segments'`,
+    autoTag:`'div'`,
     boolProps: [{ name: 'compact' }, { name: 'horizontal' }],
     enumProps: [
       { name: 'raisedSegments', aliasPropName: 'Raised', values: ['no', 'raisedStandard', 'raisedStacked', 'raisedPiled'], alias: `, { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' }` },
@@ -158,6 +180,8 @@ export interface animateTo {
   },
   {
     name: 'flag',
+    autoClass:`'ui flag'`,
+    autoTag:`'i'`,
     locked: true,
     otherProps: '  $Flag?: flag;\r\n  $FlagShort?: flagShort;',
     otherPropDescr: '    ,$Flag: new ui.enumConverter<flag>(flag, val.$Flag),\r\n    $FlagShort: new ui.enumConverter<flagShort>(flagShort, val.$FlagShort),',
@@ -305,6 +329,8 @@ export interface animateTo {
     ]
   },
 ];
+
+export var genData: { [name: string]: genComponent; } = {};
 
 function genInit() {
   codeData.forEach(c => { if (c.type == undefined) c.type = genComponentType.elements; })

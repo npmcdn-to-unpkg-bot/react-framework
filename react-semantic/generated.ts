@@ -13,6 +13,7 @@
   Flag,
   Header,
   Icon, flipped, rotated, circularIcon, bordered,
+  Icons,
   Image,
   Input,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
@@ -94,6 +95,12 @@ export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
     $negative: new ui.boolConverter(val.$negative)
   };
 });
+export const Button: ui.StatelessComponent<ButtonProps> = pr => {
+  var props: ButtonProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
+  return React.createElement(props.$Attached ? 'div' : 'button', rest);
+}
+
 
 //**************************************************************
 //*   BUTTONANIMATED
@@ -230,6 +237,12 @@ export var flagPropsDescr = ui.createDescr<FlagProps>(val => {
     $FlagShort: new ui.enumConverter<flagShort>(flagShort, val.$FlagShort),
   };
 });
+export const Flag: ui.StatelessComponent<FlagProps> = pr => {
+  var props: FlagProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui flag'], ui.projection(props, flagPropsDescr));
+  return React.createElement('i', rest);
+}
+
 
 //**************************************************************
 //*   HEADER
@@ -297,6 +310,31 @@ export var iconPropsDescr = ui.createDescr<IconProps>(val => {
     $corner: new ui.boolConverter(val.$corner)
   };
 });
+export const Icon: ui.StatelessComponent<IconProps> = pr => {
+  var props: IconProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['icon'], ui.projection(props, iconPropsDescr));
+  return React.createElement('i', rest);
+}
+
+
+//**************************************************************
+//*   ICONS
+//**************************************************************    
+export interface IconsProps extends ui.IProps, ui.IPropsSize {
+  $Size?: ui.size;
+}
+
+export var iconsPropsDescr = ui.createDescr<IconsProps>(val => {
+  return {
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size)
+  };
+});
+export const Icons: ui.StatelessComponent<IconsProps> = pr => {
+  var props: IconsProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['icons'], ui.projection(props, iconsPropsDescr));
+  return React.createElement('i', rest);
+}
+
 
 //**************************************************************
 //*   IMAGE
@@ -380,6 +418,12 @@ export var labelPropsDescr = ui.createDescr<LabelProps>(val => {
     $floating: new ui.boolConverter(val.$floating)
   };
 });
+export const Label: ui.StatelessComponent<LabelProps> = pr => {
+  var props: LabelProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui label'], ui.projection(props, labelPropsDescr));
+  return React.createElement(props.$outerTag ? props.$outerTag : 'span', rest);
+}
+
 
 //**************************************************************
 //*   LABELS
@@ -399,6 +443,12 @@ export var labelsPropsDescr = ui.createDescr<LabelsProps>(val => {
     $circular: new ui.boolConverter(val.$circular)
   };
 });
+export const Labels: ui.StatelessComponent<LabelsProps> = pr => {
+  var props: LabelsProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui labels'], ui.projection(props, labelsPropsDescr));
+  return React.createElement('div', rest);
+}
+
 
 //**************************************************************
 //*   LIST
@@ -513,6 +563,12 @@ export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
     $basic: new ui.boolConverter(val.$basic)
   };
 });
+export const Segment: ui.StatelessComponent<SegmentProps> = pr => {
+  var props: SegmentProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui segment'], ui.projection(props, segmentPropsDescr));
+  return React.createElement('div', rest);
+}
+
 
 //**************************************************************
 //*   SEGMENTS
@@ -535,6 +591,12 @@ export var segmentsPropsDescr = ui.createDescr<SegmentsProps>(val => {
     $horizontal: new ui.boolConverter(val.$horizontal)
   };
 });
+export const Segments: ui.StatelessComponent<SegmentsProps> = pr => {
+  var props: SegmentsProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui segments'], ui.projection(props, segmentsPropsDescr));
+  return React.createElement('div', rest);
+}
+
 
 //**************************************************************
 //*   STEP

@@ -1,4 +1,9 @@
-﻿Icons
+﻿TODO:
+- chyba u slozitejsich buttonu
+- generace spolecnych enums (ui.color apod.)
+
+
+Icons
 - funguje spatne grouping (pro mensi velikosti)
 
 Label

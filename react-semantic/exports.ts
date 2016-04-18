@@ -11,26 +11,27 @@ codeData, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 
 export {
 animate, animateTo,
-ButtonProps, attachedButton,
+Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
 ButtonIconProps, iconLabel,
 ButtonLabeledProps,
 ButtonsProps, eqWidth,
 ButtonSocialProps, social,
 DividerProps,
-FlagProps,
+Flag, FlagProps,
 HeaderProps,
-IconProps, flipped, rotated, circularIcon, bordered,
+Icon, IconProps, flipped, rotated, circularIcon, bordered,
+Icons, IconsProps,
 ImageProps,
 InputProps,
-LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
-LabelsProps,
+Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
+Labels, LabelsProps,
 ListProps,
 LoaderProps,
 RailProps,
 RevealProps,
-SegmentProps, raised, attachedSegment, padded, emphasis, aligned,
-SegmentsProps, raisedSegments,
+Segment, SegmentProps, raised, attachedSegment, padded, emphasis, aligned,
+Segments, SegmentsProps, raisedSegments,
 StepProps,
 AdProps,
 CardProps,
@@ -44,11 +45,10 @@ GridProps,
 MenuProps,
 MessageProps,
 TableProps
+
 } from './generated';
 
-export {Label, Labels} from './elements/label';
 export {
-Button,  
 ButtonLabeled,
 ButtonIcon,
 ButtonAnimated, 
@@ -56,10 +56,8 @@ ButtonSocial,
 Buttons, 
 } from './elements/button';
 export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from './elements/buttonTest';
-export {Icon, Icons, IconsProps} from './elements/icon';
 export {IconTest} from './elements/iconTest';
 export {LabelTest} from './elements/labelTest';
-export {Segment, Segments } from './elements/segment';
 export {SegmentTest} from './elements/segmentTest';
 
 export {Ad} from './views/ad';
@@ -88,7 +86,6 @@ export {Table} from './collections/table';
 export {TableTest} from './collections/tableTest';
 export {Divider} from './elements/divider';
 export {DividerTest} from './elements/dividerTest';
-export {Flag} from './elements/flag';
 export {FlagTest} from './elements/flagTest';
 export {Header} from './elements/header';
 export {HeaderTest} from './elements/headerTest';

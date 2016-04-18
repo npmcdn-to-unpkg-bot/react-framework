@@ -53,7 +53,7 @@ export const UsesExport: React.StatelessComponent<{ type: UsesExportType; }> = d
 export {${up(c.name)}Test} from './${tp(c)}/${c.name}Test';`;
       case UsesExportType.import: join = ',\r\n'; return `  ${up(c.name)}${myEnums(c)}`;
       case UsesExportType.test: join = ', '; return `${up(c.name)}Test`;
-      case UsesExportType.generatedExports: join = '\r\n'; return `${up(c.name)}Props${myEnums(c)},`;
+      case UsesExportType.generatedExports: join = '\r\n'; return `${c.autoTag ? up(c.name) + ', ' : ''}${up(c.name)}Props${myEnums(c)},`;
     }
   });
   return <pre>{res.join(join) }</pre>;
@@ -151,6 +151,16 @@ export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val =>
     {comp.otherPropDescr ? comp.otherPropDescr : ''}
     {`  };
 }${comp.inheritsFrom ? ', ' + comp.inheritsFrom + 'PropsDescr' : ''});`}
+
+    {!comp.autoTag ? '' : `
+export const ${up(comp.name)}: ui.StatelessComponent<${up(comp.name)}Props> = pr => {
+  var props: ${up(comp.name)}Props = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses([${comp.autoClass}], ui.projection(props, ${comp.name}PropsDescr));
+  return React.createElement(${comp.autoTag}, rest);
+}
+
+`}
+
   </pre>;
 };
 

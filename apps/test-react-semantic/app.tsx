@@ -9,7 +9,7 @@ import {
   color, size,
   Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, floated, attachedButton, animate, iconLabel, eqWidth,
   Label, Labels, pointing, corner, attachedLabel, ribbon,
-  Icon, Icons, icon,
+  Icon, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,

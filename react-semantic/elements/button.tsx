@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as ui from '../lib';
 import {
-  ButtonProps, buttonPropsDescr,
+  Button, ButtonProps, buttonPropsDescr,
   ButtonAnimatedProps, buttonAnimatedPropsDescr, animate, animateTo,
   ButtonLabeledProps, buttonLabeledPropsDescr,
   ButtonIconProps, buttonIconPropsDescr, iconLabel,
@@ -11,13 +11,6 @@ import {
   LabelProps, IconProps
 } from '../generated';
 import { Label, Icon} from '../exports';
-
-//******************* Button
-export const Button: ui.StatelessComponent<ButtonProps> = pr => {
-  var props: ButtonProps = ui.enumValToProp(pr);
-  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
-  return React.createElement(props.$Attached ? 'div' : 'button', rest);
-}
 
 //******************* ButtonAnimated
 export const ButtonAnimated: ui.StatelessComponent<ButtonAnimatedProps> = pr => {

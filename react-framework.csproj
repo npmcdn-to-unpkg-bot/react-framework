@@ -85,7 +85,7 @@
     <TypeScriptCompile Include="react-semantic\elements\loader.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\loaderTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\rail.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\flag.tsx" />
+    <None Include="trash\flag.tsx_" />
     <TypeScriptCompile Include="react-semantic\elements\dividerTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\headerTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\imageTest.tsx" />
@@ -97,14 +97,13 @@
     <TypeScriptCompile Include="react-semantic\elements\stepTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\flagTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\iconTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\icon.tsx" />
+    <None Include="trash\icon.tsx_" />
     <TypeScriptCompile Include="react-semantic\elements\segmentTest.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\labelTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\segment.tsx" />
-    <TypeScriptCompile Include="react-semantic\libTest.tsx" />
+    <None Include="trash\segment.tsx_" />
     <TypeScriptCompile Include="react-semantic\lib.ts" />
     <TypeScriptCompile Include="react-semantic\exports.ts" />
-    <TypeScriptCompile Include="react-semantic\elements\label.tsx" />
+    <None Include="trash\label.tsx_" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
     <TypeScriptCompile Include="react-semantic\views\adTest.tsx" />
     <TypeScriptCompile Include="react-semantic\views\card.tsx" />
