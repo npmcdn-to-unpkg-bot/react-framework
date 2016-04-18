@@ -2,9 +2,12 @@
 StatelessComponent, enumToClass, propConverter, boolConverter, enumConverter, TPropsDescr, IProps, createDescr, propsToClasses, color, size, projection,
 IPropsColor, enumValToProp, IPropsSize, registerEnum, IPropsFloated, floated, enumStrings, enumNumbers,
 } from './lib';
+
+export {codeData, genData, genComponentType, genComponent, genBoolProp, genEnumProp } from './sourceForGenerated';
+
 export {Label, LabelProps, Labels, LabelsProps, pointing, corner, attachedLabel, circular, ribbon} from './elements/label';
 export {
-Button, state, attachedButton, 
+Button, attachedButton, 
 ButtonLabeled, ButtonLabeledProps,
 ButtonIcon, iconLabel,
 ButtonAnimated, animate, animateTo,
@@ -65,7 +68,7 @@ export {StepTest} from './elements/stepTest';
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, social, floated, attachedButton, animate, iconLabel, eqWidth,
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,

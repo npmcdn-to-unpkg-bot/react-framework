@@ -3,6 +3,7 @@
 
 Label
 - attach - zalezi na poradi retezeni classes
+- pointing: class='... pointing left' does not work. Must be class='... left pointing',
 
 Segment
 - paddedVery - zalezi na poradi

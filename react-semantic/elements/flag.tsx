@@ -506,15 +506,13 @@ export interface FlagProps extends ui.IProps, ui.IPropsColor {
   $Color?: ui.color;
   $Flag?: flag;
   $FlagShort?: flagShort;
-  $boolTest?: boolean;
 }
 
 var flagPropsDescr = ui.createDescr<FlagProps>(val => {
   return {
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
-    $Flag: new ui.enumConverter<flag>(flag, val.$Flag),
+    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color)
+    , $Flag: new ui.enumConverter<flag>(flag, val.$Flag),
     $FlagShort: new ui.enumConverter<flagShort>(flagShort, val.$FlagShort),
-    $boolTest: new ui.boolConverter(val.$boolTest)
   };
 });
 

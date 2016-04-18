@@ -21,8 +21,9 @@ export abstract class propConverter {
 }
 
 export class boolConverter extends propConverter {
-  constructor(valueExample: boolean) { super(); }
+  constructor(valueExample: boolean, private ignoreGen?:boolean) { super(); }
   convert(propName: string, val): convertResult {
+    if (this.ignoreGen) return '';
     if (propName[0] == '$') propName = propName.substr(1);
     return val ? propName : null;
   }

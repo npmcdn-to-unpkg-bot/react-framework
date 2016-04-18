@@ -2,7 +2,7 @@
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, state, floated, attachedButton, iconLabel, 
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, floated, attachedButton, iconLabel, 
   Label, pointing, corner, attachedLabel, circular,
   Icon, icon
 } from '../exports';
@@ -81,11 +81,11 @@ export const ButtonTest: ui.StatelessComponent<ui.IProps> = props => {
     <ButtonIcon $compact $Icon={icon.user}>Compact</ButtonIcon>
     <Button $labeled $hasIcon><Icon $Icon={icon.user} />Add Friend</Button>
     <h2>Active</h2>
-    <Button $stateActive>Active</Button>
+    <Button $active>Active</Button>
     <h2>Disabled</h2>
-    <Button disabled>Disabled</Button>
+    <Button $disabled>Disabled</Button>
     <h2>Loading</h2>
-    <Button $stateLoading>Loading</Button><Button $stateLoading $basic>Loading</Button><Button $stateLoading $primary>Loading</Button><Button $stateLoading $secondary>Loading</Button>
+    <Button $loading>Loading</Button><Button $loading $basic>Loading</Button><Button $loading $primary>Loading</Button><Button $loading $secondary>Loading</Button>
     <h2>Attached</h2>
     <div className="ui attached segment">
       <Button $attachedTop>Top</Button>

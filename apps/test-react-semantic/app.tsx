@@ -3,11 +3,11 @@ import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 import * as tests from '../test-config';
 
-import {CodeGenerator} from '../../react-semantic/codeGenerator';
+import {CodeGenerator, CodeGenerator2} from '../../react-semantic/codeGenerator';
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, social, floated, attachedButton, animate, iconLabel, eqWidth,
   Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
@@ -44,9 +44,9 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <FlagTest/>
-      {/*
       <CodeGenerator/>
+      {/*
+      <FlagTest/>
       <ComponentGen comp={genData['divider']}/>
       <SegmentTest/>
       <IconTest/><hr/>

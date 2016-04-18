@@ -6,81 +6,57 @@ import {
   Icon, icon, color, size
 } from '../exports';
 
-export enum state {
-  no,
-  $stateActive,
-  $stateDisabled,
-  $stateLoading
-}
-ui.registerEnum(state, '$State', { $stateActive: 'active', $stateDisabled: 'disabled', $stateLoading:'loading'});
-export interface IPropsState {
-  $stateActive?: boolean;
-  $stateDisabled?: boolean;
-  $stateLoading?: boolean;
-}
-export enum attachedButton {
-  no,
-  $attachedTop,
-  $attachedBottom,
-  $attachedLeft,
-  $attachedRight,
-}
-ui.registerEnum(attachedButton, '$Attached');
-export interface IPropsAttached {
-  $attachedTop?: boolean;
-  $attachedBottom?: boolean;
-  $attachedLeft?: boolean;
-  $attachedRight?: boolean;
-}
-export interface ButtonProps extends ui.IProps, IPropsAttached, ui.IPropsFloated, IPropsState, ui.IPropsColor, ui.IPropsSize {
-  $Color?: color;
-  $Size?: ui.size;
-  $State?: state;
-  $Floated?: ui.floated;
-  $Attached?: attachedButton;
+export enum attachedButton { no, $attachedTop, $attachedBottom, $attachedLeft, $attachedRight, }
+ui.registerEnum(attachedButton, '$AttachedButton');
+export interface IPropsAttachedButtonProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedLeft?: boolean; $attachedRight?: boolean; }
 
+export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, ui.IPropsSize, ui.IPropsColor, ui.IPropsFloated {
+  $Attached?: attachedButton;
+  $Size?: ui.size;
+  $Color?: ui.color;
+  $Floated?: ui.floated;
   $basic?: boolean;
   $inverted?: boolean;
   $compact?: boolean;
-  //toggle?: boolean; !!! TODO
   $fluid?: boolean;
   $circular?: boolean;
   $labeled?: boolean;
   $hasIcon?: boolean;
-  $stateActive?: boolean;
-  $stateLoading?: boolean,
-  $primary?: boolean,
-  $secondary?: boolean,
-  $positive?: boolean,
-  $negative?: boolean,
+  $active?: boolean;
+  $loading?: boolean;
+  $disabled?: boolean;
+  $primary?: boolean;
+  $secondary?: boolean;
+  $positive?: boolean;
+  $negative?: boolean;
 }
+
 var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
   return {
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $State: new ui.enumConverter<state>(state, val.$State),
-    $Floated: new ui.enumConverter<ui.floated>(ui.floated, val.$Floated),
     $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
-
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
+    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Floated: new ui.enumConverter<ui.floated>(ui.floated, val.$Floated),
     $basic: new ui.boolConverter(val.$basic),
     $inverted: new ui.boolConverter(val.$inverted),
     $compact: new ui.boolConverter(val.$compact),
-    //toggle: new ui.boolConverter(val.toggle),
     $fluid: new ui.boolConverter(val.$fluid),
     $circular: new ui.boolConverter(val.$circular),
     $labeled: new ui.boolConverter(val.$labeled),
-    $loading: new ui.boolConverter(val.$stateLoading),
+    $hasIcon: new ui.boolConverter(val.$hasIcon, true),
+    $active: new ui.boolConverter(val.$active, true),
+    $loading: new ui.boolConverter(val.$loading),
+    $disabled: new ui.boolConverter(val.$disabled),
     $primary: new ui.boolConverter(val.$primary),
     $secondary: new ui.boolConverter(val.$secondary),
     $positive: new ui.boolConverter(val.$positive),
-    $negative: new ui.boolConverter(val.$negative),
-    $active: null,
-    $hasIcon: null
+    $negative: new ui.boolConverter(val.$negative)
   };
 });
+
 export const Button: ui.StatelessComponent<ButtonProps> = pr => {
   var props: ButtonProps = ui.enumValToProp(pr);
-  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$stateActive }], ui.projection(props, buttonPropsDescr));
+  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
   return React.createElement(props.$Attached ? 'div' : 'button', rest);
 }
 

@@ -41,6 +41,7 @@
     <Content Include="README.md" />
     <Content Include="react-semantic\README.md" />
     <Content Include="react-semantic\package.json" />
+    <Content Include="react-semantic\elements\flag.json" />
     <None Include="trash\json.json" />
     <Content Include="utils\position.js" />
     <Content Include="utils\typescript-polyfils.js" />
@@ -57,6 +58,9 @@
     <TypeScriptCompile Include="apps\test-config.ts" />
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
+    <TypeScriptCompile Include="react-semantic\sourceForGenerated.ts" />
+    <TypeScriptCompile Include="react-semantic\generated.ts" />
+    <TypeScriptCompile Include="react-semantic\largeEnums.ts" />
     <TypeScriptCompile Include="react-semantic\codeGenerator.tsx" />
     <TypeScriptCompile Include="react-semantic\collections\breadcrumb.tsx" />
     <TypeScriptCompile Include="react-semantic\collections\breadcrumbTest.tsx" />
