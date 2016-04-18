@@ -7,8 +7,8 @@ import {CodeGenerator, CodeGenerator2} from '../../react-semantic/codeGenerator'
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, social, floated, attachedButton, animate, iconLabel, eqWidth,
-  Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, floated, attachedButton, animate, iconLabel, eqWidth,
+  Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 
@@ -46,6 +46,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
     return <div>
       <CodeGenerator/>
       {/*
+      <CodeGenerator2/>
       <FlagTest/>
       <ComponentGen comp={genData['divider']}/>
       <SegmentTest/>

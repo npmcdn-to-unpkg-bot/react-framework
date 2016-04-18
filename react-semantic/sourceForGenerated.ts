@@ -5,9 +5,11 @@ export interface genComponent {
   type?: genComponentType;
   boolProps: Array<genBoolProp>;
   enumProps: Array<genEnumProp>;
+  locked?: boolean;
+  inheritsFrom?: string;
+  otherCode?: string;
   otherPropDescr?: string;
   otherProps?: string;
-  locked?: boolean;
 }
 
 export interface genBoolProp {
@@ -39,6 +41,58 @@ export var codeData: Array<genComponent> = [
     ]
   },
   {
+    name: 'buttonAnimated',
+    otherCode: `
+export enum animate { standard, vertical, fade }
+export interface animateTo {
+  animate?: animate;
+  to: React.ReactNode;
+}
+`,
+    otherProps: '  $animateTo: animateTo;',
+    otherPropDescr: '    $animateTo: null,',
+    boolProps: [],
+    enumProps: [
+    ],
+    inheritsFrom: 'button'
+  },
+  {
+    name: 'buttonLabeled',
+    otherProps: '  $label: React.ReactElement<any>;',
+    otherPropDescr: `    ,$label: null
+`,
+    boolProps: [{ name: 'pointing' }, { name: 'left' }],
+    enumProps: [
+    ],
+    inheritsFrom: 'button'
+  },
+  {
+    name: 'buttonIcon',
+    boolProps: [],
+    enumProps: [
+      { name: 'iconLabel', values: ['no', 'iconLabelRight', 'iconLabelLeft'] },
+      { name: 'icon', isSystem: true },
+    ],
+    inheritsFrom: 'button'
+  },
+  {
+    name: 'buttonSocial',
+    boolProps: [],
+    enumProps: [
+      { name: 'social', values: ['no', 'facebook', 'twitter', 'googlePlus', 'vk', 'linkedin', 'instagram', 'youtube'] },
+    ],
+    inheritsFrom: 'button'
+  },
+  {
+    name: 'buttons',
+    boolProps: [{ name: 'vertical' }, { name: 'labeled' }, { name: 'basic' }, { name: 'hasIcon' }],
+    enumProps: [
+      { name: 'eqWidth', values: ['no', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'] },
+      { name: 'size', isSystem: true },
+      { name: 'color', isSystem: true },
+    ]
+  },
+  {
     name: 'label',
     locked: true,
     otherProps: '  $outerTag?: string;',
@@ -60,16 +114,23 @@ export var codeData: Array<genComponent> = [
     ]
   },
   {
+    name: 'labels',
+    boolProps: [{ name: 'tag' }, { name: 'circular' }],
+    enumProps: [
+      { name: 'size', isSystem: true },
+      { name: 'color', isSystem: true },
+    ]
+  },
+  {
     name: 'icon',
     locked: true,
-    otherProps: '  $Icon: icon;',
-    otherPropDescr: '    ,$Icon: new ui.enumConverter<icon>(icon, val.$Icon),',
     boolProps: [{ name: 'disabled' }, { name: 'loading' }, { name: 'fitted' }, { name: 'link' }, { name: 'inverted' }, { name: 'corner' }],
     enumProps: [
       { name: 'flipped', values: ['no', 'flippedHorizontally', 'flippedVertically'] },
       { name: 'rotated', values: ['no', 'rotatedClockwise', 'rotatedCounterclockwise'] },
       { name: 'circularIcon', aliasPropName: 'Circular', values: ['no', 'circularStandard', 'circularInverted'], alias: `, { $circularStandard: 'circular' }` },
       { name: 'bordered', values: ['no', 'borderedStandard', 'borderedInverted'], alias: `, { $borderedStandard: 'bordered' }` },
+      { name: 'icon', isSystem: true },
       { name: 'size', isSystem: true },
       { name: 'color', isSystem: true }
     ]
@@ -86,6 +147,13 @@ export var codeData: Array<genComponent> = [
       { name: 'aligned', values: ['no', 'alignedLeft', 'alignedCenter', 'alignedRight'], alias: `, { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned'} ` },
       { name: 'color', isSystem: true },
       { name: 'floated', isSystem: true },
+    ]
+  },
+  {
+    name: 'segments',
+    boolProps: [{ name: 'compact' }, { name: 'horizontal' }],
+    enumProps: [
+      { name: 'raisedSegments', aliasPropName: 'raised', values: ['no', 'raisedStandard', 'raisedStacked', 'raisedPiled'], alias: `, { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' }` },
     ]
   },
   {
@@ -238,10 +306,13 @@ export var codeData: Array<genComponent> = [
   },
 ];
 
-codeData.forEach(c => { if (c.type == undefined) c.type = genComponentType.elements; })
-codeData = codeData.sort((a, b) => {
-  if (a.type != b.type) return a.type > b.type ? 1 : -1;
-  return a.name.localeCompare(b.name);
-});
+function genInit() {
+  codeData.forEach(c => { if (c.type == undefined) c.type = genComponentType.elements; })
+  codeData = codeData.sort((a, b) => {
+    if (a.type != b.type) return a.type > b.type ? 1 : -1;
+    return a.name.localeCompare(b.name);
+  });
+  codeData.forEach(c => genData[c.name] = c);
+}
 
-codeData.forEach(c => genData[c.name] = c);
+genInit();

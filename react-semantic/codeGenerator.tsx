@@ -14,24 +14,33 @@ export const CodeGenerator: React.StatelessComponent<any> = dt => {
     <UsesExport type={0}/><br/>
     <UsesExport type={1}/><br/>
     <UsesExport type={2}/><br/>
+    <UsesExport type={3}/><br/>
   </div>
 };
 
 export const CodeGenerator2: React.StatelessComponent<any> = dt => {
   return <div>
     <pre>
-      {`//********* This code is generated, do not modify it!
+      {`//********* This code is generated - do not modify it!
 
-import * as ui from './exports';
+//content for "import {} from '???/exports"'
+/*
+  color, size, floated, icon, flag, flagShort,`}
+      <UsesExport type={UsesExportType.import}/>
+      {`*/
+
+import * as React from 'react';
+import * as ui from './lib';
 import {icon, flag, flagShort} from './largeEnums';
+
 `}
     </pre>
-    {g.codeData.map(cd => <ComponentGenLow comp={g.genData[cd.name]}/>)}
+    {g.codeData.map(cd => <ComponentGenLow comp={g.genData[cd.name]}/>) }
   </div>
 };
 
 //*********************************** Uses
-export const enum UsesExportType { exports, import, test }
+export const enum UsesExportType { generatedExports, exports, import, test }
 export const UsesExport: React.StatelessComponent<{ type: UsesExportType; }> = dt => {
   function myEnums(c: g.genComponent) {
     var res = c.enumProps.filter(e => !e.isSystem).map(e => ', ' + e.name);
@@ -44,6 +53,7 @@ export const UsesExport: React.StatelessComponent<{ type: UsesExportType; }> = d
 export {${up(c.name)}Test} from './${tp(c)}/${c.name}Test';`;
       case UsesExportType.import: join = ',\r\n'; return `  ${up(c.name)}${myEnums(c)}`;
       case UsesExportType.test: join = ', '; return `${up(c.name)}Test`;
+      case UsesExportType.generatedExports: join = '\r\n'; return `${up(c.name)}Props${myEnums(c)},`;
     }
   });
   return <pre>{res.join(join) }</pre>;
@@ -55,13 +65,13 @@ export const ComponentTestGen: React.StatelessComponent<{ comp: g.genComponent; 
     `import * as React from 'react';
 
 import {
-  color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, social, floated, attachedButton, animate, iconLabel, eqWidth,
-  Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
-  Icon, Icons, icon,
+  color, size, floated, icon,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, social, attachedButton, animate, iconLabel, eqWidth,
+  Label, Labels, pointing, corner, attachedLabel, ribbon,
+  Icon, Icons, 
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 `}
-    <UsesExport type={1}/>
+    <UsesExport type={UsesExportType.import}/>
     {`
 } from '../exports';
 
@@ -126,21 +136,22 @@ export const ComponentGenLow: React.StatelessComponent<{ comp: g.genComponent; }
 //**************************************************************
 //*   ${comp.name.toUpperCase()}
 //**************************************************************`}
+    {comp.otherCode ? comp.otherCode : ''}
     {enumDef}
     {`    
-export interface ${up(comp.name)}Props extends ui.IProps${enumPropsType(comp.enumProps)} {
+export interface ${up(comp.name)}Props extends ${comp.inheritsFrom ? up(comp.inheritsFrom) + 'Props' : 'ui.IProps'}${enumPropsType(comp.enumProps)} {
 `}
     {comp.enumProps.map(en => enumProp(en, false)).concat(comp.boolProps.map(en => boolProp(en, false))).join('\r\n') + '\r\n'}
     {comp.otherProps ? comp.otherProps + '\r\n' : ''}
     {`}
 
-var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val => {
+export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val => {
   return {
 `}
     {comp.enumProps.map(en => enumProp(en, true)).concat(comp.boolProps.map(en => boolProp(en, true))).join(',\r\n') + '\r\n' }
     {comp.otherPropDescr ? comp.otherPropDescr : ''}
     {`  };
-});`}
+}${comp.inheritsFrom ? ', ' + comp.inheritsFrom + 'PropsDescr' : ''});`}
   </pre>;
 };
 

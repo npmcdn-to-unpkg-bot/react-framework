@@ -2,8 +2,8 @@
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, floated, attachedButton, iconLabel, 
-  Label, pointing, corner, attachedLabel, circular,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, eqWidth, floated, attachedButton, iconLabel, social, 
+  Label, pointing, corner, attachedLabel, circularLabel,
   Icon, icon
 } from '../exports';
 import * as ui from '../exports';
@@ -119,7 +119,7 @@ export const ButtonIconTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>ButtonIcon</h1>
     <ButtonIcon $iconLabelRight $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $IconLabel={ui.iconLabel.iconLabelRight} $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
+    <ButtonIcon $IconLabel={ui.iconLabel.$iconLabelRight} $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
     <ButtonIcon $iconLabelLeft $colOrange $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
     <ButtonIcon $colPink $Icon={icon.user}></ButtonIcon> <br/><br/>
   </div>;
@@ -135,7 +135,7 @@ export const ButtonsTest: ui.StatelessComponent<ui.IProps> = props => {
       <Button><Icon $Icon={icon.user} />Add Friend</Button>
       <Button><Icon $Icon={icon.user} />Add Friend</Button>
     </Buttons><br/><br/>
-    <Buttons $EqWidth={eqWidth.three}><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
+    <Buttons $EqWidth={eqWidth.$three}><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
     <Buttons $colGreen><Button>One</Button> <Button>Two</Button> <Button>Three</Button></Buttons><br/><br/>
     <Buttons $basic><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
     <Buttons $basic $vertical><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>

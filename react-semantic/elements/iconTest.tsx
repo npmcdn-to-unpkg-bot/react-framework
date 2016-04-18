@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import {
   color, size,
   Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, floated, attachedButton, iconLabel,
-  Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
+  Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
 } from '../exports';
 import * as ui from '../exports';

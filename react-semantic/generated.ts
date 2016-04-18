@@ -1,6 +1,45 @@
-﻿
-//********* This code is generated
-import * as ui from './exports';
+﻿//********* This code is generated - do not modify it!
+
+//content for "import {} from '???/exports"'
+/*
+  color, size, floated, icon, flag, flagShort,
+  Button, attachedButton,
+  ButtonAnimated,
+  ButtonIcon, iconLabel,
+  ButtonLabeled,
+  Buttons, eqWidth,
+  ButtonSocial, social,
+  Divider,
+  Flag,
+  Header,
+  Icon, flipped, rotated, circularIcon, bordered,
+  Image,
+  Input,
+  Label, pointing, corner, attachedLabel, circularLabel, ribbon,
+  Labels,
+  List,
+  Loader,
+  Rail,
+  Reveal,
+  Segment, raised, attachedSegment, padded, emphasis, aligned,
+  Segments, raisedSegments,
+  Step,
+  Ad,
+  Card,
+  Comment,
+  Feed,
+  Item,
+  Statistic,
+  Breadcrumb,
+  Form,
+  Grid,
+  Menu,
+  Message,
+  Table
+*/
+
+import * as React from 'react';
+import * as ui from './lib';
 import {icon, flag, flagShort} from './largeEnums';
 
 
@@ -33,7 +72,7 @@ export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, ui.IPr
   $negative?: boolean;
 }
 
-var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
+export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
   return {
     $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
     $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
@@ -57,13 +96,119 @@ var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
 });
 
 //**************************************************************
+//*   BUTTONANIMATED
+//**************************************************************
+export enum animate { standard, vertical, fade }
+export interface animateTo {
+  animate?: animate;
+  to: React.ReactNode;
+}
+
+export interface ButtonAnimatedProps extends ButtonProps {
+
+  $animateTo: animateTo;
+}
+
+export var buttonAnimatedPropsDescr = ui.createDescr<ButtonAnimatedProps>(val => {
+  return {
+
+    $animateTo: null,
+  };
+}, buttonPropsDescr);
+
+//**************************************************************
+//*   BUTTONICON
+//**************************************************************
+
+export enum iconLabel { no, $iconLabelRight, $iconLabelLeft, }
+ui.registerEnum(iconLabel, '$IconLabel');
+export interface IPropsIconLabelProp { $iconLabelRight?: boolean; $iconLabelLeft?: boolean; }
+
+export interface ButtonIconProps extends ButtonProps, IPropsIconLabelProp, ui.IPropsIcon {
+  $IconLabel?: iconLabel;
+  $Icon?: ui.icon;
+}
+
+export var buttonIconPropsDescr = ui.createDescr<ButtonIconProps>(val => {
+  return {
+    $IconLabel: new ui.enumConverter<iconLabel>(iconLabel, val.$IconLabel),
+    $Icon: new ui.enumConverter<ui.icon>(ui.icon, val.$Icon)
+  };
+}, buttonPropsDescr);
+
+//**************************************************************
+//*   BUTTONLABELED
+//**************************************************************    
+export interface ButtonLabeledProps extends ButtonProps {
+  $pointing?: boolean;
+  $left?: boolean;
+  $label: React.ReactElement<any>;
+}
+
+export var buttonLabeledPropsDescr = ui.createDescr<ButtonLabeledProps>(val => {
+  return {
+    $pointing: new ui.boolConverter(val.$pointing),
+    $left: new ui.boolConverter(val.$left)
+    , $label: null
+  };
+}, buttonPropsDescr);
+
+//**************************************************************
+//*   BUTTONS
+//**************************************************************
+
+export enum eqWidth { no, $two, $three, $four, $five, $six, $seven, $eight, $nine, $ten, $eleven, $twelve, }
+ui.registerEnum(eqWidth, '$EqWidth');
+export interface IPropsEqWidthProp { $two?: boolean; $three?: boolean; $four?: boolean; $five?: boolean; $six?: boolean; $seven?: boolean; $eight?: boolean; $nine?: boolean; $ten?: boolean; $eleven?: boolean; $twelve?: boolean; }
+
+export interface ButtonsProps extends ui.IProps, IPropsEqWidthProp, ui.IPropsSize, ui.IPropsColor {
+  $EqWidth?: eqWidth;
+  $Size?: ui.size;
+  $Color?: ui.color;
+  $vertical?: boolean;
+  $labeled?: boolean;
+  $basic?: boolean;
+  $hasIcon?: boolean;
+}
+
+export var buttonsPropsDescr = ui.createDescr<ButtonsProps>(val => {
+  return {
+    $EqWidth: new ui.enumConverter<eqWidth>(eqWidth, val.$EqWidth),
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
+    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $vertical: new ui.boolConverter(val.$vertical),
+    $labeled: new ui.boolConverter(val.$labeled),
+    $basic: new ui.boolConverter(val.$basic),
+    $hasIcon: new ui.boolConverter(val.$hasIcon)
+  };
+});
+
+//**************************************************************
+//*   BUTTONSOCIAL
+//**************************************************************
+
+export enum social { no, $facebook, $twitter, $googlePlus, $vk, $linkedin, $instagram, $youtube, }
+ui.registerEnum(social, '$Social');
+export interface IPropsSocialProp { $facebook?: boolean; $twitter?: boolean; $googlePlus?: boolean; $vk?: boolean; $linkedin?: boolean; $instagram?: boolean; $youtube?: boolean; }
+
+export interface ButtonSocialProps extends ButtonProps, IPropsSocialProp {
+  $Social?: social;
+}
+
+export var buttonSocialPropsDescr = ui.createDescr<ButtonSocialProps>(val => {
+  return {
+    $Social: new ui.enumConverter<social>(social, val.$Social)
+  };
+}, buttonPropsDescr);
+
+//**************************************************************
 //*   DIVIDER
 //**************************************************************    
 export interface DividerProps extends ui.IProps {
 
 }
 
-var dividerPropsDescr = ui.createDescr<DividerProps>(val => {
+export var dividerPropsDescr = ui.createDescr<DividerProps>(val => {
   return {
 
   };
@@ -78,7 +223,7 @@ export interface FlagProps extends ui.IProps, ui.IPropsColor {
   $FlagShort?: flagShort;
 }
 
-var flagPropsDescr = ui.createDescr<FlagProps>(val => {
+export var flagPropsDescr = ui.createDescr<FlagProps>(val => {
   return {
     $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color)
     , $Flag: new ui.enumConverter<flag>(flag, val.$Flag),
@@ -93,7 +238,7 @@ export interface HeaderProps extends ui.IProps {
 
 }
 
-var headerPropsDescr = ui.createDescr<HeaderProps>(val => {
+export var headerPropsDescr = ui.createDescr<HeaderProps>(val => {
   return {
 
   };
@@ -119,11 +264,12 @@ export enum bordered { no, $borderedStandard, $borderedInverted, }
 ui.registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
 export interface IPropsBorderedProp { $borderedStandard?: boolean; $borderedInverted?: boolean; }
 
-export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, ui.IPropsSize, ui.IPropsColor {
+export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, ui.IPropsIcon, ui.IPropsSize, ui.IPropsColor {
   $Flipped?: flipped;
   $Rotated?: rotated;
   $Circular?: circularIcon;
   $Bordered?: bordered;
+  $Icon?: ui.icon;
   $Size?: ui.size;
   $Color?: ui.color;
   $disabled?: boolean;
@@ -132,15 +278,15 @@ export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedPr
   $link?: boolean;
   $inverted?: boolean;
   $corner?: boolean;
-  $Icon: icon;
 }
 
-var iconPropsDescr = ui.createDescr<IconProps>(val => {
+export var iconPropsDescr = ui.createDescr<IconProps>(val => {
   return {
     $Flipped: new ui.enumConverter<flipped>(flipped, val.$Flipped),
     $Rotated: new ui.enumConverter<rotated>(rotated, val.$Rotated),
     $Circular: new ui.enumConverter<circularIcon>(circularIcon, val.$Circular),
     $Bordered: new ui.enumConverter<bordered>(bordered, val.$Bordered),
+    $Icon: new ui.enumConverter<ui.icon>(ui.icon, val.$Icon),
     $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
     $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
     $disabled: new ui.boolConverter(val.$disabled),
@@ -149,7 +295,6 @@ var iconPropsDescr = ui.createDescr<IconProps>(val => {
     $link: new ui.boolConverter(val.$link),
     $inverted: new ui.boolConverter(val.$inverted),
     $corner: new ui.boolConverter(val.$corner)
-    , $Icon: new ui.enumConverter<icon>(icon, val.$Icon),
   };
 });
 
@@ -160,7 +305,7 @@ export interface ImageProps extends ui.IProps {
 
 }
 
-var imagePropsDescr = ui.createDescr<ImageProps>(val => {
+export var imagePropsDescr = ui.createDescr<ImageProps>(val => {
   return {
 
   };
@@ -173,7 +318,7 @@ export interface InputProps extends ui.IProps {
 
 }
 
-var inputPropsDescr = ui.createDescr<InputProps>(val => {
+export var inputPropsDescr = ui.createDescr<InputProps>(val => {
   return {
 
   };
@@ -219,7 +364,7 @@ export interface LabelProps extends ui.IProps, IPropsPointingProp, IPropsCornerP
   $outerTag?: string;
 }
 
-var labelPropsDescr = ui.createDescr<LabelProps>(val => {
+export var labelPropsDescr = ui.createDescr<LabelProps>(val => {
   return {
     $Pointing: new ui.enumConverter<pointing>(pointing, val.$Pointing),
     $Corner: new ui.enumConverter<corner>(corner, val.$Corner),
@@ -237,13 +382,32 @@ var labelPropsDescr = ui.createDescr<LabelProps>(val => {
 });
 
 //**************************************************************
+//*   LABELS
+//**************************************************************    
+export interface LabelsProps extends ui.IProps, ui.IPropsSize, ui.IPropsColor {
+  $Size?: ui.size;
+  $Color?: ui.color;
+  $tag?: boolean;
+  $circular?: boolean;
+}
+
+export var labelsPropsDescr = ui.createDescr<LabelsProps>(val => {
+  return {
+    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
+    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $tag: new ui.boolConverter(val.$tag),
+    $circular: new ui.boolConverter(val.$circular)
+  };
+});
+
+//**************************************************************
 //*   LIST
 //**************************************************************    
 export interface ListProps extends ui.IProps {
 
 }
 
-var listPropsDescr = ui.createDescr<ListProps>(val => {
+export var listPropsDescr = ui.createDescr<ListProps>(val => {
   return {
 
   };
@@ -256,7 +420,7 @@ export interface LoaderProps extends ui.IProps {
 
 }
 
-var loaderPropsDescr = ui.createDescr<LoaderProps>(val => {
+export var loaderPropsDescr = ui.createDescr<LoaderProps>(val => {
   return {
 
   };
@@ -269,7 +433,7 @@ export interface RailProps extends ui.IProps {
 
 }
 
-var railPropsDescr = ui.createDescr<RailProps>(val => {
+export var railPropsDescr = ui.createDescr<RailProps>(val => {
   return {
 
   };
@@ -282,7 +446,7 @@ export interface RevealProps extends ui.IProps {
 
 }
 
-var revealPropsDescr = ui.createDescr<RevealProps>(val => {
+export var revealPropsDescr = ui.createDescr<RevealProps>(val => {
   return {
 
   };
@@ -330,7 +494,7 @@ export interface SegmentProps extends ui.IProps, IPropsRaisedProp, IPropsAttache
   $basic?: boolean;
 }
 
-var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
+export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
   return {
     $Raised: new ui.enumConverter<raised>(raised, val.$Raised),
     $Attached: new ui.enumConverter<attachedSegment>(attachedSegment, val.$Attached),
@@ -351,13 +515,35 @@ var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
 });
 
 //**************************************************************
+//*   SEGMENTS
+//**************************************************************
+
+export enum raisedSegments { no, $raisedStandard, $raisedStacked, $raisedPiled, }
+ui.registerEnum(raisedSegments, '$RaisedSegments', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' });
+export interface IPropsRaisedSegmentsProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; }
+
+export interface SegmentsProps extends ui.IProps, IPropsRaisedSegmentsProp {
+  $raised?: raisedSegments;
+  $compact?: boolean;
+  $horizontal?: boolean;
+}
+
+export var segmentsPropsDescr = ui.createDescr<SegmentsProps>(val => {
+  return {
+    $raised: new ui.enumConverter<raisedSegments>(raisedSegments, val.$raised),
+    $compact: new ui.boolConverter(val.$compact),
+    $horizontal: new ui.boolConverter(val.$horizontal)
+  };
+});
+
+//**************************************************************
 //*   STEP
 //**************************************************************    
 export interface StepProps extends ui.IProps {
 
 }
 
-var stepPropsDescr = ui.createDescr<StepProps>(val => {
+export var stepPropsDescr = ui.createDescr<StepProps>(val => {
   return {
 
   };
@@ -370,7 +556,7 @@ export interface AdProps extends ui.IProps {
 
 }
 
-var adPropsDescr = ui.createDescr<AdProps>(val => {
+export var adPropsDescr = ui.createDescr<AdProps>(val => {
   return {
 
   };
@@ -383,7 +569,7 @@ export interface CardProps extends ui.IProps {
 
 }
 
-var cardPropsDescr = ui.createDescr<CardProps>(val => {
+export var cardPropsDescr = ui.createDescr<CardProps>(val => {
   return {
 
   };
@@ -396,7 +582,7 @@ export interface CommentProps extends ui.IProps {
 
 }
 
-var commentPropsDescr = ui.createDescr<CommentProps>(val => {
+export var commentPropsDescr = ui.createDescr<CommentProps>(val => {
   return {
 
   };
@@ -409,7 +595,7 @@ export interface FeedProps extends ui.IProps {
 
 }
 
-var feedPropsDescr = ui.createDescr<FeedProps>(val => {
+export var feedPropsDescr = ui.createDescr<FeedProps>(val => {
   return {
 
   };
@@ -422,7 +608,7 @@ export interface ItemProps extends ui.IProps {
 
 }
 
-var itemPropsDescr = ui.createDescr<ItemProps>(val => {
+export var itemPropsDescr = ui.createDescr<ItemProps>(val => {
   return {
 
   };
@@ -435,7 +621,7 @@ export interface StatisticProps extends ui.IProps {
 
 }
 
-var statisticPropsDescr = ui.createDescr<StatisticProps>(val => {
+export var statisticPropsDescr = ui.createDescr<StatisticProps>(val => {
   return {
 
   };
@@ -448,7 +634,7 @@ export interface BreadcrumbProps extends ui.IProps {
 
 }
 
-var breadcrumbPropsDescr = ui.createDescr<BreadcrumbProps>(val => {
+export var breadcrumbPropsDescr = ui.createDescr<BreadcrumbProps>(val => {
   return {
 
   };
@@ -461,7 +647,7 @@ export interface FormProps extends ui.IProps {
 
 }
 
-var formPropsDescr = ui.createDescr<FormProps>(val => {
+export var formPropsDescr = ui.createDescr<FormProps>(val => {
   return {
 
   };
@@ -474,7 +660,7 @@ export interface GridProps extends ui.IProps {
 
 }
 
-var gridPropsDescr = ui.createDescr<GridProps>(val => {
+export var gridPropsDescr = ui.createDescr<GridProps>(val => {
   return {
 
   };
@@ -487,7 +673,7 @@ export interface MenuProps extends ui.IProps {
 
 }
 
-var menuPropsDescr = ui.createDescr<MenuProps>(val => {
+export var menuPropsDescr = ui.createDescr<MenuProps>(val => {
   return {
 
   };
@@ -500,7 +686,7 @@ export interface MessageProps extends ui.IProps {
 
 }
 
-var messagePropsDescr = ui.createDescr<MessageProps>(val => {
+export var messagePropsDescr = ui.createDescr<MessageProps>(val => {
   return {
 
   };
@@ -513,7 +699,7 @@ export interface TableProps extends ui.IProps {
 
 }
 
-var tablePropsDescr = ui.createDescr<TableProps>(val => {
+export var tablePropsDescr = ui.createDescr<TableProps>(val => {
   return {
 
   };

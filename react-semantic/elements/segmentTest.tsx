@@ -2,8 +2,8 @@
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, social, floated, attachedButton, animate, iconLabel, eqWidth,
-  Label, Labels, pointing, corner, attachedLabel, circular, ribbon,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, floated, attachedButton, animate, iconLabel, eqWidth,
+  Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 

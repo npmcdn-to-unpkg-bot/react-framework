@@ -1,59 +1,18 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as ui from '../exports';
+import * as ui from '../lib';
 import {
-  Label, pointing, corner, attachedLabel, circular,
-  Icon, icon, color, size
-} from '../exports';
+  ButtonProps, buttonPropsDescr,
+  ButtonAnimatedProps, buttonAnimatedPropsDescr, animate, animateTo,
+  ButtonLabeledProps, buttonLabeledPropsDescr,
+  ButtonIconProps, buttonIconPropsDescr, iconLabel,
+  ButtonSocialProps, buttonSocialPropsDescr, social,
+  ButtonsProps, buttonsPropsDescr, eqWidth,
+  LabelProps, IconProps
+} from '../generated';
+import { Label, Icon} from '../exports';
 
-export enum attachedButton { no, $attachedTop, $attachedBottom, $attachedLeft, $attachedRight, }
-ui.registerEnum(attachedButton, '$AttachedButton');
-export interface IPropsAttachedButtonProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedLeft?: boolean; $attachedRight?: boolean; }
-
-export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, ui.IPropsSize, ui.IPropsColor, ui.IPropsFloated {
-  $Attached?: attachedButton;
-  $Size?: ui.size;
-  $Color?: ui.color;
-  $Floated?: ui.floated;
-  $basic?: boolean;
-  $inverted?: boolean;
-  $compact?: boolean;
-  $fluid?: boolean;
-  $circular?: boolean;
-  $labeled?: boolean;
-  $hasIcon?: boolean;
-  $active?: boolean;
-  $loading?: boolean;
-  $disabled?: boolean;
-  $primary?: boolean;
-  $secondary?: boolean;
-  $positive?: boolean;
-  $negative?: boolean;
-}
-
-var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
-  return {
-    $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
-    $Floated: new ui.enumConverter<ui.floated>(ui.floated, val.$Floated),
-    $basic: new ui.boolConverter(val.$basic),
-    $inverted: new ui.boolConverter(val.$inverted),
-    $compact: new ui.boolConverter(val.$compact),
-    $fluid: new ui.boolConverter(val.$fluid),
-    $circular: new ui.boolConverter(val.$circular),
-    $labeled: new ui.boolConverter(val.$labeled),
-    $hasIcon: new ui.boolConverter(val.$hasIcon, true),
-    $active: new ui.boolConverter(val.$active, true),
-    $loading: new ui.boolConverter(val.$loading),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $primary: new ui.boolConverter(val.$primary),
-    $secondary: new ui.boolConverter(val.$secondary),
-    $positive: new ui.boolConverter(val.$positive),
-    $negative: new ui.boolConverter(val.$negative)
-  };
-});
-
+//******************* Button
 export const Button: ui.StatelessComponent<ButtonProps> = pr => {
   var props: ButtonProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
@@ -61,27 +20,9 @@ export const Button: ui.StatelessComponent<ButtonProps> = pr => {
 }
 
 //******************* ButtonAnimated
-export enum animate { standard, vertical, fade }
-
-export interface animateTo {
-  animate?: animate;
-  to: React.ReactNode;
-}
-
-export interface ButtonAnimatedProps extends ButtonProps {
-  $animateTo: animateTo;
-}
-
-var buttonAnimatePropsDescr = ui.createDescr<ButtonAnimatedProps>(val => {
-  return { //animateTo a children se zpracovavaji jinak
-    $animateTo: null,
-    children: null
-  };
-}, buttonPropsDescr);
-
 export const ButtonAnimated: ui.StatelessComponent<ButtonAnimatedProps> = pr => {
   var props = ui.enumValToProp(pr);
-  var projection = ui.projection(props, buttonAnimatePropsDescr);
+  var projection = ui.projection(props, buttonAnimatedPropsDescr);
   var initCls = ['ui animated button', ui.enumToClass<animate>(animate, props.$animateTo.animate)];
   var rest = ui.propsToClasses(initCls, projection);
   return <button {...rest}>
@@ -91,26 +32,13 @@ export const ButtonAnimated: ui.StatelessComponent<ButtonAnimatedProps> = pr => 
 }
 
 //****************** ButtonLabeled
-export interface ButtonLabeledProps extends ButtonProps {
-  $label: React.ReactElement<ui.LabelProps>;
-  $left?: boolean;
-  $pointing?: boolean;
-}
-var buttonLabeledDescr = ui.createDescr<ButtonLabeledProps>(val => {
-  return { //props se zpracovavaji rucne
-    $label: null,
-    $left: null,
-    $pointing: null,
-  };
-}, buttonPropsDescr);
-
 export const ButtonLabeled: ui.StatelessComponent<ButtonLabeledProps> = pr => {
   var props = ui.enumValToProp(pr);
   //button
   var projection = ui.projection(props, buttonPropsDescr);
   var btn = <Button {...ui.propsToClasses(null, projection) }/>;
   //kopie a uprava label props
-  var labelProps: ui.LabelProps = Object.assign({}, props.$label.props);
+  var labelProps: LabelProps = Object.assign({}, props.$label.props);
   if (props.$pointing)
     if (props.$left) labelProps.$pointingRight = true; else labelProps.$pointingLeft = true;
   labelProps.$outerTag = 'a';
@@ -123,28 +51,12 @@ export const ButtonLabeled: ui.StatelessComponent<ButtonLabeledProps> = pr => {
 };
 
 //******************* ButtonIcon
-export enum iconLabel { no, iconLabelRight, iconLabelLeft }
-ui.registerEnum(iconLabel, '$IconLabel');
-export interface IPropsIconLabel {
-  $iconLabelRight?: boolean;
-  $iconLabelLeft?: boolean;
-}
 
-export interface ButtonIconProps extends ButtonProps, IPropsIconLabel {
-  $Icon: icon;
-  $IconLabel?: iconLabel;
-}
-var buttonIconDescr = ui.createDescr<ButtonIconProps>(val => {
-  return {
-    $Icon: null,
-    $IconLabel: null
-  }
-}, buttonPropsDescr);
 export const ButtonIcon: ui.StatelessComponent<ButtonIconProps> = pr => {
   var props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui', { right: props.$iconLabelRight }, props.$IconLabel ? 'labeled' : null, 'icon button'], ui.projection(props, buttonPropsDescr));
-  var iconProps: ui.IconProps = { $Icon: pr.$Icon };
-  if (props.$IconLabel == iconLabel.iconLabelRight) iconProps.className = 'right';
+  var iconProps: IconProps = { $Icon: pr.$Icon };
+  if (props.$IconLabel == iconLabel.$iconLabelRight) iconProps.className = 'right';
   var icon = <Icon {...iconProps}/>
   return <button {...rest}>
     {icon} {props.children}
@@ -152,42 +64,6 @@ export const ButtonIcon: ui.StatelessComponent<ButtonIconProps> = pr => {
 }
 
 //******************* Buttons
-export enum eqWidth {
-  two,
-  three,
-  four,
-  five,
-  six,
-  seven,
-  eight,
-  nine,
-  ten,
-  eleven,
-  twelve
-}
-
-export interface ButtonsProps extends ui.IProps, ui.IPropsColor, ui.IPropsSize {
-  $vertical?: boolean;
-  $labeled?: boolean;
-  $basic?: boolean;
-  $hasIcon?: boolean;
-  $EqWidth?: eqWidth;
-  $Color?: color;
-  $Size?: size;
-}
-var buttonsPropsDescr = ui.createDescr<ButtonsProps>(val => {
-  return {
-    $vertical: new ui.boolConverter(val.$vertical),
-    $labeled: new ui.boolConverter(val.$labeled),
-    $basic: new ui.boolConverter(val.$basic),
-    $hasIcon: null, //osetri se rucne
-
-    $EqWidth: new ui.enumConverter<eqWidth>(eqWidth, val.$EqWidth),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-  }
-});
-
 export const Buttons: ui.StatelessComponent<ButtonsProps> = pr => {
   var props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui buttons', { icon: props.$hasIcon }], ui.projection(props, buttonsPropsDescr));
@@ -195,35 +71,6 @@ export const Buttons: ui.StatelessComponent<ButtonsProps> = pr => {
 };
 
 //******************* Social
-export enum social {
-  $facebook,
-  $twitter,
-  $googlePlus,
-  $vk,
-  $linkedin,
-  $instagram,
-  $youtube
-}
-ui.registerEnum(social, '$Social');
-export interface IPropsSocial {
-  $facebook?: boolean;
-  $twitter?: boolean;
-  $googlePlus?: boolean;
-  $vk?: boolean;
-  $linkedin?: boolean;
-  $instagram?: boolean;
-  $youtube?: boolean;
-}
-
-export interface ButtonSocialProps extends ButtonProps, IPropsSocial {
-  $Social?: social;
-}
-var buttonSocialPropsDescr = ui.createDescr<ButtonSocialProps>(val => {
-  return {
-    $Social: new ui.enumConverter<social>(social, val.$Social),
-  }
-});
-
 export const ButtonSocial: ui.StatelessComponent<ButtonSocialProps> = pr => {
   var props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui button'], ui.projection(props, buttonSocialPropsDescr));
