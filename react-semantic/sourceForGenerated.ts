@@ -153,7 +153,7 @@ export interface animateTo {
     name: 'segments',
     boolProps: [{ name: 'compact' }, { name: 'horizontal' }],
     enumProps: [
-      { name: 'raisedSegments', aliasPropName: 'raised', values: ['no', 'raisedStandard', 'raisedStacked', 'raisedPiled'], alias: `, { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' }` },
+      { name: 'raisedSegments', aliasPropName: 'Raised', values: ['no', 'raisedStandard', 'raisedStacked', 'raisedPiled'], alias: `, { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' }` },
     ]
   },
   {

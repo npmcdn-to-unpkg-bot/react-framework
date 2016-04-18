@@ -116,7 +116,6 @@ export const ComponentGenLow: React.StatelessComponent<{ comp: g.genComponent; }
     var res = enumProps.map(en => ', ' + (en.isSystem ? `ui.IProps${up(en.name)}` : `IProps${up(en.name)}Prop`));
     return res.join('');
   }
-  function enumPropName(pr: g.genEnumProp): string { return pr.aliasPropName ? pr.aliasPropName : up(pr.name); }
   function enumProp(pr: g.genEnumProp, isMeta: boolean): string {
     return isMeta ?
       `    $${enumPropName(pr)}: new ui.enumConverter<${en(pr)}>(${en(pr)}, val.$${enumPropName(pr)})` :
@@ -155,6 +154,7 @@ export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val =>
   </pre>;
 };
 
+function enumPropName(pr: g.genEnumProp): string { return pr.aliasPropName ? pr.aliasPropName : up(pr.name); }
 
 //****************************************
 const EnumDef: React.StatelessComponent<{ enum: g.genEnumProp; }> = dt => {
@@ -168,7 +168,7 @@ const EnumDef: React.StatelessComponent<{ enum: g.genEnumProp; }> = dt => {
   };
   return <pre>{`
 export enum ${en.name} { ${item(dt.enum.values, false)}}
-ui.registerEnum(${en.name}, '$${up(en.name)}'${en.alias ? en.alias : ''});
+ui.registerEnum(${en.name}, '$${enumPropName(en)}'${en.alias ? en.alias : ''});
 export interface IProps${up(en.name)}Prop { ${item(dt.enum.values, true)}}
 `}
   </pre>;

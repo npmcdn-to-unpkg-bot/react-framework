@@ -48,7 +48,7 @@ import {icon, flag, flagShort} from './largeEnums';
 //**************************************************************
 
 export enum attachedButton { no, $attachedTop, $attachedBottom, $attachedLeft, $attachedRight, }
-ui.registerEnum(attachedButton, '$AttachedButton');
+ui.registerEnum(attachedButton, '$Attached');
 export interface IPropsAttachedButtonProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedLeft?: boolean; $attachedRight?: boolean; }
 
 export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, ui.IPropsSize, ui.IPropsColor, ui.IPropsFloated {
@@ -257,7 +257,7 @@ ui.registerEnum(rotated, '$Rotated');
 export interface IPropsRotatedProp { $rotatedClockwise?: boolean; $rotatedCounterclockwise?: boolean; }
 
 export enum circularIcon { no, $circularStandard, $circularInverted, }
-ui.registerEnum(circularIcon, '$CircularIcon', { $circularStandard: 'circular' });
+ui.registerEnum(circularIcon, '$Circular', { $circularStandard: 'circular' });
 export interface IPropsCircularIconProp { $circularStandard?: boolean; $circularInverted?: boolean; }
 
 export enum bordered { no, $borderedStandard, $borderedInverted, }
@@ -337,11 +337,11 @@ ui.registerEnum(corner, '$Corner');
 export interface IPropsCornerProp { $cornerLeft?: boolean; $cornerRight?: boolean; }
 
 export enum attachedLabel { no, $attachedTop, $attachedBottom, $attachedTopRight, $attachedTopLeft, $attachedBottomRight, $attachedBottomLeft, }
-ui.registerEnum(attachedLabel, '$AttachedLabel', { $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached' });
+ui.registerEnum(attachedLabel, '$Attached', { $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached' });
 export interface IPropsAttachedLabelProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedTopRight?: boolean; $attachedTopLeft?: boolean; $attachedBottomRight?: boolean; $attachedBottomLeft?: boolean; }
 
 export enum circularLabel { no, $circularStandard, $circularEmpty, }
-ui.registerEnum(circularLabel, '$CircularLabel');
+ui.registerEnum(circularLabel, '$Circular');
 export interface IPropsCircularLabelProp { $circularStandard?: boolean; $circularEmpty?: boolean; }
 
 export enum ribbon { no, $ribbonLeft, $ribbonRight, }
@@ -461,7 +461,7 @@ ui.registerEnum(raised, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 
 export interface IPropsRaisedProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; $raisedStackedTall?: boolean; }
 
 export enum attachedSegment { no, $attachedTop, $attachedBottom, $attachedBoth, }
-ui.registerEnum(attachedSegment, '$AttachedSegment', { $attachedBoth: 'attached' });
+ui.registerEnum(attachedSegment, '$Attached', { $attachedBoth: 'attached' });
 export interface IPropsAttachedSegmentProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedBoth?: boolean; }
 
 export enum padded { no, $paddedStandard, $paddedVery, }
@@ -519,18 +519,18 @@ export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
 //**************************************************************
 
 export enum raisedSegments { no, $raisedStandard, $raisedStacked, $raisedPiled, }
-ui.registerEnum(raisedSegments, '$RaisedSegments', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' });
+ui.registerEnum(raisedSegments, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' });
 export interface IPropsRaisedSegmentsProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; }
 
 export interface SegmentsProps extends ui.IProps, IPropsRaisedSegmentsProp {
-  $raised?: raisedSegments;
+  $Raised?: raisedSegments;
   $compact?: boolean;
   $horizontal?: boolean;
 }
 
 export var segmentsPropsDescr = ui.createDescr<SegmentsProps>(val => {
   return {
-    $raised: new ui.enumConverter<raisedSegments>(raisedSegments, val.$raised),
+    $Raised: new ui.enumConverter<raisedSegments>(raisedSegments, val.$Raised),
     $compact: new ui.boolConverter(val.$compact),
     $horizontal: new ui.boolConverter(val.$horizontal)
   };
