@@ -1,6 +1,6 @@
 ﻿export {
 StatelessComponent, enumToClass, propConverter, boolConverter, enumConverter, TPropsDescr, IProps, createDescr, propsToClasses, color, size, projection,
-IPropsColor, enumValToProp, IPropsSize, registerEnum, IPropsFloated, floated
+IPropsColor, enumValToProp, IPropsSize, registerEnum, IPropsFloated, floated, enumStrings, enumNumbers,
 } from './lib';
 export {Label, LabelProps, Labels, LabelsProps, pointing, corner, attachedLabel, circular, ribbon} from './elements/label';
 export {
@@ -44,7 +44,7 @@ export {Table, TableProps} from './collections/table';
 export {TableTest} from './collections/tableTest';
 export {Divider, DividerProps} from './elements/divider';
 export {DividerTest} from './elements/dividerTest';
-export {Flag, FlagProps} from './elements/flag';
+export {Flag, FlagProps, flag, flagShort} from './elements/flag';
 export {FlagTest} from './elements/flagTest';
 export {Header, HeaderProps} from './elements/header';
 export {HeaderTest} from './elements/headerTest';

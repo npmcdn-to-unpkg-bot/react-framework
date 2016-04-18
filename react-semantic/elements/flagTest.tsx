@@ -1,5 +1,6 @@
 ﻿import * as React from 'react';
 
+
 import {
   color, size,
   Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, state, social, floated, attachedButton, animate, iconLabel, eqWidth,
@@ -7,7 +8,7 @@ import {
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
   Divider,
-  Flag,
+  Flag, flag, flagShort,
   Header,
   Image,
   Input,
@@ -24,7 +25,9 @@ import * as ui from '../exports';
 export const FlagTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>Flag</h1>
-    <Flag>
-    </Flag>
-  </div>;
+    <h3>Long flag names</h3>
+    {ui.enumNumbers(flag).map(num => <Flag $Flag={num} title={flag[num]}/>) }
+    <h3>Shortflag names</h3>
+    {ui.enumNumbers(flagShort).map(num => <Flag $FlagShort={num} title={flagShort[num]}/>) }
+  </div >;
 }

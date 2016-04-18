@@ -90,6 +90,14 @@ export function propsToClasses(init: Array<convertResult>, src: projectionResult
   return src.rest;
 }
 
+function enumParse(enumType, isString:boolean): Array<string|number> {
+  var res = [];
+  for (var p in enumType) { var val = enumType[p]; if ((isString && !(typeof val == 'string')) || (!isString && !(typeof val == 'number'))) continue; res.push(val); }
+  return res;
+}
+export function enumStrings(enumType): Array<string> { return enumParse(enumType, true) as Array<string>; }
+export function enumNumbers(enumType): Array<number> { return enumParse(enumType, false) as Array<number>; }
+
 export function registerEnum(enumType, propName: string, propToHTMLClass?: { [wrong: string]: string;}) {
   for (var p in enumType) {
     var val = enumType[p]; if (typeof val == 'number' || val === 'no' || val === 'standard') continue;
