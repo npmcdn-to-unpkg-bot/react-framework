@@ -44,16 +44,7 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <FlagTest/>
-      <SegmentTest/>
-      <IconTest/><hr/>
-      <LabelTest/><hr/>
-      <ButtonTest/><hr/>
-      <ButtonSocialTest/><hr/>
-      <ButtonLabeledTest/><hr/>
-      <ButtonAnimatedTest/><hr/>
-      <ButtonIconTest/><hr/>
-      <ButtonsTest/><hr/>
+      <CodeGenerator2/>
       {/*
       <CodeGenerator2/>
       <CodeGenerator/>

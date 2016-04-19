@@ -7,7 +7,6 @@ export abstract class propConverter {
 }
 export type TPropsDescr = { [propName: string]: propConverter; };
 export interface IProps extends React.HTMLAttributes { }
-export interface IPropsIcon {}
 
 //-----------------------
 export interface StatelessComponent<T> extends React.StatelessComponent<React.Props<any> & T> { }
@@ -114,75 +113,3 @@ export function registerEnum(enumType, propName: string, propToHTMLClass?: { [wr
 interface IEnumItem { propName: string, numValue: number; enumType }
 var enumValueToProp: { [short: string]: IEnumItem; } = {};
 var propsToHTMLClass: { [wrong: string]: string; } = {};
-
-export interface IPropsColor {
-  $colRed?: boolean;
-  $colOrange?: boolean;
-  $colYellow?: boolean;
-  $colOlive?: boolean;
-  $colGreen?: boolean;
-  $colTeal?: boolean;
-  $colBlue?: boolean;
-  $colViolet?: boolean;
-  $colPurple?: boolean;
-  $colPink?: boolean;
-  $colBrown?: boolean;
-  $colGrey?: boolean;
-  $colBlack?: boolean;
-}
-
-export enum color {
-  standard,
-  $colRed,
-  $colOrange,
-  $colYellow,
-  $colOlive,
-  $colGreen,
-  $colTeal,
-  $colBlue,
-  $colViolet,
-  $colPurple,
-  $colPink,
-  $colBrown,
-  $colGrey,
-  $colBlack
-}
-registerEnum(color, '$Color', {
-  $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue',
-  $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black'
-});
-
-export interface IPropsSize {
-  $s3?: boolean; $mini?: boolean;
-  $s2?: boolean; $tiny?: boolean;
-  $s1?: boolean; $small?: boolean;
-  //$medium?: boolean;
-  $1?: boolean; $large?: boolean;
-  $2?: boolean; $big?: boolean;
-  $3?: boolean; $huge?: boolean;
-  $4?: boolean; $massive?: boolean;
-}
-
-export enum size {
-  standard,
-  $s3, $mini,
-  $s2, $tiny,
-  $s1, $small,
-  //$medium,
-  $1, $large,
-  $2, $big,
-  $3, $huge,
-  $4, $massive
-}
-registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' });
-
-export enum floated {
-  no,
-  $floatedLeft,
-  $floatedRight
-}
-ui.registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight:'rightFloated'});
-export interface IPropsFloated {
-  $floatedLeft?: boolean;
-  $floatedRight?: boolean;
-}

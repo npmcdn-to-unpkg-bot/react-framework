@@ -1,6 +1,6 @@
 ﻿TODO:
 - chyba u slozitejsich buttonu
-- generace spolecnych enums (ui.color apod.)
+- oddelena generace enum interfaces a to dvou typu: prazdna (nedovolujici zadat enum hodnoty primo) a plna. Prepinat se bude v generate.ts souboru.
 
 
 Icons

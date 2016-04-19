@@ -39,10 +39,64 @@
   Table
 */
 
+//content for "export {} from '/.generated"'
+/*
+export {
+  animate, animateTo, color, size, floated,
+  Button, ButtonProps, attachedButton,
+  ButtonAnimatedProps,
+  ButtonIconProps, iconLabel,
+  ButtonLabeledProps,
+  ButtonsProps, eqWidth,
+  ButtonSocialProps, social,
+  DividerProps,
+  Flag, FlagProps,
+  HeaderProps,
+  Icon, IconProps, flipped, rotated, circularIcon, bordered,
+  Icons, IconsProps,
+  ImageProps,
+  InputProps,
+  Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
+  Labels, LabelsProps,
+  ListProps,
+  LoaderProps,
+  RailProps,
+  RevealProps,
+  Segment, SegmentProps, raised, attachedSegment, padded, emphasis, aligned,
+  Segments, SegmentsProps, raisedSegments,
+  StepProps,
+  AdProps,
+  CardProps,
+  CommentProps,
+  FeedProps,
+  ItemProps,
+  StatisticProps,
+  BreadcrumbProps,
+  FormProps,
+  GridProps,
+  MenuProps,
+  MessageProps,
+  TableProps,
+} from './generated';
+*/
+
 import * as React from 'react';
 import * as ui from './lib';
 import {icon, flag, flagShort} from './largeEnums';
 
+export interface IPropsIconProp { }
+
+export enum color { standard, $colRed, $colOrange, $colYellow, $colOlive, $colGreen, $colTeal, $colBlue, $colViolet, $colPurple, $colPink, $colBrown, $colGrey, $colBlack, }
+ui.registerEnum(color, '$Color', { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black' });
+export interface IPropsColorProp { $colRed?: boolean; $colOrange?: boolean; $colYellow?: boolean; $colOlive?: boolean; $colGreen?: boolean; $colTeal?: boolean; $colBlue?: boolean; $colViolet?: boolean; $colPurple?: boolean; $colPink?: boolean; $colBrown?: boolean; $colGrey?: boolean; $colBlack?: boolean; }
+
+export enum size { standard, $s3, $mini, $s2, $tiny, $s1, $small, $1, $large, $2, $big, $3, $huge, $4, $massive, }
+ui.registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' });
+export interface IPropsSizeProp { $s3?: boolean; $mini?: boolean; $s2?: boolean; $tiny?: boolean; $s1?: boolean; $small?: boolean; $1?: boolean; $large?: boolean; $2?: boolean; $big?: boolean; $3?: boolean; $huge?: boolean; $4?: boolean; $massive?: boolean; }
+
+export enum floated { no, $floatedLeft, $floatedRight, }
+ui.registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight: 'rightFloated' });
+export interface IPropsFloatedProp { $floatedLeft?: boolean; $floatedRight?: boolean; }
 
 //**************************************************************
 //*   BUTTON
@@ -52,11 +106,11 @@ export enum attachedButton { no, $attachedTop, $attachedBottom, $attachedLeft, $
 ui.registerEnum(attachedButton, '$Attached');
 export interface IPropsAttachedButtonProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedLeft?: boolean; $attachedRight?: boolean; }
 
-export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, ui.IPropsSize, ui.IPropsColor, ui.IPropsFloated {
+export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, IPropsSizeProp, IPropsColorProp, IPropsFloatedProp {
   $Attached?: attachedButton;
-  $Size?: ui.size;
-  $Color?: ui.color;
-  $Floated?: ui.floated;
+  $Size?: size;
+  $Color?: color;
+  $Floated?: floated;
   $basic?: boolean;
   $inverted?: boolean;
   $compact?: boolean;
@@ -76,9 +130,9 @@ export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, ui.IPr
 export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
   return {
     $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
-    $Floated: new ui.enumConverter<ui.floated>(ui.floated, val.$Floated),
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Color: new ui.enumConverter<color>(color, val.$Color),
+    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
     $basic: new ui.boolConverter(val.$basic),
     $inverted: new ui.boolConverter(val.$inverted),
     $compact: new ui.boolConverter(val.$compact),
@@ -95,6 +149,7 @@ export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
     $negative: new ui.boolConverter(val.$negative)
   };
 });
+
 export const Button: ui.StatelessComponent<ButtonProps> = pr => {
   var props: ButtonProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
@@ -131,15 +186,15 @@ export enum iconLabel { no, $iconLabelRight, $iconLabelLeft, }
 ui.registerEnum(iconLabel, '$IconLabel');
 export interface IPropsIconLabelProp { $iconLabelRight?: boolean; $iconLabelLeft?: boolean; }
 
-export interface ButtonIconProps extends ButtonProps, IPropsIconLabelProp, ui.IPropsIcon {
+export interface ButtonIconProps extends ButtonProps, IPropsIconLabelProp, IPropsIconProp {
   $IconLabel?: iconLabel;
-  $Icon?: ui.icon;
+  $Icon?: icon;
 }
 
 export var buttonIconPropsDescr = ui.createDescr<ButtonIconProps>(val => {
   return {
     $IconLabel: new ui.enumConverter<iconLabel>(iconLabel, val.$IconLabel),
-    $Icon: new ui.enumConverter<ui.icon>(ui.icon, val.$Icon)
+    $Icon: new ui.enumConverter<icon>(icon, val.$Icon)
   };
 }, buttonPropsDescr);
 
@@ -168,10 +223,10 @@ export enum eqWidth { no, $two, $three, $four, $five, $six, $seven, $eight, $nin
 ui.registerEnum(eqWidth, '$EqWidth');
 export interface IPropsEqWidthProp { $two?: boolean; $three?: boolean; $four?: boolean; $five?: boolean; $six?: boolean; $seven?: boolean; $eight?: boolean; $nine?: boolean; $ten?: boolean; $eleven?: boolean; $twelve?: boolean; }
 
-export interface ButtonsProps extends ui.IProps, IPropsEqWidthProp, ui.IPropsSize, ui.IPropsColor {
+export interface ButtonsProps extends ui.IProps, IPropsEqWidthProp, IPropsSizeProp, IPropsColorProp {
   $EqWidth?: eqWidth;
-  $Size?: ui.size;
-  $Color?: ui.color;
+  $Size?: size;
+  $Color?: color;
   $vertical?: boolean;
   $labeled?: boolean;
   $basic?: boolean;
@@ -181,8 +236,8 @@ export interface ButtonsProps extends ui.IProps, IPropsEqWidthProp, ui.IPropsSiz
 export var buttonsPropsDescr = ui.createDescr<ButtonsProps>(val => {
   return {
     $EqWidth: new ui.enumConverter<eqWidth>(eqWidth, val.$EqWidth),
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Color: new ui.enumConverter<color>(color, val.$Color),
     $vertical: new ui.boolConverter(val.$vertical),
     $labeled: new ui.boolConverter(val.$labeled),
     $basic: new ui.boolConverter(val.$basic),
@@ -224,19 +279,20 @@ export var dividerPropsDescr = ui.createDescr<DividerProps>(val => {
 //**************************************************************
 //*   FLAG
 //**************************************************************    
-export interface FlagProps extends ui.IProps, ui.IPropsColor {
-  $Color?: ui.color;
+export interface FlagProps extends ui.IProps, IPropsColorProp {
+  $Color?: color;
   $Flag?: flag;
   $FlagShort?: flagShort;
 }
 
 export var flagPropsDescr = ui.createDescr<FlagProps>(val => {
   return {
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color)
+    $Color: new ui.enumConverter<color>(color, val.$Color)
     , $Flag: new ui.enumConverter<flag>(flag, val.$Flag),
     $FlagShort: new ui.enumConverter<flagShort>(flagShort, val.$FlagShort),
   };
 });
+
 export const Flag: ui.StatelessComponent<FlagProps> = pr => {
   var props: FlagProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui flag'], ui.projection(props, flagPropsDescr));
@@ -277,14 +333,14 @@ export enum bordered { no, $borderedStandard, $borderedInverted, }
 ui.registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
 export interface IPropsBorderedProp { $borderedStandard?: boolean; $borderedInverted?: boolean; }
 
-export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, ui.IPropsIcon, ui.IPropsSize, ui.IPropsColor {
+export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, IPropsIconProp, IPropsSizeProp, IPropsColorProp {
   $Flipped?: flipped;
   $Rotated?: rotated;
   $Circular?: circularIcon;
   $Bordered?: bordered;
-  $Icon?: ui.icon;
-  $Size?: ui.size;
-  $Color?: ui.color;
+  $Icon?: icon;
+  $Size?: size;
+  $Color?: color;
   $disabled?: boolean;
   $loading?: boolean;
   $fitted?: boolean;
@@ -299,9 +355,9 @@ export var iconPropsDescr = ui.createDescr<IconProps>(val => {
     $Rotated: new ui.enumConverter<rotated>(rotated, val.$Rotated),
     $Circular: new ui.enumConverter<circularIcon>(circularIcon, val.$Circular),
     $Bordered: new ui.enumConverter<bordered>(bordered, val.$Bordered),
-    $Icon: new ui.enumConverter<ui.icon>(ui.icon, val.$Icon),
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Icon: new ui.enumConverter<icon>(icon, val.$Icon),
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Color: new ui.enumConverter<color>(color, val.$Color),
     $disabled: new ui.boolConverter(val.$disabled),
     $loading: new ui.boolConverter(val.$loading),
     $fitted: new ui.boolConverter(val.$fitted),
@@ -310,6 +366,7 @@ export var iconPropsDescr = ui.createDescr<IconProps>(val => {
     $corner: new ui.boolConverter(val.$corner)
   };
 });
+
 export const Icon: ui.StatelessComponent<IconProps> = pr => {
   var props: IconProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['icon'], ui.projection(props, iconPropsDescr));
@@ -320,15 +377,16 @@ export const Icon: ui.StatelessComponent<IconProps> = pr => {
 //**************************************************************
 //*   ICONS
 //**************************************************************    
-export interface IconsProps extends ui.IProps, ui.IPropsSize {
-  $Size?: ui.size;
+export interface IconsProps extends ui.IProps, IPropsSizeProp {
+  $Size?: size;
 }
 
 export var iconsPropsDescr = ui.createDescr<IconsProps>(val => {
   return {
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size)
+    $Size: new ui.enumConverter<size>(size, val.$Size)
   };
 });
+
 export const Icons: ui.StatelessComponent<IconsProps> = pr => {
   var props: IconsProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['icons'], ui.projection(props, iconsPropsDescr));
@@ -386,14 +444,14 @@ export enum ribbon { no, $ribbonLeft, $ribbonRight, }
 ui.registerEnum(ribbon, '$Ribbon');
 export interface IPropsRibbonProp { $ribbonLeft?: boolean; $ribbonRight?: boolean; }
 
-export interface LabelProps extends ui.IProps, IPropsPointingProp, IPropsCornerProp, IPropsAttachedLabelProp, IPropsCircularLabelProp, IPropsRibbonProp, ui.IPropsSize, ui.IPropsColor {
+export interface LabelProps extends ui.IProps, IPropsPointingProp, IPropsCornerProp, IPropsAttachedLabelProp, IPropsCircularLabelProp, IPropsRibbonProp, IPropsSizeProp, IPropsColorProp {
   $Pointing?: pointing;
   $Corner?: corner;
   $Attached?: attachedLabel;
   $Circular?: circularLabel;
   $Ribbon?: ribbon;
-  $Size?: ui.size;
-  $Color?: ui.color;
+  $Size?: size;
+  $Color?: color;
   $image?: boolean;
   $basic?: boolean;
   $tag?: boolean;
@@ -409,8 +467,8 @@ export var labelPropsDescr = ui.createDescr<LabelProps>(val => {
     $Attached: new ui.enumConverter<attachedLabel>(attachedLabel, val.$Attached),
     $Circular: new ui.enumConverter<circularLabel>(circularLabel, val.$Circular),
     $Ribbon: new ui.enumConverter<ribbon>(ribbon, val.$Ribbon),
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Color: new ui.enumConverter<color>(color, val.$Color),
     $image: new ui.boolConverter(val.$image),
     $basic: new ui.boolConverter(val.$basic),
     $tag: new ui.boolConverter(val.$tag),
@@ -418,6 +476,7 @@ export var labelPropsDescr = ui.createDescr<LabelProps>(val => {
     $floating: new ui.boolConverter(val.$floating)
   };
 });
+
 export const Label: ui.StatelessComponent<LabelProps> = pr => {
   var props: LabelProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui label'], ui.projection(props, labelPropsDescr));
@@ -428,21 +487,22 @@ export const Label: ui.StatelessComponent<LabelProps> = pr => {
 //**************************************************************
 //*   LABELS
 //**************************************************************    
-export interface LabelsProps extends ui.IProps, ui.IPropsSize, ui.IPropsColor {
-  $Size?: ui.size;
-  $Color?: ui.color;
+export interface LabelsProps extends ui.IProps, IPropsSizeProp, IPropsColorProp {
+  $Size?: size;
+  $Color?: color;
   $tag?: boolean;
   $circular?: boolean;
 }
 
 export var labelsPropsDescr = ui.createDescr<LabelsProps>(val => {
   return {
-    $Size: new ui.enumConverter<ui.size>(ui.size, val.$Size),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Color: new ui.enumConverter<color>(color, val.$Color),
     $tag: new ui.boolConverter(val.$tag),
     $circular: new ui.boolConverter(val.$circular)
   };
 });
+
 export const Labels: ui.StatelessComponent<LabelsProps> = pr => {
   var props: LabelsProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui labels'], ui.projection(props, labelsPropsDescr));
@@ -526,14 +586,14 @@ export enum aligned { no, $alignedLeft, $alignedCenter, $alignedRight, }
 ui.registerEnum(aligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned' });
 export interface IPropsAlignedProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; }
 
-export interface SegmentProps extends ui.IProps, IPropsRaisedProp, IPropsAttachedSegmentProp, IPropsPaddedProp, IPropsEmphasisProp, IPropsAlignedProp, ui.IPropsColor, ui.IPropsFloated {
+export interface SegmentProps extends ui.IProps, IPropsRaisedProp, IPropsAttachedSegmentProp, IPropsPaddedProp, IPropsEmphasisProp, IPropsAlignedProp, IPropsColorProp, IPropsFloatedProp {
   $Raised?: raised;
   $Attached?: attachedSegment;
   $Padded?: padded;
   $Emphasis?: emphasis;
   $Aligned?: aligned;
-  $Color?: ui.color;
-  $Floated?: ui.floated;
+  $Color?: color;
+  $Floated?: floated;
   $vertical?: boolean;
   $disabled?: boolean;
   $loading?: boolean;
@@ -551,8 +611,8 @@ export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
     $Padded: new ui.enumConverter<padded>(padded, val.$Padded),
     $Emphasis: new ui.enumConverter<emphasis>(emphasis, val.$Emphasis),
     $Aligned: new ui.enumConverter<aligned>(aligned, val.$Aligned),
-    $Color: new ui.enumConverter<ui.color>(ui.color, val.$Color),
-    $Floated: new ui.enumConverter<ui.floated>(ui.floated, val.$Floated),
+    $Color: new ui.enumConverter<color>(color, val.$Color),
+    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
     $vertical: new ui.boolConverter(val.$vertical),
     $disabled: new ui.boolConverter(val.$disabled),
     $loading: new ui.boolConverter(val.$loading),
@@ -563,6 +623,7 @@ export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
     $basic: new ui.boolConverter(val.$basic)
   };
 });
+
 export const Segment: ui.StatelessComponent<SegmentProps> = pr => {
   var props: SegmentProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui segment'], ui.projection(props, segmentPropsDescr));
@@ -591,6 +652,7 @@ export var segmentsPropsDescr = ui.createDescr<SegmentsProps>(val => {
     $horizontal: new ui.boolConverter(val.$horizontal)
   };
 });
+
 export const Segments: ui.StatelessComponent<SegmentsProps> = pr => {
   var props: SegmentsProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui segments'], ui.projection(props, segmentsPropsDescr));

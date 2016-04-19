@@ -1,16 +1,16 @@
 ﻿export {
-StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, color, size, floated, 
-IPropsColor, enumValToProp, IPropsSize, registerEnum, IPropsFloated, enumStrings, enumNumbers,
+StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, 
+enumValToProp, registerEnum, enumStrings, enumNumbers,
 convertResult, propConverter, TPropsDescr, IProps
 } from './lib';
 
 export { icon, flag, flagShort, flagMap } from './largeEnums';
 export {
-codeData, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
+source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {
-animate, animateTo,
+animate, animateTo, color, size, floated,
 Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
 ButtonIconProps, iconLabel,
@@ -44,8 +44,7 @@ FormProps,
 GridProps,
 MenuProps,
 MessageProps,
-TableProps
-
+TableProps,
 } from './generated';
 
 export {

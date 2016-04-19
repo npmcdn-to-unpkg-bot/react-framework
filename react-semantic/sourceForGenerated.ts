@@ -1,5 +1,10 @@
 ﻿export enum genComponentType { elements, views, collections, }
 
+export interface genSource {
+  enums: Array<genEnumProp>;
+  codeData: Array<genComponent>;
+}
+
 export interface genComponent {
   name: string;
   type?: genComponentType;
@@ -27,7 +32,16 @@ export interface genEnumProp {
   alias?: string;
 }
 
-export var codeData: Array<genComponent> = [
+export var source: genSource = {
+  enums:[
+    { name: 'color', values: ['standard', 'colRed', 'colOrange', 'colYellow', 'colOlive', 'colGreen', 'colTeal', 'colBlue', 'colViolet', 'colPurple', 'colPink', 'colBrown', 'colGrey', 'colBlack'],
+      alias: `, { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black'}` },
+    { name: 'size', values: ['standard', 's3', 'mini', 's2', 'tiny', 's1', 'small', '1', 'large', '2', 'big', '3', 'huge', '4', 'massive'],
+      alias: `, { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' }`},
+    { name: 'floated', values: ['no', 'floatedLeft', 'floatedRight'] ,
+      alias: `, { $floatedLeft: 'leftFloated', $floatedRight:'rightFloated'}`},
+  ],
+  codeData:[
   {
     name: 'button',
     locked: true,
@@ -328,17 +342,17 @@ export interface animateTo {
     enumProps: [
     ]
   },
-];
+]};
 
 export var genData: { [name: string]: genComponent; } = {};
 
 function genInit() {
-  codeData.forEach(c => { if (c.type == undefined) c.type = genComponentType.elements; })
-  codeData = codeData.sort((a, b) => {
+  source.codeData.forEach(c => { if (c.type == undefined) c.type = genComponentType.elements; })
+  source.codeData = source.codeData.sort((a, b) => {
     if (a.type != b.type) return a.type > b.type ? 1 : -1;
     return a.name.localeCompare(b.name);
   });
-  codeData.forEach(c => genData[c.name] = c);
+  source.codeData.forEach(c => genData[c.name] = c);
 }
 
 genInit();
