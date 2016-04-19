@@ -8,9 +8,9 @@ import {
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest
-} from '../../exports';
+} from '../../common/exports';
 
-import * as ui from '../../exports';
+import * as ui from '../../common/exports';
 
 export const SegmentTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>

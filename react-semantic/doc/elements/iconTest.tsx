@@ -5,8 +5,8 @@ import {
   Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, floated, attachedButton, iconLabel,
   Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
-} from '../../exports';
-import * as ui from '../../exports';
+} from '../../common/exports';
+import * as ui from '../../common/exports';
 
 export const IconTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>

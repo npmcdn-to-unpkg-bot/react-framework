@@ -9,9 +9,9 @@ import {
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
   Flag, flag, flagShort,
 
-} from '../../exports';
+} from '../../common/exports';
 
-import * as ui from '../../exports';
+import * as ui from '../../common/exports';
 
 export const FlagTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>

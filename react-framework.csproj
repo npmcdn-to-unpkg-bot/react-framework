@@ -58,10 +58,10 @@
     <TypeScriptCompile Include="apps\test-config.ts" />
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
-    <TypeScriptCompile Include="react-semantic\sourceForGenerated.ts" />
-    <TypeScriptCompile Include="react-semantic\generated.ts" />
-    <TypeScriptCompile Include="react-semantic\largeEnums.ts" />
-    <TypeScriptCompile Include="react-semantic\codeGenerator.tsx" />
+    <TypeScriptCompile Include="react-semantic\common\sourceForGenerated.ts" />
+    <TypeScriptCompile Include="react-semantic\common\generated.ts" />
+    <TypeScriptCompile Include="react-semantic\common\largeEnums.ts" />
+    <TypeScriptCompile Include="react-semantic\common\codeGenerator.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
@@ -71,8 +71,8 @@
     <TypeScriptCompile Include="react-semantic\doc\elements\segmentTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\labelTest.tsx" />
     <None Include="trash\segment.tsx_" />
-    <TypeScriptCompile Include="react-semantic\lib.ts" />
-    <TypeScriptCompile Include="react-semantic\exports.ts" />
+    <TypeScriptCompile Include="react-semantic\common\lib.ts" />
+    <TypeScriptCompile Include="react-semantic\common\exports.ts" />
     <None Include="trash\label.tsx_" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 import * as tests from '../test-config';
 
-import {CodeGenerator, CodeGenerator2} from '../../react-semantic/codeGenerator';
+import {CodeGenerator, CodeGenerator2} from '../../react-semantic/common/codeGenerator';
 
 import {
   color, size,
@@ -14,8 +14,8 @@ import {
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
   FlagTest, 
-} from '../../react-semantic/exports';
-import * as ui from '../../react-semantic/exports';
+} from '../../react-semantic/common/exports';
+import * as ui from '../../react-semantic/common/exports';
 
 var moduleId = 'testReactSemantic';
 

@@ -53,9 +53,9 @@ ButtonIcon,
 ButtonAnimated, 
 ButtonSocial,
 Buttons, 
-} from './elements/button';
-export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from './doc/elements/buttonTest';
-export {IconTest} from './doc/elements/iconTest';
-export {LabelTest} from './doc/elements/labelTest';
-export {SegmentTest} from './doc/elements/segmentTest';
-export {FlagTest} from './doc/elements/flagTest';
+} from '../elements/button';
+export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from '../doc/elements/buttonTest';
+export {IconTest} from '../doc/elements/iconTest';
+export {LabelTest} from '../doc/elements/labelTest';
+export {SegmentTest} from '../doc/elements/segmentTest';
+export {FlagTest} from '../doc/elements/flagTest';

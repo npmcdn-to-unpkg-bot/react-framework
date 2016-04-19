@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as ui from '../lib';
+import * as ui from '../common/lib';
 import {
   Button, ButtonProps, buttonPropsDescr,
   ButtonAnimatedProps, buttonAnimatedPropsDescr, animate, animateTo,
@@ -9,8 +9,8 @@ import {
   ButtonSocialProps, buttonSocialPropsDescr, social,
   ButtonsProps, buttonsPropsDescr, eqWidth,
   LabelProps, IconProps
-} from '../generated';
-import { Label, Icon} from '../exports';
+} from '../common/generated';
+import { Label, Icon} from '../common/exports';
 
 //******************* ButtonAnimated
 export const ButtonAnimated: ui.StatelessComponent<ButtonAnimatedProps> = pr => {
