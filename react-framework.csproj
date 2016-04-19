@@ -62,61 +62,19 @@
     <TypeScriptCompile Include="react-semantic\generated.ts" />
     <TypeScriptCompile Include="react-semantic\largeEnums.ts" />
     <TypeScriptCompile Include="react-semantic\codeGenerator.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\breadcrumb.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\breadcrumbTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\form.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\grid.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\menu.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\message.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\table.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\tableTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\messageTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\menuTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\formTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\collections\gridTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\buttonTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\divider.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\header.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\image.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\input.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\list.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\listTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\loader.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\loaderTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\rail.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
-    <TypeScriptCompile Include="react-semantic\elements\dividerTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\headerTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\imageTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\inputTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\railTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\reveal.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\revealTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\step.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\stepTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\flagTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\iconTest.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\flagTest.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\iconTest.tsx" />
     <None Include="trash\icon.tsx_" />
-    <TypeScriptCompile Include="react-semantic\elements\segmentTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\elements\labelTest.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\segmentTest.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\labelTest.tsx" />
     <None Include="trash\segment.tsx_" />
     <TypeScriptCompile Include="react-semantic\lib.ts" />
     <TypeScriptCompile Include="react-semantic\exports.ts" />
     <None Include="trash\label.tsx_" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\adTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\card.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\cardTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\comment.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\commentTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\feed.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\feedTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\item.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\itemTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\statistic.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\statisticTest.tsx" />
-    <TypeScriptCompile Include="react-semantic\views\ad.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />
     <TypeScriptCompile Include="trash\flux.tsx" />
     <TypeScriptCompile Include="react-framework\flux.tsx" />
@@ -141,7 +99,10 @@
   <ItemGroup>
     <Reference Include="System.Web" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="react-semantic\collections\" />
+    <Folder Include="react-semantic\views\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>

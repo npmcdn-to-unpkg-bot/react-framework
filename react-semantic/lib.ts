@@ -1,7 +1,4 @@
-﻿import * as ui from './exports';
-export {icon} from  './exports';
-
-export type convertResult = string | {};
+﻿export type convertResult = string | {};
 export abstract class propConverter {
   abstract convert(propName: string, val): convertResult;
 }
@@ -22,18 +19,18 @@ export function enumToClass<T extends number>(enumType, val: T): string {
   return res == 'standard' || res == 'no' ? '' : res;
 }
 
-export class boolConverter extends ui.propConverter {
+export class boolConverter extends propConverter {
   constructor(valueExample: boolean, private ignoreGen?:boolean) { super(); }
-  convert(propName: string, val): ui.convertResult {
+  convert(propName: string, val): convertResult {
     if (this.ignoreGen) return '';
     if (propName[0] == '$') propName = propName.substr(1);
     return val ? propName : null;
   }
 }
 
-export class enumConverter<T> extends ui.propConverter {
+export class enumConverter<T> extends propConverter {
   constructor(public enumType, valueExample: T) { super(); }
-  convert(propName: string, val): ui.convertResult {
+  convert(propName: string, val): convertResult {
     let res = typeof val == 'number' ? this.enumType[val] as string : val as string; if (res == 'standard' || res == 'no') return res;
     var temp = propsToHTMLClass[res]; res = temp ? temp : res; //nahrada spatne hodnoty spravnou, napr. IPropsPointing.pointingAbove => pointing
     if (res[0] == '$') res = res.substr(1);
@@ -42,8 +39,8 @@ export class enumConverter<T> extends ui.propConverter {
   }
 }
 
-export function createDescr<T extends ui.IProps>(create: (val: T) => ui.TPropsDescr, ancestor?: ui.TPropsDescr): ui.TPropsDescr {
-  var res: ui.TPropsDescr = ancestor ? Object.assign({}, ancestor) : {};
+export function createDescr<T extends IProps>(create: (val: T) => TPropsDescr, ancestor?: TPropsDescr): TPropsDescr {
+  var res: TPropsDescr = ancestor ? Object.assign({}, ancestor) : {};
   Object.assign(res, create({} as T));
   return res;
 }
@@ -52,9 +49,9 @@ export interface projectionResult {
   used: { [propName: string]: any; };
   usedTodo: { [propName: string]: any; };
   rest: { [propName: string]: any; };
-  maskUsed: ui.TPropsDescr;
+  maskUsed: TPropsDescr;
 }
-export function projection(source: {}, mask: ui.TPropsDescr): projectionResult {
+export function projection(source: {}, mask: TPropsDescr): projectionResult {
   let res: projectionResult = { used: {}, rest: {}, maskUsed: {}, usedTodo: {} };
   for (var id in source) {
     var val = source[id];
@@ -69,7 +66,7 @@ export function projection(source: {}, mask: ui.TPropsDescr): projectionResult {
   return res;
 }
 
-export function enumValToProp<T extends ui.IProps>(props: T): T {
+export function enumValToProp<T extends IProps>(props: T): T {
   var res = Object.assign({}, props);
   for (var propId in res) {
     var propInfo = enumValueToProp[propId]; if (!propInfo) continue;
@@ -78,10 +75,10 @@ export function enumValToProp<T extends ui.IProps>(props: T): T {
   return res;
 }
 
-export function propsToClasses(init: Array<ui.convertResult>, src: projectionResult): {} {
-  var parts: Array<ui.convertResult> = init ? init : [];
+export function propsToClasses(init: Array<convertResult>, src: projectionResult): {} {
+  var parts: Array<convertResult> = init ? init : [];
   for (var p in src.used) {
-    var val = src.used[p]; var converter: ui.propConverter = src.maskUsed[p];
+    var val = src.used[p]; var converter: propConverter = src.maskUsed[p];
     parts.push(converter.convert(p, val));
   }
   if (src.rest['className']) { parts.push(src.rest['className']); } //delete src.rest['className']; }

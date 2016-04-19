@@ -7,20 +7,11 @@ import {
   Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
-  Divider,
   Flag, flag, flagShort,
-  Header,
-  Image,
-  Input,
-  List,
-  Loader,
-  Rail,
-  Reveal,
-  Step
 
-} from '../exports';
+} from '../../exports';
 
-import * as ui from '../exports';
+import * as ui from '../../exports';
 
 export const FlagTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>

@@ -21,7 +21,11 @@ export const CodeGenerator: React.StatelessComponent<any> = dt => {
 export const CodeGenerator2: React.StatelessComponent<any> = dt => {
   return <div>
     <pre>
-      {`//********* This code is generated - do not modify it!
+      {`import * as React from 'react';
+import * as ui from './lib';
+import {icon, flag, flagShort} from './largeEnums';
+
+//********* This code is generated - do not modify it!
 
 //content for "import {} from '???/exports"'
 /*
@@ -36,10 +40,6 @@ export {
       {UsesExport(UsesExportType.generatedExports) }
 {`} from './generated';
 */
-
-import * as React from 'react';
-import * as ui from './lib';
-import {icon, flag, flagShort} from './largeEnums';
 
 export interface IPropsIconProp {}
 `}

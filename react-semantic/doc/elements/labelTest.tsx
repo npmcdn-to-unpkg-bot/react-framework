@@ -6,8 +6,8 @@ import {
   Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
   Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
-} from '../exports';
-import * as ui from '../exports';
+} from '../../exports';
+import * as ui from '../../exports';
 
 export const LabelTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
