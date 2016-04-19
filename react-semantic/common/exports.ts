@@ -10,14 +10,14 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {
-animate, animateTo, color, size, floated,
+animate, animateTo, color, size, floated, aligned, column,
 Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
 ButtonIconProps, iconLabel,
 ButtonLabeledProps,
 ButtonsProps, eqWidth,
 ButtonSocialProps, social,
-DividerProps,
+Divider, DividerProps,
 Flag, FlagProps,
 HeaderProps,
 Icon, IconProps, flipped, rotated, circularIcon, bordered,
@@ -30,7 +30,7 @@ ListProps,
 LoaderProps,
 RailProps,
 RevealProps,
-Segment, SegmentProps, raised, attachedSegment, padded, emphasis, aligned,
+Segment, SegmentProps, raised, attachedSegment, padded, emphasis,
 Segments, SegmentsProps, raisedSegments,
 StepProps,
 AdProps,
@@ -40,10 +40,12 @@ FeedProps,
 ItemProps,
 StatisticProps,
 BreadcrumbProps,
+Column, ColumnProps, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
 FormProps,
-GridProps,
+Grid, GridProps,
 MenuProps,
 MessageProps,
+Row, RowProps,
 TableProps,
 } from './generated';
 
@@ -55,7 +57,9 @@ ButtonSocial,
 Buttons, 
 } from '../elements/button';
 export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from '../doc/elements/buttonTest';
+export {GridTest} from '../doc/collections/gridTest';
 export {IconTest} from '../doc/elements/iconTest';
 export {LabelTest} from '../doc/elements/labelTest';
 export {SegmentTest} from '../doc/elements/segmentTest';
 export {FlagTest} from '../doc/elements/flagTest';
+

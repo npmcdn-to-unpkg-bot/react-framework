@@ -6,18 +6,31 @@ import * as tests from '../test-config';
 import {CodeGenerator, CodeGenerator2} from '../../react-semantic/common/codeGenerator';
 
 import {
-  color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, floated, attachedButton, animate, iconLabel, eqWidth,
-  Label, Labels, pointing, corner, attachedLabel, ribbon,
-  Icon, icon,
-  Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
+  icon, flag, flagShort, color, size, floated, aligned, column,
+  Button, attachedButton,
+  ButtonAnimated,
+  ButtonIcon, iconLabel,
+  ButtonLabeled,
+  Buttons, eqWidth,
+  ButtonSocial, social,
+  Divider,
+  Flag,
+  Icon, flipped, rotated, circularIcon, bordered,
+  Icons,
+  Label, pointing, corner, attachedLabel, circularLabel, ribbon,
+  Labels,
+  Segment, raised, attachedSegment, padded, emphasis,
+  Segments, raisedSegments,
+  Column, wide,
+  Grid,
+  Row,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
-  FlagTest, 
+  FlagTest, GridTest,
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
-var moduleId = 'testReactSemantic';
+var moduleId = 'testReactSemantic;'
 
 //****************** Main Entry Point
 export function init() {
@@ -44,11 +57,12 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <CodeGenerator2/>
+      <GridTest/>
       {/*
       <CodeGenerator2/>
       <CodeGenerator/>
       <ComponentGen comp={genData['divider']}/>
+      <GridTest/>
       <FlagTest/>
       <SegmentTest/>
       <IconTest/><hr/>

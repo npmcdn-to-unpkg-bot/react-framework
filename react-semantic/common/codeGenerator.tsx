@@ -19,6 +19,7 @@ export const CodeGenerator: React.StatelessComponent<any> = dt => {
 };
 
 export const CodeGenerator2: React.StatelessComponent<any> = dt => {
+  let commonEnums = 'color, size, floated, aligned, column,';
   return <div>
     <pre>
       {`import * as React from 'react';
@@ -29,14 +30,14 @@ import {icon, flag, flagShort} from './largeEnums';
 
 //content for "import {} from '???/exports"'
 /*
-  color, size, floated, icon, flag, flagShort,`}
+  icon, flag, flagShort, ${commonEnums}`}
       {UsesExport(UsesExportType.import) }
       {`*/
 
 //content for "export {} from '/.generated"'
 /*
 export {
-  animate, animateTo, color, size, floated,`}
+  animate, animateTo, ${commonEnums}`}
       {UsesExport(UsesExportType.generatedExports) }
 {`} from './generated';
 */
@@ -167,7 +168,7 @@ export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val =>
 export const ${up(comp.name)}: ui.StatelessComponent<${up(comp.name)}Props> = pr => {
   var props: ${up(comp.name)}Props = ui.enumValToProp(pr);
   var rest = ui.propsToClasses([${comp.autoClass}], ui.projection(props, ${comp.name}PropsDescr));
-  return React.createElement(${comp.autoTag}, rest);
+  return React.createElement(${comp.autoTag}, rest, pr.children);
 }
 
 `}

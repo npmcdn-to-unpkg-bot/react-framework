@@ -24,7 +24,7 @@ export class boolConverter extends propConverter {
   convert(propName: string, val): convertResult {
     if (this.ignoreGen) return '';
     if (propName[0] == '$') propName = propName.substr(1);
-    return val ? propName : null;
+    return val ? decodeValue(propName): null;
   }
 }
 
@@ -34,9 +34,15 @@ export class enumConverter<T> extends propConverter {
     let res = typeof val == 'number' ? this.enumType[val] as string : val as string; if (res == 'standard' || res == 'no') return res;
     var temp = propsToHTMLClass[res]; res = temp ? temp : res; //nahrada spatne hodnoty spravnou, napr. IPropsPointing.pointingAbove => pointing
     if (res[0] == '$') res = res.substr(1);
-    let parts = res.split(/(?=[A-Z])/);
-    return parts.map(p => p.toLowerCase()).join(' ');
+    return decodeValue(res);
+    //let parts = res.split(/(?=[A-Z])/);
+    //return parts.map(p => p.toLowerCase()).join(' ');
   }
+}
+
+function decodeValue(val: string): string {
+  let parts = val.split(/(?=[A-Z])/);
+  return parts.map(p => p.toLowerCase()).join(' ');
 }
 
 export function createDescr<T extends IProps>(create: (val: T) => TPropsDescr, ancestor?: TPropsDescr): TPropsDescr {

@@ -62,6 +62,7 @@
     <TypeScriptCompile Include="react-semantic\common\generated.ts" />
     <TypeScriptCompile Include="react-semantic\common\largeEnums.ts" />
     <TypeScriptCompile Include="react-semantic\common\codeGenerator.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\collections\gridTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
