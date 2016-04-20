@@ -66,7 +66,9 @@
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\dividerTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\flagTest.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\containerTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\iconTest.tsx" />
     <None Include="trash\icon.tsx_" />
     <TypeScriptCompile Include="react-semantic\doc\elements\segmentTest.tsx" />

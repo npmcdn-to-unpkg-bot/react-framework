@@ -26,7 +26,7 @@ import {
   Row,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
-  FlagTest, GridTest,
+  FlagTest, GridTest, ContainerTest, DividerTest,
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
@@ -57,12 +57,12 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <GridTest/>
+      <DividerTest/>
       {/*
       <CodeGenerator2/>
       <CodeGenerator/>
-      <ComponentGen comp={genData['divider']}/>
-      <GridTest/>
+      <DividerTest/>
+      <ContainerTest/>
       <FlagTest/>
       <SegmentTest/>
       <IconTest/><hr/>

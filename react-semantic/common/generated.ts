@@ -13,7 +13,8 @@ import {icon, flag, flagShort} from './largeEnums';
   ButtonLabeled,
   Buttons, eqWidth,
   ButtonSocial, social,
-  Divider,
+  Container, alignedContainer,
+  Divider, divider,
   Flag,
   Header,
   Icon, flipped, rotated, circularIcon, bordered,
@@ -55,7 +56,8 @@ export {
   ButtonLabeledProps,
   ButtonsProps, eqWidth,
   ButtonSocialProps, social,
-  Divider, DividerProps,
+  Container, ContainerProps, alignedContainer,
+  Divider, DividerProps, divider,
   Flag, FlagProps,
   HeaderProps,
   Icon, IconProps, flipped, rotated, circularIcon, bordered,
@@ -284,15 +286,61 @@ export var buttonSocialPropsDescr = ui.createDescr<ButtonSocialProps>(val => {
 }, buttonPropsDescr);
 
 //**************************************************************
-//*   DIVIDER
-//**************************************************************    
-export interface DividerProps extends ui.IProps {
+//*   CONTAINER
+//**************************************************************
 
+export enum alignedContainer { no, $alignedLeft, $alignedCenter, $alignedRight, }
+ui.registerEnum(alignedContainer, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', });
+export interface IPropsAlignedContainerProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; }
+
+export interface ContainerProps extends ui.IProps, IPropsAlignedContainerProp {
+  $Aligned?: alignedContainer;
+  $text?: boolean;
+  $justified?: boolean;
+  $fluid?: boolean;
+}
+
+export var containerPropsDescr = ui.createDescr<ContainerProps>(val => {
+  return {
+    $Aligned: new ui.enumConverter<alignedContainer>(alignedContainer, val.$Aligned),
+    $text: new ui.boolConverter(val.$text),
+    $justified: new ui.boolConverter(val.$justified),
+    $fluid: new ui.boolConverter(val.$fluid)
+  };
+});
+
+export const Container: ui.StatelessComponent<ContainerProps> = pr => {
+  var props: ContainerProps = ui.enumValToProp(pr);
+  var rest = ui.propsToClasses(['ui container'], ui.projection(props, containerPropsDescr));
+  return React.createElement('div', rest, pr.children);
+}
+
+
+//**************************************************************
+//*   DIVIDER
+//**************************************************************
+
+export enum divider { standard, $horizontal, $vertical, }
+ui.registerEnum(divider, '$Divider');
+export interface IPropsDividerProp { $horizontal?: boolean; $vertical?: boolean; }
+
+export interface DividerProps extends ui.IProps, IPropsDividerProp {
+  $Divider?: divider;
+  $clearing?: boolean;
+  $section?: boolean;
+  $hidden?: boolean;
+  $fitted?: boolean;
+  $inverted?: boolean;
 }
 
 export var dividerPropsDescr = ui.createDescr<DividerProps>(val => {
   return {
-
+    $Divider: new ui.enumConverter<divider>(divider, val.$Divider),
+    $clearing: new ui.boolConverter(val.$clearing),
+    $section: new ui.boolConverter(val.$section),
+    $hidden: new ui.boolConverter(val.$hidden),
+    $fitted: new ui.boolConverter(val.$fitted),
+    $inverted: new ui.boolConverter(val.$inverted)
   };
 });
 
@@ -625,6 +673,10 @@ export interface SegmentProps extends ui.IProps, IPropsRaisedProp, IPropsAttache
   $circular?: boolean;
   $clearing?: boolean;
   $basic?: boolean;
+  $container?: boolean;
+  $containerText?: boolean;
+  $header?: boolean;
+  $outerTag?: string;
 }
 
 export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
@@ -643,14 +695,17 @@ export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
     $compact: new ui.boolConverter(val.$compact),
     $circular: new ui.boolConverter(val.$circular),
     $clearing: new ui.boolConverter(val.$clearing),
-    $basic: new ui.boolConverter(val.$basic)
+    $basic: new ui.boolConverter(val.$basic),
+    $container: new ui.boolConverter(val.$container),
+    $containerText: new ui.boolConverter(val.$containerText, false, 'text'),
+    $header: new ui.boolConverter(val.$header)
   };
 });
 
 export const Segment: ui.StatelessComponent<SegmentProps> = pr => {
   var props: SegmentProps = ui.enumValToProp(pr);
   var rest = ui.propsToClasses(['ui segment'], ui.projection(props, segmentPropsDescr));
-  return React.createElement('div', rest, pr.children);
+  return React.createElement(props.$outerTag ? props.$outerTag : 'div', rest, pr.children);
 }
 
 
@@ -894,6 +949,7 @@ export interface GridProps extends ui.IProps, IPropsDividedProp, IPropsCelledPro
   $stackable?: boolean;
   $container?: boolean;
   $reversed?: boolean;
+  $doubling?: boolean;
 }
 
 export var gridPropsDescr = ui.createDescr<GridProps>(val => {
@@ -909,7 +965,8 @@ export var gridPropsDescr = ui.createDescr<GridProps>(val => {
     $centered: new ui.boolConverter(val.$centered),
     $stackable: new ui.boolConverter(val.$stackable),
     $container: new ui.boolConverter(val.$container),
-    $reversed: new ui.boolConverter(val.$reversed)
+    $reversed: new ui.boolConverter(val.$reversed),
+    $doubling: new ui.boolConverter(val.$doubling)
   };
 });
 

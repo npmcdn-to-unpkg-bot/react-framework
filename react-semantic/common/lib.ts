@@ -20,11 +20,11 @@ export function enumToClass<T extends number>(enumType, val: T): string {
 }
 
 export class boolConverter extends propConverter {
-  constructor(valueExample: boolean, private ignoreGen?:boolean) { super(); }
+  constructor(valueExample: boolean, private ignoreGen?:boolean, private alias?:string) { super(); }
   convert(propName: string, val): convertResult {
     if (this.ignoreGen) return '';
     if (propName[0] == '$') propName = propName.substr(1);
-    return val ? decodeValue(propName): null;
+    return val ? decodeValue(this.alias ? this.alias : propName) : null;
   }
 }
 

@@ -246,5 +246,17 @@ export const GridTest: ui.StatelessComponent<ui.IProps> = props => {
         </Col>
       </Row>
     </Grid>
+
+    <h2>Containers Using Grids</h2>
+    <Grid $container $fourColumn $doubling $stackable><Column/><Column/><Column/><Column/></Grid>
+
+    <h2>Manual Tweaks</h2>
+    <Grid $centered>
+      <Column $sixteenWideMobile $eightWideTablet $fourWideComputer />
+      <Column $sixteenWideMobile $eightWideTablet $fourWideComputer />
+      <Column $sixteenWideMobile $eightWideTablet $fourWideComputer />
+      <Column $sixteenWideMobile $eightWideTablet $fourWideComputer />
+      <Column $sixteenWideMobile $eightWideTablet $fourWideComputer />
+    </Grid>
   </div>;
 };

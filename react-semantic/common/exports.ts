@@ -17,7 +17,8 @@ ButtonIconProps, iconLabel,
 ButtonLabeledProps,
 ButtonsProps, eqWidth,
 ButtonSocialProps, social,
-Divider, DividerProps,
+Container, ContainerProps, alignedContainer,
+Divider, DividerProps, divider,
 Flag, FlagProps,
 HeaderProps,
 Icon, IconProps, flipped, rotated, circularIcon, bordered,
@@ -42,7 +43,7 @@ StatisticProps,
 BreadcrumbProps,
 Column, ColumnProps, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
 FormProps,
-Grid, GridProps,
+Grid, GridProps, divided, celled, paddedGrid,
 MenuProps,
 MessageProps,
 Row, RowProps,
@@ -62,4 +63,7 @@ export {IconTest} from '../doc/elements/iconTest';
 export {LabelTest} from '../doc/elements/labelTest';
 export {SegmentTest} from '../doc/elements/segmentTest';
 export {FlagTest} from '../doc/elements/flagTest';
+export {ContainerTest} from '../doc/elements/containerTest';
+export {DividerTest} from '../doc/elements/dividerTest';
+
 

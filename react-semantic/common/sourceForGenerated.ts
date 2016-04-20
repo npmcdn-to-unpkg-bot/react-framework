@@ -22,6 +22,7 @@ export interface genComponent {
 export interface genBoolProp {
   name: string;
   ignore?: boolean;
+  alias?: string;
 }
 
 export interface genEnumProp {
@@ -52,16 +53,38 @@ export var source: genSource = {
     },
     { name: 'column', values: ['no', 'twoColumn', 'threeColumn', 'fourColumn', 'fiveColumn', 'sixColumn', 'sevenColumn', 'eightColumn', 'nineColumn', 'tenColumn', 'elevenColumn', 'twelveColumn', 'thirteenColumn', 'fourteenColumn', 'fifteenColumn', 'sixteenColumn'] },
     { name: 'deviceOnlyGrid', values: ['no', 'mobileOnly', 'tabletOnly', 'computerOnly', 'largeScreenOnly', 'widescreenOnly'] },
-    { name: 'relaxed', values: ['no', 'relaxed', 'relaxedVery'], alias:`, {$relaxedVery: 'veryRelaxed'}` },
+    { name: 'relaxed', values: ['no', 'relaxed', 'relaxedVery'], alias: `, {$relaxedVery: 'veryRelaxed'}` },
   ],
   codeData: [
+    {
+      name: 'divider',
+      autoClass: `'ui divider'`,
+      autoTag: `'div'`,
+      boolProps: [{ name: 'clearing' }, { name: 'section' }, { name: 'hidden' }, { name: 'fitted' }, { name: 'inverted' }],
+      enumProps: [
+        { name: 'divider', values:['standard', 'horizontal', 'vertical'] }
+      ]
+    },
+    {
+      name: 'container',
+      autoClass: `'ui container'`,
+      autoTag: `'div'`,
+      type: genComponentType.elements,
+      boolProps: [{ name: 'text' }, { name: 'justified' }, { name: 'fluid' }],
+      enumProps: [
+        {
+          name: 'alignedContainer', aliasPropName: 'Aligned', values: ['no', 'alignedLeft', 'alignedCenter', 'alignedRight',], alias
+          : `, { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned', } `
+        },
+      ]
+    },
     {
       name: 'grid',
       autoClass: `'ui grid'`,
       autoTag: `'div'`,
       type: genComponentType.collections,
       boolProps: [
-        { name: 'internallyCelled' }, { name: 'equalWidth' }, { name: 'centered' }, { name: 'stackable' }, { name: 'container' }, { name: 'reversed' }
+        { name: 'internallyCelled' }, { name: 'equalWidth' }, { name: 'centered' }, { name: 'stackable' }, { name: 'container' }, { name: 'reversed' }, { name: 'doubling' }
       ],
       enumProps: [
         { name: 'divided', values: ['no', 'dividedHorizontally', 'dividedVertically'], alias: `, {$dividedHorizontally:'divided', $dividedVertically:'verticallyDivided'}` },
@@ -233,9 +256,12 @@ export interface animateTo {
     }, {
       name: 'segment',
       autoClass: `'ui segment'`,
-      autoTag: `'div'`,
-      locked: true,
-      boolProps: [{ name: 'vertical' }, { name: 'disabled' }, { name: 'loading' }, { name: 'inverted' }, { name: 'compact' }, { name: 'circular' }, { name: 'clearing' }, { name: 'basic' }],
+      autoTag: `props.$outerTag ? props.$outerTag : 'div'`,
+      otherProps: '  $outerTag?: string;',
+      boolProps: [{ name: 'vertical' }, { name: 'disabled' }, { name: 'loading' }, { name: 'inverted' }, { name: 'compact' },
+        { name: 'circular' }, { name: 'clearing' }, { name: 'basic' }, { name: 'container' }, { name: 'containerText', alias: 'text' },
+        //{ name: 'header' } ?? k cemu je, viz divider example
+      ],
       enumProps: [
         { name: 'raised', values: ['no', 'raisedStandard', 'raisedStacked', 'raisedPiled', 'raisedStackedTall'], alias: `, { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedStackedTall: 'stackedTall', $raisedPiled: 'piled' } ` },
         { name: 'attachedSegment', aliasPropName: 'Attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedBoth'], alias: `, { $attachedBoth: 'attached'} ` },
@@ -265,14 +291,6 @@ export interface animateTo {
       boolProps: [],
       enumProps: [
         { name: 'color', isSystem: true }
-      ]
-    },
-    {
-      name: 'divider',
-      autoClass: `'ui divider'`,
-      autoTag: `'div'`,
-      boolProps: [],
-      enumProps: [
       ]
     },
     {
