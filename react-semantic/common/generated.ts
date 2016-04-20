@@ -6,7 +6,7 @@ import {icon, flag, flagShort} from './largeEnums';
 
 //content for "import {} from '???/exports"'
 /*
-  icon, flag, flagShort, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, attached, 
+  icon, flag, flagShort, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, 
   Button, attachedButton,
   ButtonAnimated,
   ButtonIcon, iconLabel,
@@ -16,10 +16,11 @@ import {icon, flag, flagShort} from './largeEnums';
   Container,
   Divider, divider,
   Flag,
-  Header, sizeHeader, outerTag, subHeader,
+  Header, sizeHeader, outerTagHeader, subHeader,
   Icon, flipped, rotated, circularIcon, bordered,
   Icons,
-  Image,
+  Image, outerTagImage,
+  Images,
   Input,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels,
@@ -49,7 +50,7 @@ import {icon, flag, flagShort} from './largeEnums';
 //content for "export {} from '/.generated"'
 /*
 export {
-  animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, attached, 
+  animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, 
   Button, ButtonProps, attachedButton,
   ButtonAnimatedProps,
   ButtonIconProps, iconLabel,
@@ -59,10 +60,11 @@ export {
   Container, ContainerProps,
   Divider, DividerProps, divider,
   Flag, FlagProps,
-  Header, HeaderProps, sizeHeader, outerTag, subHeader,
+  Header, HeaderProps, sizeHeader, outerTagHeader, subHeader,
   Icon, IconProps, flipped, rotated, circularIcon, bordered,
   Icons, IconsProps,
-  ImageProps,
+  ImageProps, outerTagImage,
+  Images, ImagesProps,
   InputProps,
   Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels, LabelsProps,
@@ -123,6 +125,10 @@ export interface IPropsRelaxedProp { $relaxed?: boolean; $relaxedVery?: boolean;
 export enum textAligned { no, $alignedLeft, $alignedCenter, $alignedRight, }
 ui.registerEnum(textAligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', });
 export interface IPropsTextAlignedProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; }
+
+export enum verticalAligned { no, $alignedTop = 4, $alignedBottom = 5, $alignedMiddle = 6, }
+ui.registerEnum(verticalAligned, '$Aligned', { $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
+export interface IPropsVerticalAlignedProp { $alignedTop?: boolean; $alignedBottom?: boolean; $alignedMiddle?: boolean; }
 
 export enum attached { no, $attachedTop, $attachedBottom, $attachedBoth, }
 ui.registerEnum(attached, '$Attached', { $attachedBoth: 'attached' });
@@ -386,17 +392,17 @@ export enum sizeHeader { no, $tiny = 4, $small = 6, $large = 8, $huge = 12, $med
 ui.registerEnum(sizeHeader, '$Size');
 export interface IPropsSizeHeaderProp { $tiny?: boolean; $small?: boolean; $large?: boolean; $huge?: boolean; $medium?: boolean; }
 
-export enum outerTag { div, $h1, $h2, $h3, $h4, $h5, }
-ui.registerEnum(outerTag, '$OuterTag');
-export interface IPropsOuterTagProp { $h1?: boolean; $h2?: boolean; $h3?: boolean; $h4?: boolean; $h5?: boolean; }
+export enum outerTagHeader { no, $h1 = ui.htmlTags.h1, $h2 = ui.htmlTags.h2, $h3 = ui.htmlTags.h3, $h4 = ui.htmlTags.h4, $h5 = ui.htmlTags.h5, }
+ui.registerEnum(outerTagHeader, '$OuterTag');
+export interface IPropsOuterTagHeaderProp { $h1?: boolean; $h2?: boolean; $h3?: boolean; $h4?: boolean; $h5?: boolean; }
 
 export enum subHeader { no, $sub, $subUppercase, }
 ui.registerEnum(subHeader, '$SubHeader');
 export interface IPropsSubHeaderProp { $sub?: boolean; $subUppercase?: boolean; }
 
-export interface HeaderProps extends ui.IProps, IPropsSizeHeaderProp, IPropsOuterTagProp, IPropsAttachedProp, IPropsFloatedProp, IPropsTextAlignedProp, IPropsColorProp, IPropsSubHeaderProp {
+export interface HeaderProps extends ui.IProps, IPropsSizeHeaderProp, IPropsOuterTagHeaderProp, IPropsAttachedProp, IPropsFloatedProp, IPropsTextAlignedProp, IPropsColorProp, IPropsSubHeaderProp {
   $Size?: sizeHeader;
-  $OuterTag?: outerTag;
+  $OuterTag?: outerTagHeader;
   $Attached?: attached;
   $Floated?: floated;
   $Aligned?: textAligned;
@@ -413,7 +419,7 @@ export interface HeaderProps extends ui.IProps, IPropsSizeHeaderProp, IPropsOute
 export var headerPropsDescr = ui.createDescr<HeaderProps>(val => {
   return {
     $Size: new ui.enumConverter<sizeHeader>(sizeHeader, val.$Size),
-    $OuterTag: new ui.enumConverter<outerTag>(outerTag, val.$OuterTag),
+    $OuterTag: new ui.enumConverter<outerTagHeader>(outerTagHeader, val.$OuterTag),
     $Attached: new ui.enumConverter<attached>(attached, val.$Attached),
     $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
     $Aligned: new ui.enumConverter<textAligned>(textAligned, val.$Aligned),
@@ -431,7 +437,7 @@ export var headerPropsDescr = ui.createDescr<HeaderProps>(val => {
 export const Header: ui.StatelessComponent<HeaderProps> = pr => {
   var props: HeaderProps = ui.enumValToProp(pr, headerPropsDescr);
   var rest = ui.propsToClasses([(props.$SubHeader == subHeader.$sub ? 'sub header' : (props.$SubHeader == subHeader.$subUppercase) ? 'ui sub header' : 'ui header')], ui.projection(props, headerPropsDescr));
-  return React.createElement(outerTag[props.$OuterTag].replace('$', ''), rest, pr.children);
+  return React.createElement(props.$OuterTag ? outerTagHeader[props.$OuterTag].replace('$', '') : 'div', rest, pr.children);
 }
 
 
@@ -518,16 +524,65 @@ export const Icons: ui.StatelessComponent<IconsProps> = pr => {
 
 //**************************************************************
 //*   IMAGE
-//**************************************************************    
-export interface ImageProps extends ui.IProps {
+//**************************************************************
 
+export enum outerTagImage { no, $a = ui.htmlTags.a, }
+ui.registerEnum(outerTagImage, '$OuterTag');
+export interface IPropsOuterTagImageProp { $a?: boolean; }
+
+export interface ImageProps extends ui.IProps, IPropsSizeProp, IPropsFloatedProp, IPropsVerticalAlignedProp, IPropsOuterTagImageProp {
+  $Size?: size;
+  $Floated?: floated;
+  $Aligned?: verticalAligned;
+  $OuterTag?: outerTagImage;
+  $hidden?: boolean;
+  $disabled?: boolean;
+  $avatar?: boolean;
+  $bordered?: boolean;
+  $fluid?: boolean;
+  $rounded?: boolean;
+  $circular?: boolean;
+  $centered?: boolean;
+  $spaced?: boolean;
 }
 
 export var imagePropsDescr = ui.createDescr<ImageProps>(val => {
   return {
-
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
+    $Aligned: new ui.enumConverter<verticalAligned>(verticalAligned, val.$Aligned),
+    $OuterTag: new ui.enumConverter<outerTagImage>(outerTagImage, val.$OuterTag),
+    $hidden: new ui.boolConverter(val.$hidden),
+    $disabled: new ui.boolConverter(val.$disabled),
+    $avatar: new ui.boolConverter(val.$avatar),
+    $bordered: new ui.boolConverter(val.$bordered),
+    $fluid: new ui.boolConverter(val.$fluid),
+    $rounded: new ui.boolConverter(val.$rounded),
+    $circular: new ui.boolConverter(val.$circular),
+    $centered: new ui.boolConverter(val.$centered),
+    $spaced: new ui.boolConverter(val.$spaced)
   };
 });
+
+//**************************************************************
+//*   IMAGES
+//**************************************************************    
+export interface ImagesProps extends ui.IProps, IPropsSizeProp {
+  $Size?: size;
+}
+
+export var imagesPropsDescr = ui.createDescr<ImagesProps>(val => {
+  return {
+    $Size: new ui.enumConverter<size>(size, val.$Size)
+  };
+});
+
+export const Images: ui.StatelessComponent<ImagesProps> = pr => {
+  var props: ImagesProps = ui.enumValToProp(pr, imagesPropsDescr);
+  var rest = ui.propsToClasses(['ui images'], ui.projection(props, imagesPropsDescr));
+  return React.createElement('div', rest, pr.children);
+}
+
 
 //**************************************************************
 //*   INPUT

@@ -58,17 +58,41 @@ export var source: genSource = {
       name: 'textAligned', aliasPropName:'Aligned', values: ['no', 'alignedLeft', 'alignedCenter', 'alignedRight'], alias
       : `, { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned', } `
     },
+    {
+      name: 'verticalAligned', aliasPropName: 'Aligned', values: ['no', 'alignedTop=4', 'alignedBottom=5', 'alignedMiddle=6'], alias
+      : `, { $alignedTop:'topAligned', $alignedBottom:'bottomAligned', $alignedMiddle:'middleAligned' } `
+    },
     { name: 'attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedBoth'], alias: `, { $attachedBoth: 'attached'} ` },
   ],
   codeData: [
     {
+      name: 'image',
+      boolProps: [{ name: 'hidden' }, { name: 'disabled' }, { name: 'avatar' }, { name: 'bordered' }, { name: 'fluid' }, { name: 'rounded' }, { name: 'circular' },
+        { name: 'centered' }, { name: 'spaced' },],
+      enumProps: [
+        { name: 'size', isSystem: true },
+        { name: 'floated', isSystem: true },
+        { name: 'verticalAligned', aliasPropName: 'Aligned', isSystem: true },
+        { name: 'outerTagImage', aliasPropName: 'OuterTag', values: ['no', 'a=ui.htmlTags.a'] },
+      ]
+    },
+    {
+      name: 'images',
+      autoClass: `'ui images'`,
+      autoTag: `'div'`,
+      boolProps: [],
+      enumProps: [
+        { name: 'size', isSystem: true },
+      ]
+    },
+    {
       name: 'header',
       autoClass: `(props.$SubHeader == subHeader.$sub ? 'sub header' : (props.$SubHeader == subHeader.$subUppercase) ? 'ui sub header' : 'ui header')`,
-      autoTag: `outerTag[props.$OuterTag].replace('$','')`,
+      autoTag: `props.$OuterTag ? outerTagHeader[props.$OuterTag].replace('$','') : 'div'`,
       boolProps: [{ name: 'icon' }, { name: 'disabled' }, { name: 'dividing' }, { name: 'block' }, { name: 'inverted' }, { name: 'justified' }],
       enumProps: [
         { name: 'sizeHeader', aliasPropName: 'Size', values: ['no', 'tiny=4', 'small=6', 'large=8', 'huge=12', 'medium=99'] },
-        { name: 'outerTag', values: ['div', 'h1', 'h2', 'h3', 'h4', 'h5'] },
+        { name: 'outerTagHeader', aliasPropName:'OuterTag', values: ['no', 'h1=ui.htmlTags.h1', 'h2=ui.htmlTags.h2', 'h3=ui.htmlTags.h3', 'h4=ui.htmlTags.h4', 'h5=ui.htmlTags.h5'] },
         { name: 'attached', isSystem: true },
         { name: 'floated', isSystem: true },
         { name: 'textAligned', aliasPropName: 'Aligned', isSystem: true },
@@ -308,12 +332,6 @@ export interface animateTo {
       boolProps: [],
       enumProps: [
         { name: 'color', isSystem: true }
-      ]
-    },
-    {
-      name: 'image',
-      boolProps: [],
-      enumProps: [
       ]
     },
     {

@@ -7,7 +7,7 @@ import {
   Segment, raised, attached, padded, emphasis,
   Grid, divided, celled, paddedGrid,
   Column, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
-  Header, sizeHeader, outerTag, subHeader,
+  Header, sizeHeader, outerTagHeader, subHeader,
   Row,
 } from '../../common/exports';
 import * as ui from '../../common/exports';

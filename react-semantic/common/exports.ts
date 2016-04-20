@@ -1,7 +1,7 @@
 ﻿export {
 StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, 
 enumValToProp, enumStrings, enumNumbers,
-IProps
+IProps, htmlTags
 } from './lib';
 
 export { icon, flag, flagShort, flagMap } from './largeEnums';
@@ -10,7 +10,7 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {
-animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, attached,
+animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,
 Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
 ButtonIconProps, iconLabel,
@@ -20,10 +20,11 @@ ButtonSocialProps, social,
 Container, ContainerProps,
 Divider, DividerProps, divider,
 Flag, FlagProps,
-Header, HeaderProps, sizeHeader, outerTag, subHeader,
+Header, HeaderProps, sizeHeader, outerTagHeader, subHeader,
 Icon, IconProps, flipped, rotated, circularIcon, bordered,
 Icons, IconsProps,
-ImageProps,
+ImageProps, outerTagImage,
+Images, ImagesProps,
 InputProps,
 Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
 Labels, LabelsProps,
@@ -50,13 +51,10 @@ Row, RowProps,
 TableProps,
 } from './generated';
 
-export {
-ButtonLabeled,
-ButtonIcon,
-ButtonAnimated, 
-ButtonSocial,
-Buttons, 
-} from '../elements/button';
+
+export {ButtonLabeled, ButtonIcon, ButtonAnimated, ButtonSocial, Buttons} from '../elements/button';
+export {Image} from '../elements/image';
+
 export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from '../doc/elements/buttonTest';
 export {GridTest} from '../doc/collections/gridTest';
 export {IconTest} from '../doc/elements/iconTest';
@@ -65,4 +63,5 @@ export {SegmentTest} from '../doc/elements/segmentTest';
 export {FlagTest} from '../doc/elements/flagTest';
 export {ContainerTest} from '../doc/elements/containerTest';
 export {DividerTest} from '../doc/elements/dividerTest';
+export {ImageTest} from '../doc/elements/imageTest';
 export {HeaderTest} from '../doc/elements/headerTest';

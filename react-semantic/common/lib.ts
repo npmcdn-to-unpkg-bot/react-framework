@@ -5,6 +5,17 @@ export abstract class propConverter {
 export type TPropsDescr = { [propName: string]: propConverter; };
 export interface IProps extends React.HTMLAttributes { }
 
+export class htmlTags {
+  static h1 = 1;
+  static h2 = 2;
+  static h3 = 3;
+  static h4 = 4;
+  static h5 = 5;
+  static a = 6;
+  static div = 7;
+  static span = 8;
+}
+
 //-----------------------
 export interface StatelessComponent<T> extends React.StatelessComponent<React.Props<any> & T> { }
 
