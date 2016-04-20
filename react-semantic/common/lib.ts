@@ -72,8 +72,13 @@ export function projection(source: {}, mask: TPropsDescr): projectionResult {
   return res;
 }
 
-export function enumValToProp<T extends IProps>(props: T): T {
-  var res = Object.assign({}, props);
+export function enumValToProp<T extends IProps>(props: T, allProps?: TPropsDescr): T {
+  var initEnums = {};
+  for (var p in allProps) {
+    var propDescr = allProps[p] as enumConverter<any>; if (!(propDescr instanceof enumConverter)) continue;
+    if (propDescr.enumType[0] != 'no') initEnums[p] =  0;
+  }
+  var res = Object.assign(initEnums, props);
   for (var propId in res) {
     var propInfo = enumValueToProp[propId]; if (!propInfo) continue;
     res[propInfo.propName] = propInfo.enumType[propId]; delete res[propId]; 

@@ -1,10 +1,15 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {
-  animate, animateTo, color, size, floated, aligned, column, icon,
+  animate, animateTo, color, size, floated, textAligned, column, icon,
   Divider, DividerProps, divider,
-  Container, alignedContainer,  Segment, raised, attachedSegment, padded, emphasis,  Grid, divided, celled, paddedGrid,  Column, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
-  Row,  Icon,} from '../../common/exports';
+  Container,
+  Segment, raised, attached, padded, emphasis,
+  Grid, divided, celled, paddedGrid,
+  Column, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
+  Row,
+  Icon,
+} from '../../common/exports';
 import * as ui from '../../common/exports';
 
 export const DividerTest: ui.StatelessComponent<ui.IProps> = props => {

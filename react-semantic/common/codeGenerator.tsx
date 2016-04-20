@@ -19,7 +19,7 @@ export const CodeGenerator: React.StatelessComponent<any> = dt => {
 };
 
 export const CodeGenerator2: React.StatelessComponent<any> = dt => {
-  let commonEnums = 'color, size, floated, aligned, column,';
+  let commonEnums = g.source.enums.map(en => en.name + ', ').join('');
   return <div>
     <pre>
       {`import * as React from 'react';
@@ -169,7 +169,7 @@ export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val =>
     {!comp.autoTag ? '' : `
 
 export const ${up(comp.name)}: ui.StatelessComponent<${up(comp.name)}Props> = pr => {
-  var props: ${up(comp.name)}Props = ui.enumValToProp(pr);
+  var props: ${up(comp.name)}Props = ui.enumValToProp(pr, ${comp.name}PropsDescr);
   var rest = ui.propsToClasses([${comp.autoClass}], ui.projection(props, ${comp.name}PropsDescr));
   return React.createElement(${comp.autoTag}, rest, pr.children);
 }

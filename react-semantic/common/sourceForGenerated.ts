@@ -36,11 +36,11 @@ export interface genEnumProp {
 export var source: genSource = {
   enums: [
     {
-      name: 'color', values: ['standard', 'colRed', 'colOrange', 'colYellow', 'colOlive', 'colGreen', 'colTeal', 'colBlue', 'colViolet', 'colPurple', 'colPink', 'colBrown', 'colGrey', 'colBlack'],
+      name: 'color', values: ['no', 'colRed', 'colOrange', 'colYellow', 'colOlive', 'colGreen', 'colTeal', 'colBlue', 'colViolet', 'colPurple', 'colPink', 'colBrown', 'colGrey', 'colBlack'],
       alias: `, { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black'}`
     },
     {
-      name: 'size', values: ['standard', 's3', 'mini', 's2', 'tiny', 's1', 'small', '1', 'large', '2', 'big', '3', 'huge', '4', 'massive'],
+      name: 'size', values: ['no', 's3', 'mini', 's2', 'tiny', 's1', 'small', '1', 'large', '2', 'big', '3', 'huge', '4', 'massive'],
       alias: `, { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' }`
     },
     {
@@ -54,15 +54,35 @@ export var source: genSource = {
     { name: 'column', values: ['no', 'twoColumn', 'threeColumn', 'fourColumn', 'fiveColumn', 'sixColumn', 'sevenColumn', 'eightColumn', 'nineColumn', 'tenColumn', 'elevenColumn', 'twelveColumn', 'thirteenColumn', 'fourteenColumn', 'fifteenColumn', 'sixteenColumn'] },
     { name: 'deviceOnlyGrid', values: ['no', 'mobileOnly', 'tabletOnly', 'computerOnly', 'largeScreenOnly', 'widescreenOnly'] },
     { name: 'relaxed', values: ['no', 'relaxed', 'relaxedVery'], alias: `, {$relaxedVery: 'veryRelaxed'}` },
+    {
+      name: 'textAligned', aliasPropName:'Aligned', values: ['no', 'alignedLeft', 'alignedCenter', 'alignedRight'], alias
+      : `, { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned', } `
+    },
+    { name: 'attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedBoth'], alias: `, { $attachedBoth: 'attached'} ` },
   ],
   codeData: [
+    {
+      name: 'header',
+      autoClass: `(props.$SubHeader == subHeader.$sub ? 'sub header' : (props.$SubHeader == subHeader.$subUppercase) ? 'ui sub header' : 'ui header')`,
+      autoTag: `outerTag[props.$OuterTag].replace('$','')`,
+      boolProps: [{ name: 'icon' }, { name: 'disabled' }, { name: 'dividing' }, { name: 'block' }, { name: 'inverted' }, { name: 'justified' }],
+      enumProps: [
+        { name: 'sizeHeader', aliasPropName: 'Size', values: ['no', 'tiny=4', 'small=6', 'large=8', 'huge=12', 'medium=99'] },
+        { name: 'outerTag', values: ['div', 'h1', 'h2', 'h3', 'h4', 'h5'] },
+        { name: 'attached', isSystem: true },
+        { name: 'floated', isSystem: true },
+        { name: 'textAligned', aliasPropName: 'Aligned', isSystem: true },
+        { name: 'color', isSystem: true },
+        { name: 'subHeader', values:['no', 'sub', 'subUppercase'] },
+      ]
+    },
     {
       name: 'divider',
       autoClass: `'ui divider'`,
       autoTag: `'div'`,
       boolProps: [{ name: 'clearing' }, { name: 'section' }, { name: 'hidden' }, { name: 'fitted' }, { name: 'inverted' }],
       enumProps: [
-        { name: 'divider', values:['standard', 'horizontal', 'vertical'] }
+        { name: 'divider', values: ['no', 'horizontal', 'vertical'] }
       ]
     },
     {
@@ -72,10 +92,7 @@ export var source: genSource = {
       type: genComponentType.elements,
       boolProps: [{ name: 'text' }, { name: 'justified' }, { name: 'fluid' }],
       enumProps: [
-        {
-          name: 'alignedContainer', aliasPropName: 'Aligned', values: ['no', 'alignedLeft', 'alignedCenter', 'alignedRight',], alias
-          : `, { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned', } `
-        },
+        { name: 'textAligned', aliasPropName: 'Aligned', isSystem: true }
       ]
     },
     {
@@ -264,9 +281,9 @@ export interface animateTo {
       ],
       enumProps: [
         { name: 'raised', values: ['no', 'raisedStandard', 'raisedStacked', 'raisedPiled', 'raisedStackedTall'], alias: `, { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedStackedTall: 'stackedTall', $raisedPiled: 'piled' } ` },
-        { name: 'attachedSegment', aliasPropName: 'Attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedBoth'], alias: `, { $attachedBoth: 'attached'} ` },
+        { name: 'attached', isSystem:true },
         { name: 'padded', values: ['no', 'paddedStandard', 'paddedVery'], alias: `, { $paddedVery: 'veryPadded'} ` },
-        { name: 'emphasis', values: ['standard', 'secondary', 'tertiary'], alias: ` ` },
+        { name: 'emphasis', values: ['no', 'secondary', 'tertiary'], alias: ` ` },
         { name: 'aligned', isSystem: true },
         { name: 'color', isSystem: true },
         { name: 'floated', isSystem: true },
@@ -291,12 +308,6 @@ export interface animateTo {
       boolProps: [],
       enumProps: [
         { name: 'color', isSystem: true }
-      ]
-    },
-    {
-      name: 'header',
-      boolProps: [],
-      enumProps: [
       ]
     },
     {

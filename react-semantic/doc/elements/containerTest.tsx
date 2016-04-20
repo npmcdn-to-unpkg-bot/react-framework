@@ -2,8 +2,8 @@
 import * as ReactDOM from 'react-dom';
 import {
   animate, animateTo, color, size, floated, aligned, column,
-  Container, alignedContainer,
-  Segment, raised, attachedSegment, padded, emphasis,
+  Container, textAligned,
+  Segment, raised, attached, padded, emphasis,
   Grid, divided, celled, paddedGrid,
   Column, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
   Row,

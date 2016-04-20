@@ -2,13 +2,7 @@
 
 
 import {
-  color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, floated, attachedButton, animate, iconLabel, eqWidth,
-  Label, Labels, pointing, corner, attachedLabel, ribbon,
-  Icon, Icons, icon,
-  Segment, Segments, raised, attachedSegment, padded, emphasis, aligned, raisedSegments,
   Flag, flag, flagShort,
-
 } from '../../common/exports';
 
 import * as ui from '../../common/exports';

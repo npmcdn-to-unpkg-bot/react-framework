@@ -10,17 +10,17 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {
-animate, animateTo, color, size, floated, aligned, column,
+animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, attached,
 Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
 ButtonIconProps, iconLabel,
 ButtonLabeledProps,
 ButtonsProps, eqWidth,
 ButtonSocialProps, social,
-Container, ContainerProps, alignedContainer,
+Container, ContainerProps,
 Divider, DividerProps, divider,
 Flag, FlagProps,
-HeaderProps,
+Header, HeaderProps, sizeHeader, outerTag, subHeader,
 Icon, IconProps, flipped, rotated, circularIcon, bordered,
 Icons, IconsProps,
 ImageProps,
@@ -31,7 +31,7 @@ ListProps,
 LoaderProps,
 RailProps,
 RevealProps,
-Segment, SegmentProps, raised, attachedSegment, padded, emphasis,
+Segment, SegmentProps, raised, padded, emphasis,
 Segments, SegmentsProps, raisedSegments,
 StepProps,
 AdProps,
@@ -65,5 +65,4 @@ export {SegmentTest} from '../doc/elements/segmentTest';
 export {FlagTest} from '../doc/elements/flagTest';
 export {ContainerTest} from '../doc/elements/containerTest';
 export {DividerTest} from '../doc/elements/dividerTest';
-
-
+export {HeaderTest} from '../doc/elements/headerTest';
