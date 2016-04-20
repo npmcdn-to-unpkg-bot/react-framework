@@ -185,7 +185,10 @@ function enumPropName(pr: g.genEnumProp): string { return pr.aliasPropName ? pr.
 function EnumDef(en: g.genEnumProp) {
   function item(val: Array<string>, isProp: boolean) {
     var arr = val.slice(0);
-    for (var i = 1; i < arr.length; i++) arr[i] = '$' + arr[i];
+    for (var i = 1; i < arr.length; i++) {
+      var parts = arr[i].split('=');
+      arr[i] = '$' + parts[0] + (isProp || parts.length==1 ? '' : ' = ' + parts[1]);
+    }
     var arr = isProp ? arr.slice(1) : arr;
     let res: Array<String> = arr.map(val => isProp ? `${val}?: boolean; ` : `${val}, `);
     return res.join('')
