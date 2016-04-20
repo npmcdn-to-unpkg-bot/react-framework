@@ -133,8 +133,11 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
       `  $${enumPropName(pr)}?: ${en(pr)};`;
   }
   function boolProp(pr: g.genBoolProp, isMeta: boolean): string {
+    var meta = '';
+    if (pr.ignore) meta += ', true'; if (!pr.ignore && pr.alias) meta += ', false';
+    if (pr.alias) meta += ', \'' + pr.alias + '\'';
     return isMeta ?
-      `    $${pr.name}: new ui.boolConverter(val.$${pr.name}${pr.ignore ? ', true' : ''})` :
+      `    $${pr.name}: new ui.boolConverter(val.$${pr.name}${meta})` :
       `  $${pr.name}?: boolean;`;
   }
   let enumProps = comp.enumProps.map(en => { });
