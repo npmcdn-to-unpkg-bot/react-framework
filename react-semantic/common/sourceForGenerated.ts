@@ -66,6 +66,13 @@ export var source: genSource = {
   ],
   codeData: [
     {
+      name: 'input',
+      otherProps: '  $placeHolder: string;',
+      boolProps: [],
+      enumProps: [
+      ]
+    },
+    {
       name: 'image',
       boolProps: [{ name: 'hidden' }, { name: 'disabled' }, { name: 'avatar' }, { name: 'bordered' }, { name: 'fluid' }, { name: 'rounded' }, { name: 'circular' },
         { name: 'centered' }, { name: 'spaced' },],
@@ -332,12 +339,6 @@ export interface animateTo {
       boolProps: [],
       enumProps: [
         { name: 'color', isSystem: true }
-      ]
-    },
-    {
-      name: 'input',
-      boolProps: [],
-      enumProps: [
       ]
     },
     {

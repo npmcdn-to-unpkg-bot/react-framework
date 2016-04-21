@@ -43,6 +43,7 @@
     <Content Include="react-semantic\package.json" />
     <Content Include="react-semantic\elements\flag.json" />
     <None Include="trash\json.json" />
+    <Content Include="trash\index.html" />
     <Content Include="utils\position.js" />
     <Content Include="utils\typescript-polyfils.js" />
     <Content Include="web.config" />
@@ -58,6 +59,7 @@
     <TypeScriptCompile Include="apps\test-config.ts" />
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
+    <TypeScriptCompile Include="react-semantic\collections\forms.tsx" />
     <TypeScriptCompile Include="react-semantic\common\sourceForGenerated.ts" />
     <TypeScriptCompile Include="react-semantic\common\generated.ts" />
     <TypeScriptCompile Include="react-semantic\common\largeEnums.ts" />
@@ -79,8 +81,10 @@
     <TypeScriptCompile Include="react-semantic\common\lib.ts" />
     <TypeScriptCompile Include="react-semantic\common\exports.ts" />
     <None Include="trash\label.tsx_" />
+    <TypeScriptCompile Include="react-semantic\elements\input.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\image.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
+    <TypeScriptCompile Include="trash\index.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />
     <TypeScriptCompile Include="trash\flux.tsx" />
     <TypeScriptCompile Include="react-framework\flux.tsx" />
@@ -106,7 +110,6 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="react-semantic\collections\" />
     <Folder Include="react-semantic\views\" />
   </ItemGroup>
   <PropertyGroup>
