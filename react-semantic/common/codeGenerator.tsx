@@ -152,7 +152,7 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
     {comp.otherCode ? comp.otherCode : ''}
     {enumDef}
     {`    
-export interface ${up(comp.name)}Props extends ${comp.inheritsFrom ? up(comp.inheritsFrom) + 'Props' : 'ui.IProps'}${enumPropsType(comp.enumProps)} {
+export interface ${up(comp.name)}Props extends ${comp.inheritsFrom ? up(comp.inheritsFrom) + 'Props' : 'ui.IProps'}${comp.otherExtends ? comp.otherExtends : ''}${enumPropsType(comp.enumProps)} {
 `}
     {comp.enumProps.map(en => enumProp(en, false)).concat(comp.boolProps.map(en => boolProp(en, false))).join('\r\n') + '\r\n'}
     {comp.otherProps ? comp.otherProps + '\r\n' : ''}

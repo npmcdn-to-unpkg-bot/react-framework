@@ -1,4 +1,14 @@
-﻿export type convertResult = string | {};
+﻿//types for validators
+export type TSyncValidator = (val: string) => string;
+export type TSyncCompleted = (err: string) => void;
+export interface IFieldProps {
+  $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
+  $validator?: TSyncValidator;
+  $validators?: Array<TSyncValidator>;
+}
+
+
+export type convertResult = string | {};
 export abstract class propConverter {
   abstract convert(propName: string, val): convertResult;
 }

@@ -21,7 +21,7 @@ import {icon, flag, flagShort} from './largeEnums';
   Icons,
   Image, outerTagImage,
   Images,
-  Input,
+  Input, iconInput, labeled, action,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels,
   List,
@@ -65,7 +65,7 @@ export {
   Icons, IconsProps,
   ImageProps, outerTagImage,
   Images, ImagesProps,
-  InputProps,
+  InputProps, iconInput, labeled, action,
   Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels, LabelsProps,
   ListProps,
@@ -586,14 +586,49 @@ export const Images: ui.StatelessComponent<ImagesProps> = pr => {
 
 //**************************************************************
 //*   INPUT
-//**************************************************************    
-export interface InputProps extends ui.IProps {
+//**************************************************************
 
+export enum iconInput { no, $iconRight, $iconLeft, }
+ui.registerEnum(iconInput, '$IconInput', { $iconLeft: 'icon' });
+export interface IPropsIconInputProp { $iconRight?: boolean; $iconLeft?: boolean; }
+
+export enum labeled { no, $labeledLeft, $labeledRight, $labeledRightCorner, $labeledLeftCorner, }
+ui.registerEnum(labeled, '$Labeled', { $labeledLeft: 'labeled', $labeledRightCorner: 'cornerLabeled' });
+export interface IPropsLabeledProp { $labeledLeft?: boolean; $labeledRight?: boolean; $labeledRightCorner?: boolean; $labeledLeftCorner?: boolean; }
+
+export enum action { no, $actionRight, $actionLeft, }
+ui.registerEnum(action, '$Action', { $actionRight: 'action' });
+export interface IPropsActionProp { $actionRight?: boolean; $actionLeft?: boolean; }
+
+export interface InputProps extends ui.IProps, ui.IFieldProps, IPropsIconInputProp, IPropsLabeledProp, IPropsActionProp, IPropsSizeProp {
+  $IconInput?: iconInput;
+  $Labeled?: labeled;
+  $Action?: action;
+  $Size?: size;
+  $error?: boolean;
+  $focus?: boolean;
+  $loading?: boolean;
+  $disabled?: boolean;
+  $labeled?: boolean;
+  $transparent?: boolean;
+  $inverted?: boolean;
+  $fluid?: boolean;
 }
 
 export var inputPropsDescr = ui.createDescr<InputProps>(val => {
   return {
-
+    $IconInput: new ui.enumConverter<iconInput>(iconInput, val.$IconInput),
+    $Labeled: new ui.enumConverter<labeled>(labeled, val.$Labeled),
+    $Action: new ui.enumConverter<action>(action, val.$Action),
+    $Size: new ui.enumConverter<size>(size, val.$Size),
+    $error: new ui.boolConverter(val.$error),
+    $focus: new ui.boolConverter(val.$focus),
+    $loading: new ui.boolConverter(val.$loading),
+    $disabled: new ui.boolConverter(val.$disabled),
+    $labeled: new ui.boolConverter(val.$labeled),
+    $transparent: new ui.boolConverter(val.$transparent),
+    $inverted: new ui.boolConverter(val.$inverted),
+    $fluid: new ui.boolConverter(val.$fluid)
   };
 });
 

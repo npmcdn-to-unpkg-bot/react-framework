@@ -15,6 +15,7 @@ export interface genComponent {
   otherCode?: string;
   otherPropDescr?: string;
   otherProps?: string;
+  otherExtends?: string;
   autoTag?: string; //tag pro automatickou generaci komponenty
   autoClass?: string; //class pro automatickou generaci komponenty
 }
@@ -67,9 +68,13 @@ export var source: genSource = {
   codeData: [
     {
       name: 'input',
-      otherProps: '  $placeHolder: string;',
-      boolProps: [],
+      otherExtends: `, ui.IFieldProps`,
+      boolProps: [{ name: 'error' }, { name: 'focus' }, { name: 'loading' }, { name: 'disabled' }, { name: 'labeled' }, { name: 'transparent' }, { name: 'inverted' }, { name: 'fluid' },],
       enumProps: [
+        { name: 'iconInput', values: ["no", "iconRight", "iconLeft"], alias:`, { $iconLeft: 'icon' }` },
+        { name: 'labeled', values: ["no", "labeledLeft", "labeledRight", 'labeledRightCorner', 'labeledLeftCorner'], alias:`,  { $labeledLeft: 'labeled', $labeledRightCorner: 'cornerLabeled' }` },
+        { name: 'action', values: ["no", "actionRight", "actionLeft"], alias: `, { $actionRight: 'action' }` },
+        { name: 'size', isSystem: true },
       ]
     },
     {

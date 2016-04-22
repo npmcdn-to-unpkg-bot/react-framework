@@ -1,19 +1,17 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as ui from '../common/lib';
-import {ImageProps, imagePropsDescr, outerTagImage
+import * as val from '../common/inputValidated';
+import {InputProps, inputPropsDescr
 } from '../common/generated';
 
-export const Input: ui.StatelessComponent<ImageProps> = pr => {
-  let props: ImageProps = ui.enumValToProp(pr, imagePropsDescr);
-  let tag = props.$OuterTag; delete props.$OuterTag;
-  if (tag == outerTagImage.$a) {
-    let src = props['src']; delete props['src'];
-    let rest = ui.propsToClasses(['ui image'], ui.projection(props, imagePropsDescr));
-    return React.createElement('a', rest, React.createElement('img', { src: src }));
-  } else {
-    let rest = ui.propsToClasses(['ui image'], ui.projection(props, imagePropsDescr));
-    return React.createElement('img', rest, pr.children);
+import * as ui from '../common/exports'
+
+export class Input extends val.Field<InputProps> {
+  render(): JSX.Element {
+    var props: InputProps = ui.enumValToProp(this.props, inputPropsDescr);
+    if (this.state.error) props.$error = true;
+    var rest = ui.propsToClasses(['ui input'], ui.projection(props, inputPropsDescr));
+    return React.createElement('div', rest, props.children);
   }
 }
 

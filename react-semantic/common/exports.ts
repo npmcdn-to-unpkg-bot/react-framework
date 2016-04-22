@@ -1,13 +1,16 @@
 ﻿export {
 StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, 
 enumValToProp, enumStrings, enumNumbers,
-IProps, htmlTags
+IProps, htmlTags, TSyncCompleted, 
 } from './lib';
 
 export { icon, flag, flagShort, flagMap } from './largeEnums';
 export {
 source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
+
+export {rangeValidator, requiredValidator } from './validators';
+export {FieldInput, FieldError} from './inputValidated';
 
 export {
 animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,
@@ -25,7 +28,7 @@ Icon, IconProps, flipped, rotated, circularIcon, bordered,
 Icons, IconsProps,
 ImageProps, outerTagImage,
 Images, ImagesProps,
-InputProps,
+InputProps, iconInput, labeled, action,
 Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
 Labels, LabelsProps,
 ListProps,
@@ -51,8 +54,8 @@ Row, RowProps,
 TableProps,
 } from './generated';
 
-
 export {ButtonLabeled, ButtonIcon, ButtonAnimated, ButtonSocial, Buttons} from '../elements/button';
+export {Input} from '../elements/input';
 export {Image} from '../elements/image';
 
 export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from '../doc/elements/buttonTest';
@@ -65,3 +68,4 @@ export {ContainerTest} from '../doc/elements/containerTest';
 export {DividerTest} from '../doc/elements/dividerTest';
 export {ImageTest} from '../doc/elements/imageTest';
 export {HeaderTest} from '../doc/elements/headerTest';
+export {InputTest} from '../doc/elements/inputTest';

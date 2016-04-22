@@ -60,6 +60,8 @@
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
     <TypeScriptCompile Include="react-semantic\collections\forms.tsx" />
+    <TypeScriptCompile Include="react-semantic\common\validators.tsx" />
+    <TypeScriptCompile Include="react-semantic\common\inputValidated.tsx" />
     <TypeScriptCompile Include="react-semantic\common\sourceForGenerated.ts" />
     <TypeScriptCompile Include="react-semantic\common\generated.ts" />
     <TypeScriptCompile Include="react-semantic\common\largeEnums.ts" />
@@ -68,6 +70,7 @@
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\inputTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\imageTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\headerTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\dividerTest.tsx" />
