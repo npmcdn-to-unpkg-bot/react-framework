@@ -22,7 +22,7 @@ export class InputSmart extends val.inputLow<InputSmartProps> {
     if (this.state.asyncRunning) prCopy.$loading = true;
     return React.createElement('div', null, [
       React.createElement(Input, prCopy),
-      <Label $tiny $pointingLeft $colRed $basic style={{ visibility: this.state.asyncRunning || this.state.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{this.state.asyncRunning ? '...loading' : this.state.error}</Label>]);
+      <Label $tiny $pointingLeft $colRed $basic style={{ visibility: this.state.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{this.state.error}</Label>]);
   }
   static childContextTypes = { MyInput: React.PropTypes.any };
 }

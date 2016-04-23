@@ -21,7 +21,7 @@ export class InputSmartTest extends React.Component<any, any> {
 
       <InputSmart $iconLeft ref={self => this.field = self}
         $validators = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
-        $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'error'), 4000) }
+        $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
         >
         <InputTag placeholder="Search..."/><Icon $Icon={icon.search}/>
       </InputSmart>

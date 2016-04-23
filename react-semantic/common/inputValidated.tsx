@@ -38,7 +38,7 @@ export abstract class inputLow<T extends IFieldProps> extends React.Component<T,
   }
   static renderInputTag = (pr: IFieldProps, context: IFieldInputContext) => { 
     var props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
-    if (!context || !context.MyInput) React.createElement('input', props);
+    if (!context || !context.MyInput) return React.createElement('input', props);
     var field = context.MyInput;
     props.onChange = field.handleChange.bind(field); if (field.hasValidator) props.onBlur = field.blur.bind(field);
     return React.createElement('input', props);
@@ -79,9 +79,9 @@ export abstract class inputLow<T extends IFieldProps> extends React.Component<T,
       console.log('asyncStart');
       self.asyncCancel();
       //doSetState('...examining');
-      self.setState({ value: self.state.value, asyncRunning: true, error:'...loading'});
+      self.setState({ value: self.state.value, asyncRunning: true, error:null});
       var obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
-        self.props.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.state.asyncRunning = false; if (err) obs.error(err); else obs.complete(); self.asyncDelete(); });
+        self.props.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
       });
       self.asyncConnectable = obs.publish();
       self.asyncSubscription = self.asyncConnectable.connect();
@@ -130,7 +130,7 @@ export abstract class inputLow<T extends IFieldProps> extends React.Component<T,
     this.asyncSubscription.unsubscribe();
     this.asyncDelete();
   }
-  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; }
+  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; this.state.asyncRunning = false; }
   private asyncValidatingValue: string;
 
 }

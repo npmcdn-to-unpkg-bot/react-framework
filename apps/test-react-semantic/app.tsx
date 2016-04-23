@@ -57,7 +57,7 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <InputSmartTest/>
+      <InputTest/>
       {/*
       <div className="ui form">
         <div className="three fields">
