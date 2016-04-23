@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, floated, attachedButton, iconLabel,
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, social, eqWidth, floated, attachedButton, 
   Label, Labels, pointing, corner, attachedLabel, ribbon,
   Icon, Icons, icon,
 } from '../../common/exports';

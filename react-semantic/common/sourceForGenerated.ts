@@ -67,14 +67,27 @@ export var source: genSource = {
   ],
   codeData: [
     {
-      name: 'input',
-      otherExtends: `, ui.IFieldProps`,
-      boolProps: [{ name: 'error' }, { name: 'focus' }, { name: 'loading' }, { name: 'disabled' }, { name: 'labeled' }, { name: 'transparent' }, { name: 'inverted' }, { name: 'fluid' },],
+      name: 'inputSmart',
+      otherProps: `
+  $validatorAsync?: (val: string, completed: ui.TSyncCompleted) => void;
+  $validator?: ui.TSyncValidator;
+  $validators?: Array<ui.TSyncValidator>;
+` ,
+      boolProps: [],
       enumProps: [
-        { name: 'iconInput', values: ["no", "iconRight", "iconLeft"], alias:`, { $iconLeft: 'icon' }` },
-        { name: 'labeled', values: ["no", "labeledLeft", "labeledRight", 'labeledRightCorner', 'labeledLeftCorner'], alias:`,  { $labeledLeft: 'labeled', $labeledRightCorner: 'cornerLabeled' }` },
-        { name: 'action', values: ["no", "actionRight", "actionLeft"], alias: `, { $actionRight: 'action' }` },
+      ],
+      inheritsFrom: 'input'
+    },    {
+      name: 'input',
+      autoClass: `'ui input'`,
+      autoTag: `'div'`,
+      otherProps: '  $defaultValue?: string;',
+      boolProps: [{ name: 'error' }, { name: 'focus' }, { name: 'loading' }, { name: 'disabled' }, { name: 'transparent' }, { name: 'inverted' }, { name: 'fluid' },],
+      enumProps: [
+        { name: 'iconInput', values: ["no", "iconRight", "iconLeft"], alias:`, { $iconRight: 'icon', $iconLeft: 'left icon' }` },
+        { name: 'action', values: ["no", "actionRight", "actionLeft"], alias: `, { $actionRight: 'action', $actionLeft:'leftAction' }` },
         { name: 'size', isSystem: true },
+        { name: 'labeledInput', aliasPropName:'Labeled', values: ["no", "labeledLeft", "labeledRight", 'labeledRightCorner', 'labeledLeftCorner'], alias:`,  { $labeledLeft: 'labeled', $labeledRight:'rightLabeled', $labeledRightCorner: 'cornerLabeled', $labeledLeftCorner:'leftCornerLabeled' }` },
       ]
     },
     {
@@ -184,16 +197,16 @@ export var source: genSource = {
     {
       name: 'button',
       locked: true,
-      autoClass: `'ui button', { icon: props.$hasIcon, active: props.$active }`,
+      autoClass: `'ui button', { active: props.$active }`,
       autoTag: `props.$Attached ? 'div' : 'button'`,
       boolProps: [
-        { name: 'basic' }, { name: 'inverted' }, { name: 'compact' }, { name: 'fluid' }, { name: 'circular' }, { name: 'labeled' }, { name: 'hasIcon', ignore: true },
+        { name: 'basic' }, { name: 'inverted' }, { name: 'compact' }, { name: 'fluid' }, { name: 'circular' }, //{ name: 'hasIcon', ignore: true },
         { name: 'active', ignore: true }, { name: 'loading' }, { name: 'disabled' }, { name: 'primary' }, { name: 'secondary' }, { name: 'positive' }, { name: 'negative' }],
       enumProps: [
         { name: 'attachedButton', aliasPropName: 'Attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedLeft', 'attachedRight'] },
         { name: 'size', isSystem: true },
         { name: 'color', isSystem: true },
-        { name: 'floated', isSystem: true }
+        { name: 'floated', isSystem: true },
       ]
     },
     {
@@ -225,9 +238,9 @@ export interface animateTo {
     },
     {
       name: 'buttonIcon',
-      boolProps: [],
+      boolProps: [ { name: 'left' }],
       enumProps: [
-        { name: 'iconLabel', values: ['no', 'iconLabelRight', 'iconLabelLeft'] },
+        //{ name: 'iconLabel', values: ['no', 'iconLabelRight', 'iconLabelLeft'] },
         { name: 'icon', isSystem: true },
       ],
       inheritsFrom: 'button'

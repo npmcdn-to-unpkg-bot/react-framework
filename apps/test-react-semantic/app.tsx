@@ -9,7 +9,7 @@ import {
   icon, flag, flagShort, color, size, floated, aligned, column,
   Button, attachedButton,
   ButtonAnimated,
-  ButtonIcon, iconLabel,
+  ButtonIcon,
   ButtonLabeled,
   Buttons, eqWidth,
   ButtonSocial, social,
@@ -26,7 +26,7 @@ import {
   Row,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
-  FlagTest, GridTest, ContainerTest, DividerTest, HeaderTest, ImageTest, InputTest
+  FlagTest, GridTest, ContainerTest, DividerTest, HeaderTest, ImageTest, InputTest, InputSmartTest
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
@@ -57,10 +57,31 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <CodeGenerator2/>
+      <InputSmartTest/>
       {/*
+      <div className="ui form">
+        <div className="three fields">
+          <div className="field" style={{ marginBottom: '0' }}>
+            <label>First name</label>
+            <input type="text" placeholder="First Name"/>
+            <Label $tiny $pointingAbove $colRed $basic style={{ visibility: 'hidden', marginTop: '-1px' }}>asdfasd f asdf sadf</Label>
+          </div>
+          <div className="field" style={{ marginBottom: '0' }}>
+            <label>Middle name</label>
+            <input type="text" placeholder="Middle Name"/>
+            <Label $tiny $pointingAbove $colRed $basic style={{ visibility: 'xhidden', marginTop: '-1px' }}>asdfasd f asdf sadf</Label>
+          </div>
+          <div className="field" style={{ marginBottom: '0' }}>
+            <label>Last name</label>
+            <input type="text" placeholder="Last Name"/>
+            <Label $tiny $pointingAbove $colRed $basic style={{ visibility: 'xhidden', marginTop: '-1px' }}>asdfasd f asdf sadf</Label>
+          </div>
+        </div>
+      </div>
       <CodeGenerator2/>
       <CodeGenerator/>
+      <InputSmartTest/>
+      <InputTest/>
       <ImageTest/>
       <HeaderTest/>
       <DividerTest/>
@@ -72,8 +93,8 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       <ButtonTest/><hr/>
       <ButtonSocialTest/><hr/>
       <ButtonLabeledTest/><hr/>
-      <ButtonAnimatedTest/><hr/>
       <ButtonIconTest/><hr/>
+      <ButtonAnimatedTest/><hr/>
       <ButtonsTest/><hr/>
       */}
     </div>;

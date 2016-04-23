@@ -5,7 +5,7 @@ import {
   Button, ButtonProps, buttonPropsDescr,
   ButtonAnimatedProps, buttonAnimatedPropsDescr, animate, animateTo,
   ButtonLabeledProps, buttonLabeledPropsDescr,
-  ButtonIconProps, buttonIconPropsDescr, iconLabel,
+  ButtonIconProps, buttonIconPropsDescr, 
   ButtonSocialProps, buttonSocialPropsDescr, social,
   ButtonsProps, buttonsPropsDescr, eqWidth,
   LabelProps, IconProps
@@ -46,10 +46,11 @@ export const ButtonLabeled: ui.StatelessComponent<ButtonLabeledProps> = pr => {
 //******************* ButtonIcon
 
 export const ButtonIcon: ui.StatelessComponent<ButtonIconProps> = pr => {
-  var props = ui.enumValToProp(pr);
-  var rest = ui.propsToClasses(['ui', { right: props.$iconLabelRight }, props.$IconLabel ? 'labeled' : null, 'icon button'], ui.projection(props, buttonPropsDescr));
+  var props = ui.enumValToProp(pr); 
+  var hasText = React.Children.count(pr.children)>0;
+  var rest = ui.propsToClasses(['ui icon button', hasText ? { right: !props.$left} : null, hasText ? 'labeled' : null/*props.$IconLabel ? 'labeled' : null, 'icon button'*/], ui.projection(props, buttonPropsDescr));
   var iconProps: IconProps = { $Icon: pr.$Icon };
-  if (props.$IconLabel == iconLabel.$iconLabelRight) iconProps.className = 'right';
+  //if (!props.$left) iconProps.className = 'right';
   var icon = <Icon {...iconProps}/>
   return <button {...rest}>
     {icon} {props.children}

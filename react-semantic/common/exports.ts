@@ -10,13 +10,13 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {rangeValidator, requiredValidator } from './validators';
-export {FieldInput, FieldError} from './inputValidated';
+export {InputTag, InputError} from './inputValidated';
 
 export {
 animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,
 Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
-ButtonIconProps, iconLabel,
+ButtonIconProps,
 ButtonLabeledProps,
 ButtonsProps, eqWidth,
 ButtonSocialProps, social,
@@ -28,7 +28,8 @@ Icon, IconProps, flipped, rotated, circularIcon, bordered,
 Icons, IconsProps,
 ImageProps, outerTagImage,
 Images, ImagesProps,
-InputProps, iconInput, labeled, action,
+Input, InputProps, iconInput, action, labeledInput,
+InputSmartProps,
 Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
 Labels, LabelsProps,
 ListProps,
@@ -55,8 +56,8 @@ TableProps,
 } from './generated';
 
 export {ButtonLabeled, ButtonIcon, ButtonAnimated, ButtonSocial, Buttons} from '../elements/button';
-export {Input} from '../elements/input';
 export {Image} from '../elements/image';
+export {InputSmart} from '../elements/inputSmart';
 
 export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from '../doc/elements/buttonTest';
 export {GridTest} from '../doc/collections/gridTest';
@@ -69,3 +70,4 @@ export {DividerTest} from '../doc/elements/dividerTest';
 export {ImageTest} from '../doc/elements/imageTest';
 export {HeaderTest} from '../doc/elements/headerTest';
 export {InputTest} from '../doc/elements/inputTest';
+export {InputSmartTest} from '../doc/elements/inputSmartTest';

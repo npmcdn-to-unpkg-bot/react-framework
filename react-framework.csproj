@@ -70,6 +70,7 @@
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\inputSmartTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\inputTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\imageTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\headerTest.tsx" />
@@ -84,7 +85,7 @@
     <TypeScriptCompile Include="react-semantic\common\lib.ts" />
     <TypeScriptCompile Include="react-semantic\common\exports.ts" />
     <None Include="trash\label.tsx_" />
-    <TypeScriptCompile Include="react-semantic\elements\input.tsx" />
+    <TypeScriptCompile Include="react-semantic\elements\inputSmart.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\image.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
     <TypeScriptCompile Include="trash\index.tsx" />

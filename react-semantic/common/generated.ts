@@ -9,7 +9,7 @@ import {icon, flag, flagShort} from './largeEnums';
   icon, flag, flagShort, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, 
   Button, attachedButton,
   ButtonAnimated,
-  ButtonIcon, iconLabel,
+  ButtonIcon,
   ButtonLabeled,
   Buttons, eqWidth,
   ButtonSocial, social,
@@ -21,7 +21,8 @@ import {icon, flag, flagShort} from './largeEnums';
   Icons,
   Image, outerTagImage,
   Images,
-  Input, iconInput, labeled, action,
+  Input, iconInput, action, labeledInput,
+  InputSmart,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels,
   List,
@@ -53,7 +54,7 @@ export {
   animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, 
   Button, ButtonProps, attachedButton,
   ButtonAnimatedProps,
-  ButtonIconProps, iconLabel,
+  ButtonIconProps,
   ButtonLabeledProps,
   ButtonsProps, eqWidth,
   ButtonSocialProps, social,
@@ -65,7 +66,8 @@ export {
   Icons, IconsProps,
   ImageProps, outerTagImage,
   Images, ImagesProps,
-  InputProps, iconInput, labeled, action,
+  Input, InputProps, iconInput, action, labeledInput,
+  InputSmartProps,
   Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels, LabelsProps,
   ListProps,
@@ -152,8 +154,6 @@ export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, IProps
   $compact?: boolean;
   $fluid?: boolean;
   $circular?: boolean;
-  $labeled?: boolean;
-  $hasIcon?: boolean;
   $active?: boolean;
   $loading?: boolean;
   $disabled?: boolean;
@@ -174,8 +174,6 @@ export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
     $compact: new ui.boolConverter(val.$compact),
     $fluid: new ui.boolConverter(val.$fluid),
     $circular: new ui.boolConverter(val.$circular),
-    $labeled: new ui.boolConverter(val.$labeled),
-    $hasIcon: new ui.boolConverter(val.$hasIcon, true),
     $active: new ui.boolConverter(val.$active, true),
     $loading: new ui.boolConverter(val.$loading),
     $disabled: new ui.boolConverter(val.$disabled),
@@ -188,7 +186,7 @@ export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
 
 export const Button: ui.StatelessComponent<ButtonProps> = pr => {
   var props: ButtonProps = ui.enumValToProp(pr, buttonPropsDescr);
-  var rest = ui.propsToClasses(['ui button', { icon: props.$hasIcon, active: props.$active }], ui.projection(props, buttonPropsDescr));
+  var rest = ui.propsToClasses(['ui button', { active: props.$active }], ui.projection(props, buttonPropsDescr));
   return React.createElement(props.$Attached ? 'div' : 'button', rest, pr.children);
 }
 
@@ -216,21 +214,16 @@ export var buttonAnimatedPropsDescr = ui.createDescr<ButtonAnimatedProps>(val =>
 
 //**************************************************************
 //*   BUTTONICON
-//**************************************************************
-
-export enum iconLabel { no, $iconLabelRight, $iconLabelLeft, }
-ui.registerEnum(iconLabel, '$IconLabel');
-export interface IPropsIconLabelProp { $iconLabelRight?: boolean; $iconLabelLeft?: boolean; }
-
-export interface ButtonIconProps extends ButtonProps, IPropsIconLabelProp, IPropsIconProp {
-  $IconLabel?: iconLabel;
+//**************************************************************    
+export interface ButtonIconProps extends ButtonProps, IPropsIconProp {
   $Icon?: icon;
+  $left?: boolean;
 }
 
 export var buttonIconPropsDescr = ui.createDescr<ButtonIconProps>(val => {
   return {
-    $IconLabel: new ui.enumConverter<iconLabel>(iconLabel, val.$IconLabel),
-    $Icon: new ui.enumConverter<icon>(icon, val.$Icon)
+    $Icon: new ui.enumConverter<icon>(icon, val.$Icon),
+    $left: new ui.boolConverter(val.$left)
   };
 }, buttonPropsDescr);
 
@@ -589,48 +582,72 @@ export const Images: ui.StatelessComponent<ImagesProps> = pr => {
 //**************************************************************
 
 export enum iconInput { no, $iconRight, $iconLeft, }
-ui.registerEnum(iconInput, '$IconInput', { $iconLeft: 'icon' });
+ui.registerEnum(iconInput, '$IconInput', { $iconRight: 'icon', $iconLeft: 'left icon' });
 export interface IPropsIconInputProp { $iconRight?: boolean; $iconLeft?: boolean; }
 
-export enum labeled { no, $labeledLeft, $labeledRight, $labeledRightCorner, $labeledLeftCorner, }
-ui.registerEnum(labeled, '$Labeled', { $labeledLeft: 'labeled', $labeledRightCorner: 'cornerLabeled' });
-export interface IPropsLabeledProp { $labeledLeft?: boolean; $labeledRight?: boolean; $labeledRightCorner?: boolean; $labeledLeftCorner?: boolean; }
-
 export enum action { no, $actionRight, $actionLeft, }
-ui.registerEnum(action, '$Action', { $actionRight: 'action' });
+ui.registerEnum(action, '$Action', { $actionRight: 'action', $actionLeft: 'leftAction' });
 export interface IPropsActionProp { $actionRight?: boolean; $actionLeft?: boolean; }
 
-export interface InputProps extends ui.IProps, ui.IFieldProps, IPropsIconInputProp, IPropsLabeledProp, IPropsActionProp, IPropsSizeProp {
+export enum labeledInput { no, $labeledLeft, $labeledRight, $labeledRightCorner, $labeledLeftCorner, }
+ui.registerEnum(labeledInput, '$Labeled', { $labeledLeft: 'labeled', $labeledRight: 'rightLabeled', $labeledRightCorner: 'cornerLabeled', $labeledLeftCorner: 'leftCornerLabeled' });
+export interface IPropsLabeledInputProp { $labeledLeft?: boolean; $labeledRight?: boolean; $labeledRightCorner?: boolean; $labeledLeftCorner?: boolean; }
+
+export interface InputProps extends ui.IProps, IPropsIconInputProp, IPropsActionProp, IPropsSizeProp, IPropsLabeledInputProp {
   $IconInput?: iconInput;
-  $Labeled?: labeled;
   $Action?: action;
   $Size?: size;
+  $Labeled?: labeledInput;
   $error?: boolean;
   $focus?: boolean;
   $loading?: boolean;
   $disabled?: boolean;
-  $labeled?: boolean;
   $transparent?: boolean;
   $inverted?: boolean;
   $fluid?: boolean;
+  $defaultValue?: string;
 }
 
 export var inputPropsDescr = ui.createDescr<InputProps>(val => {
   return {
     $IconInput: new ui.enumConverter<iconInput>(iconInput, val.$IconInput),
-    $Labeled: new ui.enumConverter<labeled>(labeled, val.$Labeled),
     $Action: new ui.enumConverter<action>(action, val.$Action),
     $Size: new ui.enumConverter<size>(size, val.$Size),
+    $Labeled: new ui.enumConverter<labeledInput>(labeledInput, val.$Labeled),
     $error: new ui.boolConverter(val.$error),
     $focus: new ui.boolConverter(val.$focus),
     $loading: new ui.boolConverter(val.$loading),
     $disabled: new ui.boolConverter(val.$disabled),
-    $labeled: new ui.boolConverter(val.$labeled),
     $transparent: new ui.boolConverter(val.$transparent),
     $inverted: new ui.boolConverter(val.$inverted),
     $fluid: new ui.boolConverter(val.$fluid)
   };
 });
+
+export const Input: ui.StatelessComponent<InputProps> = pr => {
+  var props: InputProps = ui.enumValToProp(pr, inputPropsDescr);
+  var rest = ui.propsToClasses(['ui input'], ui.projection(props, inputPropsDescr));
+  return React.createElement('div', rest, pr.children);
+}
+
+
+//**************************************************************
+//*   INPUTSMART
+//**************************************************************    
+export interface InputSmartProps extends InputProps {
+
+
+  $validatorAsync?: (val: string, completed: ui.TSyncCompleted) => void;
+  $validator?: ui.TSyncValidator;
+  $validators?: Array<ui.TSyncValidator>;
+
+}
+
+export var inputSmartPropsDescr = ui.createDescr<InputSmartProps>(val => {
+  return {
+
+  };
+}, inputPropsDescr);
 
 //**************************************************************
 //*   LABEL

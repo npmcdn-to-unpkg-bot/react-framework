@@ -2,6 +2,7 @@
 export type TSyncValidator = (val: string) => string;
 export type TSyncCompleted = (err: string) => void;
 export interface IFieldProps {
+  $defaultValue?: string;
   $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
   $validator?: TSyncValidator;
   $validators?: Array<TSyncValidator>;

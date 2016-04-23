@@ -2,7 +2,7 @@
 
 import {
   color, size,
-  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, eqWidth, floated, attachedButton, iconLabel, social, 
+  Button, ButtonAnimated, ButtonLabeled, ButtonIcon, Buttons, ButtonSocial, animate, eqWidth, floated, attachedButton, social, 
   Label, pointing, corner, attachedLabel, circularLabel,
   Icon, icon
 } from '../../common/exports';
@@ -79,7 +79,7 @@ export const ButtonTest: ui.StatelessComponent<ui.IProps> = props => {
     <h2>Compact</h2>
     <Button $compact>Compact</Button>
     <ButtonIcon $compact $Icon={icon.user}>Compact</ButtonIcon>
-    <Button $labeled $hasIcon><Icon $Icon={icon.user} />Add Friend</Button>
+    <ButtonIcon $left $Icon={icon.user} >Add Friend Left</ButtonIcon> <ButtonIcon $Icon={icon.user} >Add Friend Right</ButtonIcon>
     <h2>Active</h2>
     <Button $active>Active</Button>
     <h2>Disabled</h2>
@@ -108,20 +108,20 @@ export const ButtonAnimatedTest: ui.StatelessComponent<ui.IProps> = props => {
 export const ButtonLabeledTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>ButtonLabeled</h1>
-    <ButtonLabeled $pointing $colBlue $label={<Label $basic $colBlue>2.048</Label>}><Icon $Icon={icon.heart}/> Like</ButtonLabeled> <br/><br/>
-    <ButtonLabeled $left $label={<Label $basic><Icon $Icon={icon.heart}/></Label>}> Left</ButtonLabeled> <br/> <br/>
-    <ButtonLabeled $left $pointing $label={<Label $basic>2.048</Label>}> Left Pointing</ButtonLabeled> <br/> <br/>
-    <Button $labeled $hasIcon><Icon $Icon={icon.user} />Add Friend</Button>
+    <ButtonLabeled $pointing $colBlue $label={<Label $basic $colBlue>2.048</Label>}><Icon $Icon={icon.heart}/>Like</ButtonLabeled> <ButtonLabeled $pointing $left $colBlue $label={<Label $basic $colBlue>2.048</Label>}><Icon $Icon={icon.heart}/>Like</ButtonLabeled><br/><br/>
+    <ButtonLabeled $left $label={<Label $basic><Icon $Icon={icon.heart}/></Label>}>Left</ButtonLabeled> <ButtonLabeled $label={<Label $basic><Icon $Icon={icon.heart}/></Label>}>Right</ButtonLabeled> <br/> <br/>
+    <ButtonLabeled $left $pointing $label={<Label $basic>2.048</Label>}>Left Pointing</ButtonLabeled> <ButtonLabeled $pointing $label={<Label $basic>2.048</Label>}>Right Pointing</ButtonLabeled> <br/> <br/>
   </div >;
 }
 
 export const ButtonIconTest: ui.StatelessComponent<ui.IProps> = props => {
   return <div>
     <h1>ButtonIcon</h1>
-    <ButtonIcon $iconLabelRight $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $IconLabel={ui.iconLabel.$iconLabelRight} $basic $colTeal $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $iconLabelLeft $colOrange $Icon={icon.user}>Add Friend</ButtonIcon> <br/><br/>
-    <ButtonIcon $colPink $Icon={icon.user}></ButtonIcon> <br/><br/>
+    <ButtonIcon $left $Icon={icon.user}>Add Friend Left</ButtonIcon> <ButtonIcon $Icon={icon.user}>Add Friend Right</ButtonIcon> <br/><br/>
+    <ButtonIcon $left $basic $colTeal $Icon={icon.user}>Add Friend Left</ButtonIcon> <ButtonIcon $basic $colTeal $Icon={icon.user}>Add Friend Right</ButtonIcon> <br/><br/>
+    <ButtonIcon $left $colTeal $Icon={icon.user}>Add Friend Left</ButtonIcon> <ButtonIcon $colTeal $Icon={icon.user}>Add Friend Left</ButtonIcon> <br/><br/>
+    <ButtonIcon $left $colPink $Icon={icon.user}/><br/><br/>
+    <Button $basic $colPink><Icon $Icon={icon.user}/> Add Friend Left</Button><br/><br/>
   </div>;
 }
 
@@ -132,8 +132,8 @@ export const ButtonsTest: ui.StatelessComponent<ui.IProps> = props => {
     <Buttons $hasIcon><ButtonIcon $Icon={icon.alignLeft}/><ButtonIcon $Icon={icon.alignRight}/><ButtonIcon $Icon={icon.alignCenter}/></Buttons><br/><br/>
     <Buttons $vertical><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
     <Buttons $vertical $labeled $hasIcon>
-      <Button><Icon $Icon={icon.user} />Add Friend</Button>
-      <Button><Icon $Icon={icon.user} />Add Friend</Button>
+      <ButtonIcon $Icon={icon.user}>Add Friend</ButtonIcon>
+      <ButtonIcon $Icon={icon.user}>Add Friend</ButtonIcon>
     </Buttons><br/><br/>
     <Buttons $EqWidth={eqWidth.$three}><Button>One</Button><Button>Two</Button><Button>Three</Button></Buttons><br/><br/>
     <Buttons $colGreen><Button>One</Button> <Button>Two</Button> <Button>Three</Button></Buttons><br/><br/>
