@@ -3,7 +3,7 @@
 
 import {
   Icon, icon, flipped, rotated, circularIcon, bordered,
-  Input, InputTag, InputError, iconInput, action,
+  Input, InputTag, iconInput, action,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Button, attachedButton,
   ButtonLabeled, ButtonIcon, ButtonAnimated, ButtonSocial, Buttons, social, eqWidth,
@@ -49,7 +49,7 @@ export const InputTest: ui.StatelessComponent<ui.IProps> = props => {
 
     <h2>Action</h2>
     <Input $actionLeft><Button>Text</Button><InputTag placeholder="Search..."/></Input> <Input $actionRight><InputTag placeholder="Search..."/><Button>Text</Button></Input><br/>
-    <Input $actionLeft $defaultValue='$52.03'><ButtonIcon $left $colTeal $Icon={icon.cart}>Checkout</ButtonIcon><InputTag placeholder="Search..."/></Input> <Input $actionRight $defaultValue='$52.03'><InputTag placeholder="Search..."/><ButtonIcon $colTeal $Icon={icon.cart}> Checkout</ButtonIcon></Input><br/>
+    <Input $actionLeft><ButtonIcon $left $colTeal $Icon={icon.cart}>Checkout</ButtonIcon><InputTag placeholder="Search..."/></Input> <Input $actionRight><InputTag placeholder="Search..."/><ButtonIcon $colTeal $Icon={icon.cart}> Checkout</ButtonIcon></Input><br/>
     <Input $actionLeft ><ButtonIcon $Icon={icon.cart}/><InputTag placeholder="Search..."/></Input> <Input $actionRight ><InputTag placeholder="Search..."/><ButtonIcon $Icon={icon.cart}/></Input><br/>
     <Input $actionLeft ><ButtonIcon $left $Icon={icon.cart}>Text</ButtonIcon><InputTag placeholder="Search..."/></Input> <Input $actionRight ><InputTag placeholder="Search..."/><ButtonIcon $Icon={icon.cart}>Text</ButtonIcon></Input><br/><br/>
     <h3>TODO: dropdown action</h3>

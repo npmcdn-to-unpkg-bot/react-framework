@@ -1,32 +1,60 @@
 ﻿import * as rx from 'rxjs/Rx';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {TSyncValidator, TSyncCompleted, IFieldProps} from './lib';
-//import {InputProps, inputPropsDescr} from './generated';
+
+//types for validators
+export type TSyncValidator = (val: string) => string;
+export type TSyncCompleted = (err: string) => void;
+export interface IInputLowProps {
+  $title?: string;
+  $defaultValue?: string;
+  $template?: TInputLowTemplate;
+  $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
+  $validator?: TSyncValidator;
+  $validators?: Array<TSyncValidator>;
+}
+export interface IFormProps { }
+export type TInputLowTemplate = (self: TInputLow) => JSX.Element;
+
+
+//**************** FORM LOW
+interface IFormState { }
+interface IFormContext { MyForm: formLow<IFormProps>; }
+export abstract class formLow<T extends IFormProps> extends React.Component<T, IFormState> {
+  static childContextTypes = { MyForm: React.PropTypes.any };
+  getChildContext(): IFormContext { return { MyForm: this }; }
+
+  private inputs: Array<TInputLow> = [];
+  inputRegister(inp: TInputLow) { this.inputs.push(inp); }
+}
+
+
+//**************** INPUT LOW
 
 interface IFieldInputContext { MyInput: TInputLow; }
-export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: IFieldProps, context: IFieldInputContext) => inputLow.renderInputTag(props, context);
-  
-export const InputError: React.StatelessComponent<React.HTMLAttributes> = (props, context: IFieldInputContext) => context.MyInput.renderError(props);
-InputTag.contextTypes = InputError.contextTypes = { MyInput: React.PropTypes.any };
+export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: IInputLowProps, context: IFieldInputContext) => inputLow.renderInputTag(props, context);
+//export const InputError: React.StatelessComponent<React.HTMLAttributes> = (props, context: IFieldInputContext) => context.MyInput.renderError(props);
+InputTag.contextTypes = { MyInput: React.PropTypes.any };
 
-interface IFieldState { value: string; error?: string; blured?: boolean; asyncRunning?: boolean; }
+interface IFieldState { value: string; error?: string; blured?: boolean; loading?: boolean; }
 
 const enum validatorStatus { no, sync, async }
 
-type TInputLow = inputLow<IFieldProps>;
+type TInputLow = inputLow<IInputLowProps>;
 
-export abstract class inputLow<T extends IFieldProps> extends React.Component<T, IFieldState> {
-  constructor(props) {
-    super(props);
+export abstract class inputLow<T extends IInputLowProps> extends React.Component<T, IFieldState> {
+  constructor(props, ctx: IFormContext) {
+    super(props, ctx);
     this.state = { value: props.$defaultValue ? props.$defaultValue : '' };
+    //register self in the form
+    if (ctx && ctx.MyForm) ctx.MyForm.inputRegister(this);
+    //prepare validators
     if (this.props.$validator) this.validators = [this.props.$validator];
     else if (this.props.$validators) this.validators = this.props.$validators;
     this.hasValidator = !!this.validators || !!this.props.$validatorAsync;
   }
   render(): JSX.Element {
-    var chlds = this.props.children;
-    return React.Children.count(chlds) == 1 ? React.Children.only(chlds) : <div>{this.props.children}</div>;
+    return this.props.$template ? this.props.$template(this) : <div>Missing $template component property</div>;
   }
   validate(completed?: (error: string) => void) {
     this.state.blured = true;
@@ -36,15 +64,17 @@ export abstract class inputLow<T extends IFieldProps> extends React.Component<T,
     this.asyncCancel();
     this.setState({ value: this.props.$defaultValue ? this.props.$defaultValue : '' });
   }
-  static renderInputTag = (pr: IFieldProps, context: IFieldInputContext) => { 
+  static renderInputTag = (pr: IInputLowProps, context: IFieldInputContext) => { 
     var props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
     if (!context || !context.MyInput) return React.createElement('input', props);
     var field = context.MyInput;
+    props.value = field.state.value;
     props.onChange = field.handleChange.bind(field); if (field.hasValidator) props.onBlur = field.blur.bind(field);
     return React.createElement('input', props);
   }
 
   static childContextTypes = { MyInput: React.PropTypes.any };
+  static contextTypes = { MyForm: React.PropTypes.any}
   getChildContext(): IFieldInputContext { return { MyInput: this }; }
 
   renderError(props: React.HTMLAttributes): JSX.Element { return <Error msg={this.state.error}/> }
@@ -72,14 +102,14 @@ export abstract class inputLow<T extends IFieldProps> extends React.Component<T,
     //******* local functions
     function doSetState(error: string) { //setState (=>render) & call completed
       //if (val != self.state.value || error != self.state.error)
-      self.setState({ value: val, error: error, blured: self.state.blured, asyncRunning: self.state.asyncRunning });
+      self.setState({ value: val, error: error, blured: self.state.blured, loading: self.state.loading });
       if (completed) completed(error);
     }
     function asyncStart() { //start of async validation
       console.log('asyncStart');
       self.asyncCancel();
       //doSetState('...examining');
-      self.setState({ value: self.state.value, asyncRunning: true, error:null});
+      self.setState({ value: self.state.value, loading: true, error:null});
       var obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
         self.props.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
       });
@@ -130,7 +160,7 @@ export abstract class inputLow<T extends IFieldProps> extends React.Component<T,
     this.asyncSubscription.unsubscribe();
     this.asyncDelete();
   }
-  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; this.state.asyncRunning = false; }
+  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; this.state.loading = false; }
   private asyncValidatingValue: string;
 
 }

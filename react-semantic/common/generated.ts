@@ -605,7 +605,6 @@ export interface InputProps extends ui.IProps, IPropsIconInputProp, IPropsAction
   $transparent?: boolean;
   $inverted?: boolean;
   $fluid?: boolean;
-  $defaultValue?: string;
 }
 
 export var inputPropsDescr = ui.createDescr<InputProps>(val => {
@@ -634,12 +633,7 @@ export const Input: ui.StatelessComponent<InputProps> = pr => {
 //**************************************************************
 //*   INPUTSMART
 //**************************************************************    
-export interface InputSmartProps extends InputProps {
-
-
-  $validatorAsync?: (val: string, completed: ui.TSyncCompleted) => void;
-  $validator?: ui.TSyncValidator;
-  $validators?: Array<ui.TSyncValidator>;
+export interface InputSmartProps extends InputProps, ui.IInputLowProps {
 
 }
 

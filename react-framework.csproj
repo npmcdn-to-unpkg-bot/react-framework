@@ -61,7 +61,7 @@
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
     <TypeScriptCompile Include="react-semantic\collections\forms.tsx" />
     <TypeScriptCompile Include="react-semantic\common\validators.tsx" />
-    <TypeScriptCompile Include="react-semantic\common\inputValidated.tsx" />
+    <TypeScriptCompile Include="react-semantic\common\forms.tsx" />
     <TypeScriptCompile Include="react-semantic\common\sourceForGenerated.ts" />
     <TypeScriptCompile Include="react-semantic\common\generated.ts" />
     <TypeScriptCompile Include="react-semantic\common\largeEnums.ts" />

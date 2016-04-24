@@ -10,7 +10,7 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {rangeValidator, requiredValidator } from './validators';
-export {InputTag, InputError} from './inputValidated';
+export {InputTag} from './forms';
 
 export {
 animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,

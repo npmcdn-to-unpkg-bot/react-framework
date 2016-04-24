@@ -67,21 +67,25 @@ export var source: genSource = {
   ],
   codeData: [
     {
-      name: 'inputSmart',
-      otherProps: `
-  $validatorAsync?: (val: string, completed: ui.TSyncCompleted) => void;
-  $validator?: ui.TSyncValidator;
-  $validators?: Array<ui.TSyncValidator>;
-` ,
+      name: 'form',
+      otherExtends: ', ui.IFormProps',
       boolProps: [],
       enumProps: [
       ],
       inheritsFrom: 'input'
-    },    {
+    },
+    {
+      name: 'inputSmart',
+      otherExtends: ', ui.IFieldProps',
+      boolProps: [],
+      enumProps: [
+      ],
+      inheritsFrom: 'input'
+    },
+    {
       name: 'input',
       autoClass: `'ui input'`,
       autoTag: `'div'`,
-      otherProps: '  $defaultValue?: string;',
       boolProps: [{ name: 'error' }, { name: 'focus' }, { name: 'loading' }, { name: 'disabled' }, { name: 'transparent' }, { name: 'inverted' }, { name: 'fluid' },],
       enumProps: [
         { name: 'iconInput', values: ["no", "iconRight", "iconLeft"], alias:`, { $iconRight: 'icon', $iconLeft: 'left icon' }` },
