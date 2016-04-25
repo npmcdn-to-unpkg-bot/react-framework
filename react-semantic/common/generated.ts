@@ -22,7 +22,6 @@ import {icon, flag, flagShort} from './largeEnums';
   Image, outerTagImage,
   Images,
   Input, iconInput, action, labeledInput,
-  InputSmart,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels,
   List,
@@ -67,7 +66,6 @@ export {
   ImageProps, outerTagImage,
   Images, ImagesProps,
   Input, InputProps, iconInput, action, labeledInput,
-  InputSmartProps,
   Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
   Labels, LabelsProps,
   ListProps,
@@ -629,19 +627,6 @@ export const Input: ui.StatelessComponent<InputProps> = pr => {
   return React.createElement('div', rest, pr.children);
 }
 
-
-//**************************************************************
-//*   INPUTSMART
-//**************************************************************    
-export interface InputSmartProps extends InputProps, ui.IInputLowProps {
-
-}
-
-export var inputSmartPropsDescr = ui.createDescr<InputSmartProps>(val => {
-  return {
-
-  };
-}, inputPropsDescr);
 
 //**************************************************************
 //*   LABEL

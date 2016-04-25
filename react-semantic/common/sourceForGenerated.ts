@@ -66,6 +66,7 @@ export var source: genSource = {
     { name: 'attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedBoth'], alias: `, { $attachedBoth: 'attached'} ` },
   ],
   codeData: [
+   /*
     {
       name: 'form',
       otherExtends: ', ui.IFormProps',
@@ -81,7 +82,7 @@ export var source: genSource = {
       enumProps: [
       ],
       inheritsFrom: 'input'
-    },
+    },*/
     {
       name: 'input',
       autoClass: `'ui input'`,

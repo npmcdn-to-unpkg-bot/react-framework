@@ -54,6 +54,8 @@
     <TypeScriptCompile Include="apps\test-react-semantic\app.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
+    <TypeScriptCompile Include="react-framework\gui-modules\doc\forms-test.tsx" />
+    <TypeScriptCompile Include="react-framework\gui-modules\forms.tsx" />
     <TypeScriptCompile Include="react-framework\js.ts" />
     <TypeScriptCompile Include="react-framework\router.ts" />
     <TypeScriptCompile Include="apps\test-config.ts" />
@@ -85,7 +87,6 @@
     <TypeScriptCompile Include="react-semantic\common\lib.ts" />
     <TypeScriptCompile Include="react-semantic\common\exports.ts" />
     <None Include="trash\label.tsx_" />
-    <TypeScriptCompile Include="react-semantic\elements\inputSmart.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\image.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
     <TypeScriptCompile Include="trash\index.tsx" />

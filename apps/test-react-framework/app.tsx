@@ -117,7 +117,8 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       <hr/>
       <RouteHook initState={this.otherHook}/>
       <hr/>
-      <FABButton />
+      {/*
+      */}
     </div>;
   }
 }

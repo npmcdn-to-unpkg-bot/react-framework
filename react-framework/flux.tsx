@@ -65,6 +65,35 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
       })));
 }
 
+//******************  REACT COMPONENTS
+export class Component<T extends Store, P extends IPropsEx> extends React.Component<IProps<T> & P, any> { //generic React component
+  constructor(props: IProps<T> & P, ctx) {
+    super(props, ctx);
+    this.state = props.initState;
+    if (!this.state) { this.state = Store.createInRender<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
+    //props to state:
+    Object.assign(this.state, props); delete this.state['initState'];
+    this.state.componentCreated(this);
+    this.state.trace('create');
+    this.state.subscribe(this);
+  }
+  state: T;
+  componentWillUnmount() {
+    if (this.props.$parent && this.props.$parent.childStores && this.state) delete this.props.$parent.childStores[this.state.getIdInParent()]; //undo adjustComponentState
+    this.state.unSubscribe(this);
+    this.state.trace('destroy');
+  }
+  render(): JSX.Element {
+    return this.state.render();
+  }
+  //static childContextTypes: {};
+
+}
+
+
+export type TComponent = Component<Store, IPropsEx>;
+export type TComponentClass = React.ComponentClass<TProps>;
+
 //****************** STORE
 export type IChildStores = { [path: string]: Store; };
 export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
@@ -72,9 +101,13 @@ export interface IPropsEx { $parent?: Store; instanceId?: string; }
 export interface IProps<T extends Store> {
   initState?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
 }
-export type TProps = IProps<Store>;
+export type TProps = IProps<Store> & IPropsEx;
 
-
+//IPropsEx x Store relationship:
+//Every component props (eg. title:string) has to be defined in Store:
+//IF we needs: interface IExampleProps extends IPropsEx { title?:string; }
+//THEN we have to have: class ExampleStore extends Store { title:string; }
+//Props are assigned to Store in component constructor (Object.assign(this.state, props); delete this.state['initState'];
 @StoreDef({ moduleId: moduleId })
 export abstract class Store implements IStore, ITypedObj {
   constructor(public $parent: Store, public instanceId?: string) {
@@ -95,7 +128,7 @@ export abstract class Store implements IStore, ITypedObj {
     var res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
     if (res) return res;
     res = new cls(parent, instanceId) as T;
-    Object.assign(res, props);
+    //Object.assign(res, props); //component props field () to store.
     if (!parent.childStores) parent.childStores = {};
     parent.childStores[idInParent] = res;
     return res as T;
@@ -135,6 +168,7 @@ export abstract class Store implements IStore, ITypedObj {
   unSubscribe(comp: TComponent) { store.doSubscribe(this, comp, false); } //called in React.Component componentWillUnmount
 
   abstract render(): JSX.Element; // { throw new flux.ENotImplemented('Missing render override'); } //React.Component render
+  componentCreated(comp: TComponent) { /*sance reagovat na prave assignovane component properties*/ }
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
   //************** Action Binding
@@ -163,30 +197,6 @@ export abstract class Store implements IStore, ITypedObj {
 
 export type TStoreClass = new ($parent: Store, instanceId?: string) => Store;
 export type TDispatchCallback = (store: Store) => void;
-
-//******************  REACT COMPONENTS
-export class Component<T extends Store, P extends IPropsEx> extends React.Component<IProps<T> & P, any> { //generic React component
-  constructor(props: IProps<T> & P, ctx) {
-    super(props, ctx);
-    this.state = props.initState;
-    if (!this.state) { this.state = Store.createInRender<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
-    this.state.trace('create');
-    this.state.subscribe(this);
-  }
-  state: T;
-  componentWillUnmount() {
-    if (this.props.$parent && this.props.$parent.childStores && this.state) delete this.props.$parent.childStores[this.state.getIdInParent()]; //undo adjustComponentState
-    this.state.unSubscribe(this);
-    this.state.trace('destroy');
-  }
-  render(): JSX.Element {
-    return this.state.render();
-  }
-
-}
-
-export type TComponent = Component<Store, IPropsEx>;
-export type TComponentClass = React.ComponentClass<TProps>;
 
 //****************** ROUTER HOOK STORE
 export interface IStoreRouteHook extends IStore { }

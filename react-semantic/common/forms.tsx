@@ -5,6 +5,40 @@ import * as ReactDOM from 'react-dom';
 //types for validators
 export type TSyncValidator = (val: string) => string;
 export type TSyncCompleted = (err: string) => void;
+
+//**************** FORM LOW
+interface IFormErrorItem { input: TInputLow; error: string; title: string; }
+interface IFormState { loading?: boolean; errors: Array<IFormErrorItem>; }
+interface IFormContext { MyForm: formLow<IFormProps>; }
+export interface IFormProps {
+  password: inputValue;
+}
+abstract class inputValue {
+  value: string;
+  error: string;
+}
+
+
+export abstract class formLow<T extends IFormProps> extends React.Component<T, IFormState> {
+  static childContextTypes = { MyForm: React.PropTypes.any };
+  getChildContext(): IFormContext { return { MyForm: this }; }
+
+  private inputs: Array<TInputLow> = [];
+  inputRegister(inp: TInputLow) { this.inputs.push(inp); }
+
+  validate(completed?: (error: string) => void) {
+  }
+  reset() { this.inputs.forEach(inp => inp.reset()); }
+
+}
+
+
+//**************** INPUT LOW
+interface IFieldInputContext { MyInput: TInputLow; }
+export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: IInputLowProps, context: IFieldInputContext) => inputLow.renderInputTag(props, context);
+InputTag.contextTypes = { MyInput: React.PropTypes.any };
+
+export type TInputLowTemplate = (self: TInputLow) => JSX.Element;
 export interface IInputLowProps {
   $title?: string;
   $defaultValue?: string;
@@ -13,36 +47,14 @@ export interface IInputLowProps {
   $validator?: TSyncValidator;
   $validators?: Array<TSyncValidator>;
 }
-export interface IFormProps { }
-export type TInputLowTemplate = (self: TInputLow) => JSX.Element;
 
-
-//**************** FORM LOW
-interface IFormState { }
-interface IFormContext { MyForm: formLow<IFormProps>; }
-export abstract class formLow<T extends IFormProps> extends React.Component<T, IFormState> {
-  static childContextTypes = { MyForm: React.PropTypes.any };
-  getChildContext(): IFormContext { return { MyForm: this }; }
-
-  private inputs: Array<TInputLow> = [];
-  inputRegister(inp: TInputLow) { this.inputs.push(inp); }
-}
-
-
-//**************** INPUT LOW
-
-interface IFieldInputContext { MyInput: TInputLow; }
-export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: IInputLowProps, context: IFieldInputContext) => inputLow.renderInputTag(props, context);
-//export const InputError: React.StatelessComponent<React.HTMLAttributes> = (props, context: IFieldInputContext) => context.MyInput.renderError(props);
-InputTag.contextTypes = { MyInput: React.PropTypes.any };
-
-interface IFieldState { value: string; error?: string; blured?: boolean; loading?: boolean; }
+interface IInputLowState { value: string; error?: string; blured?: boolean; validating?: boolean; }
 
 const enum validatorStatus { no, sync, async }
 
 type TInputLow = inputLow<IInputLowProps>;
 
-export abstract class inputLow<T extends IInputLowProps> extends React.Component<T, IFieldState> {
+export abstract class inputLow<T extends IInputLowProps> extends React.Component<T, IInputLowState> {
   constructor(props, ctx: IFormContext) {
     super(props, ctx);
     this.state = { value: props.$defaultValue ? props.$defaultValue : '' };
@@ -77,8 +89,6 @@ export abstract class inputLow<T extends IInputLowProps> extends React.Component
   static contextTypes = { MyForm: React.PropTypes.any}
   getChildContext(): IFieldInputContext { return { MyInput: this }; }
 
-  renderError(props: React.HTMLAttributes): JSX.Element { return <Error msg={this.state.error}/> }
-
   componentWillUnmount(): void { this.asyncCancel(); }
 
   protected validators: Array<TSyncValidator>;
@@ -102,14 +112,14 @@ export abstract class inputLow<T extends IInputLowProps> extends React.Component
     //******* local functions
     function doSetState(error: string) { //setState (=>render) & call completed
       //if (val != self.state.value || error != self.state.error)
-      self.setState({ value: val, error: error, blured: self.state.blured, loading: self.state.loading });
+      self.setState({ value: val, error: error, blured: self.state.blured, validating: self.state.validating });
       if (completed) completed(error);
     }
     function asyncStart() { //start of async validation
       console.log('asyncStart');
       self.asyncCancel();
       //doSetState('...examining');
-      self.setState({ value: self.state.value, loading: true, error:null});
+      self.setState({ value: self.state.value, validating: true, error:null});
       var obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
         self.props.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
       });
@@ -160,12 +170,9 @@ export abstract class inputLow<T extends IInputLowProps> extends React.Component
     this.asyncSubscription.unsubscribe();
     this.asyncDelete();
   }
-  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; this.state.loading = false; }
+  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; this.state.validating = false; }
   private asyncValidatingValue: string;
 
 }
 
-interface IError { msg: string; }
-const Error: React.StatelessComponent<IError> = props => {
-  return props.msg ? <span>{props.msg}</span> : null;
-}
+export class InputSmart extends inputLow<IInputLowProps> { }

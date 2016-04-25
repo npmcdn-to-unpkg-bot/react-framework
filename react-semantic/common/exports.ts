@@ -10,7 +10,7 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {rangeValidator, requiredValidator } from './validators';
-export {InputTag} from './forms';
+export {InputTag, InputSmart} from './forms';
 
 export {
 animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,
@@ -29,7 +29,6 @@ Icons, IconsProps,
 ImageProps, outerTagImage,
 Images, ImagesProps,
 Input, InputProps, iconInput, action, labeledInput,
-InputSmartProps,
 Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
 Labels, LabelsProps,
 ListProps,
@@ -57,7 +56,6 @@ TableProps,
 
 export {ButtonLabeled, ButtonIcon, ButtonAnimated, ButtonSocial, Buttons} from '../elements/button';
 export {Image} from '../elements/image';
-export {InputSmart} from '../elements/inputSmart';
 
 export {ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, ButtonsTest, ButtonSocialTest} from '../doc/elements/buttonTest';
 export {GridTest} from '../doc/collections/gridTest';

@@ -30,7 +30,10 @@ import {
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
-var moduleId = 'testReactSemantic;'
+import {FormTest} from '../../react-framework/gui-modules/doc/forms-test';
+
+
+var moduleId = 'testReactSemantic'
 
 //****************** Main Entry Point
 export function init() {
@@ -40,9 +43,7 @@ export function init() {
 //****************** App Store
 @flux.StoreDef({ moduleId: moduleId })
 export class AppStore extends flux.StoreApp {
-  getStartRoute(): flux.TRouteActionPar {
-    return flux.createRoute(AppRootStore);
-  }
+  getStartRoute(): flux.TRouteActionPar { return flux.createRoute(AppRootStore);  }
   getIsHashRouter(): boolean { return true; }
 }
 
@@ -57,7 +58,7 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <InputSmartTest/>
+      <FormTest $parent={this}/>
       {/*
       <div className="ui form">
         <div className="three fields">
