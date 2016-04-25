@@ -12,8 +12,10 @@ import {
   //InputSmart
 } from '../../../react-semantic/common/exports';
 
-import {InputSmart, InputSmartStore, InputTag, TInputTemplate} from '../forms';
+import {InputSmart, InputSmartStore, InputTag} from '../forms';
 import * as flux from '../../flux';
+import {BindToState} from '../../flux';
+
 
 import * as ui from '../../../react-semantic/common/exports';
 
@@ -21,7 +23,7 @@ const moduleId = 'formsTest';
 
 export class FormTest extends flux.Component<FormTestStore, flux.IPropsEx> { }
 
-var inpTemplate: TInputTemplate = self =>
+var inpTemplate: flux.TTemplate = (self: InputSmartStore) =>
   <div>
     <Input $iconLeft $loading={self.validating}>
       <InputTag placeholder="Search..." /><Icon $Icon={icon.search}/>
@@ -47,7 +49,9 @@ export class FormTestStore extends flux.Store {
         $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
         $template = {inpTemplate}
         />
-      <InputSmart $title='Password' $parent={this} initState={this.password} $validator = {ui.requiredValidator()} $template = {inpTemplate} />
+      <InputSmart $title='Password' $parent={this} initState={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
+      <hr/>
+      <BindToState $stores={[this.password, this.name]} $parent={this} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TAction.click, 'click') }>OK</a>
       <hr/>

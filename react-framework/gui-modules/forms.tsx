@@ -6,7 +6,6 @@ import * as flux from '../flux';
 
 const moduleId = 'forms';
 
-export type TInputTemplate = (self: InputStore) => JSX.Element;
 interface IInputContext { MyInput: InputStore; }
 enum TInputActions { setState };
 interface InputActionPar extends flux.IActionPar { value: string; }
@@ -14,7 +13,6 @@ interface InputActionPar extends flux.IActionPar { value: string; }
 interface InputProps extends flux.IPropsEx {
   $title?: string;
   $defaultValue?: string;
-  $template?: TInputTemplate;
   $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
   $validator?: TSyncValidator;
   $validators?: Array<TSyncValidator>;
@@ -26,7 +24,6 @@ export abstract class InputStore extends flux.Store {
   //props
   $title: string;
   $defaultValue: string;
-  $template: TInputTemplate;
   $validatorAsync: (val: string, completed: TSyncCompleted) => void;
   $validator: TSyncValidator;
   $validators: Array<TSyncValidator>;
@@ -37,10 +34,11 @@ export abstract class InputStore extends flux.Store {
   validating: boolean;
   //engine
 
-  render(): JSX.Element {
-    return this.$template ? this.$template(this) : <div>Missing $template component property</div>;
-  }
+  //render(): JSX.Element {
+  //  return this.$template ? this.$template(this) : <div>Missing $template component property</div>;
+  //}
   componentCreated(comp: flux.TComponent) {
+    super.componentCreated(comp);
     if (this.value===undefined) this.value = this.$defaultValue ? this.$defaultValue : '';
   }
   validate(completed?: (error: string) => void) {
@@ -77,8 +75,6 @@ export abstract class InputStore extends flux.Store {
   private blur() {
     console.log('blur');
     this.action<InputActionPar>(TInputActions.setState, 'setState', { value: this.value });
-    //this.blured = true;
-    //this.setNewValue(false);
   }
 
   private handleChange(event) {
@@ -128,7 +124,6 @@ export abstract class InputStore extends flux.Store {
     //** at blur or validate
     //already validated value is the same
     if (val == self.$asyncValidatingValue) {
-      debugger;
       console.log('val == self.validatingValue');
       if (!self.$asyncSubscription) {
         if (completed) completed(self.error); //async validation not running => noop

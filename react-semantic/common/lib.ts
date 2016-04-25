@@ -57,8 +57,6 @@ export class enumConverter<T> extends propConverter {
     var temp = propsToHTMLClass[res]; res = temp ? temp : res; //nahrada spatne hodnoty spravnou, napr. IPropsPointing.pointingAbove => pointing
     if (res[0] == '$') res = res.substr(1);
     return decodeValue(res);
-    //let parts = res.split(/(?=[A-Z])/);
-    //return parts.map(p => p.toLowerCase()).join(' ');
   }
 }
 

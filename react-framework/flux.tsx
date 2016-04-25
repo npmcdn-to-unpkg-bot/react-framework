@@ -70,26 +70,36 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
   constructor(props: IProps<T> & P, ctx) {
     super(props, ctx);
     this.state = props.initState;
-    if (!this.state) { this.state = Store.createInRender<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
-    //props to state:
-    Object.assign(this.state, props); delete this.state['initState'];
-    this.state.componentCreated(this);
-    this.state.trace('create');
-    this.state.subscribe(this);
+    //state to parent child states
+    if (!this.state) { this.state = Store.createInRender<T>(props, componentToStore(this.constructor as TComponentClass), props.instanceId); }
+    this.state.componentCreated(this); //notificiation
+    //this.state = props.initState;
+    ////state to parent child states
+    //if (!this.state) { this.state = Store.createInRender<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
+    //Object.assign(this.state, props); delete this.state['initState']; //props to state:
+    //debugger;
+    //this.state.componentCreated(this); //notificiation
+    //this.state.trace('create');
+    //this.state.subscribe(this);
   }
   state: T;
   componentWillUnmount() {
-    if (this.props.$parent && this.props.$parent.childStores && this.state) delete this.props.$parent.childStores[this.state.getIdInParent()]; //undo adjustComponentState
-    this.state.unSubscribe(this);
-    this.state.trace('destroy');
+    this.state.componentWillUnmount(this);
+    //if (this.props.$parent && this.props.$parent.childStores && this.state) delete this.props.$parent.childStores[this.state.getIdInParent()]; //undo adjustComponentState
+    //this.state.unSubscribe(this);
+    //this.state.trace('destroy');
   }
   render(): JSX.Element {
-    return this.state.render();
+    return this.state.render(this);
+    //var res = this.state.render(); if (res) return res;
+    //var childCount = this.props.children ? React.Children.count(this.props.children) : 0;
+    //switch (childCount) {
+    //  case 0: return <div>Missing $template component property</div>;
+    //  case 1: return React.Children.only(this.props.children);
+    //  default: return React.createElement('div', null, this.props.children);
+    //}
   }
-  //static childContextTypes: {};
-
 }
-
 
 export type TComponent = Component<Store, IPropsEx>;
 export type TComponentClass = React.ComponentClass<TProps>;
@@ -97,11 +107,13 @@ export type TComponentClass = React.ComponentClass<TProps>;
 //****************** STORE
 export type IChildStores = { [path: string]: Store; };
 export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
-export interface IPropsEx { $parent?: Store; instanceId?: string; }
+export interface IPropsEx { $parent?: Store; instanceId?: string; $template?: TTemplate; }
 export interface IProps<T extends Store> {
   initState?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
 }
 export type TProps = IProps<Store> & IPropsEx;
+export type TTemplate = (self: Store) => JSX.Element;
+
 
 //IPropsEx x Store relationship:
 //Every component props (eg. title:string) has to be defined in Store:
@@ -110,6 +122,14 @@ export type TProps = IProps<Store> & IPropsEx;
 //Props are assigned to Store in component constructor (Object.assign(this.state, props); delete this.state['initState'];
 @StoreDef({ moduleId: moduleId })
 export abstract class Store implements IStore, ITypedObj {
+
+  $template: TTemplate;
+  $subscribers: Array<string> = []; //components path's, using this store as a status
+  _type: string; //kvuli JSON deserializaci
+  path: string; //unique Store identification
+  childStores: IChildStores;
+  children: React.ReactNode;
+
   constructor(public $parent: Store, public instanceId?: string) {
     this._type = this.getMeta().id;
     var idInParent = this.getIdInParent();
@@ -139,7 +159,6 @@ export abstract class Store implements IStore, ITypedObj {
     return new meta.storeClass(parent);
   }
 
-  $subscribers: Array<string> = []; //components path's, using this store as a status
   getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
@@ -153,9 +172,6 @@ export abstract class Store implements IStore, ITypedObj {
       return storeId;
   }
   static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string { return Store.getClassMeta(storeClass).id + (instanceId ? '.' + instanceId : ''); }
-  _type: string; //kvuli JSON deserializaci
-  path: string; //unique Store identification
-  childStores: IChildStores;
   modify(modifyProc?: (st: this) => void) { //modify store and rerender all $subscribers
     if (modifyProc) modifyProc(this);
     this.$subscribers.forEach(path => {
@@ -164,11 +180,31 @@ export abstract class Store implements IStore, ITypedObj {
       comp.forceUpdate();
     });
   }
-  subscribe(comp: TComponent) { store.doSubscribe(this, comp, true); } //called in React.Component constructor
-  unSubscribe(comp: TComponent) { store.doSubscribe(this, comp, false); } //called in React.Component componentWillUnmount
+  subscribe(comp: TComponent, includingComponent: boolean) { store.doSubscribe(this, comp, true, includingComponent); } //called in React.Component constructor
+  unSubscribe(comp: TComponent, includingComponent: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
 
-  abstract render(): JSX.Element; // { throw new flux.ENotImplemented('Missing render override'); } //React.Component render
-  componentCreated(comp: TComponent) { /*sance reagovat na prave assignovane component properties*/ }
+  render(comp: TComponent): JSX.Element {
+    if (this.$template) return this.$template(this);
+    var childCount = this.children ? React.Children.count(this.children) : 0;
+    switch (childCount) {
+      case 0: return <div>Missing $template component property</div>;
+      case 1: return React.Children.only(this.children);
+      default: return React.createElement('div', null, this.children);
+    }
+  }
+
+  componentCreated(comp: TComponent) {
+    Object.assign(this, comp.props); delete this['initState']; //props to state:
+    //this.componentCreated(comp); //notificiation
+    this.trace('create');
+    this.subscribe(comp, true);
+    /*sance reagovat na prave assignovane component properties*/
+  }
+  componentWillUnmount(comp: TComponent) {
+    if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
+    this.unSubscribe(comp, true);
+    this.trace('destroy');
+  }
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
   //************** Action Binding
@@ -365,27 +401,33 @@ export abstract class StoreApp extends Store { //global Application store (root 
   getUnique(): number { return this.unique++; }
   findComponent(path: string): TComponent { var comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }
 
-  doSubscribe(st: Store, comp: TComponent, isSubscribe: boolean) { //prihlas x odhlas se k notifikaci o zmene stavu. Volano v TComponent konstructoru x TComponent.unmount.
+  doSubscribe(st: Store, comp: TComponent, isSubscribe: boolean, includingComponent:boolean) { //prihlas x odhlas se k notifikaci o zmene stavu. Volano v TComponent konstructoru x TComponent.unmount.
     if (isSubscribe) { //konstructor
-      //kontroly
-      if (this.$components[st.path]) throw new flux.Exception(`Dve komponenty stejneho jmena: ${st.path}`); //komponenta je jiz zaevidovana => dve komponenty stejneho jmena
-      if (st.$subscribers.indexOf(st.path) >= 0) throw new flux.Exception(`${st.path}: st.$componentIds && st.$componentIds.indexOf(p) >= 0`); //ta sama komponenta je prihlasena dvakrat
+      //komponenta
+      if (includingComponent) {
+        if (this.$components[st.path]) throw new flux.Exception(`Dve komponenty stejneho jmena: ${st.path}`); //komponenta je jiz zaevidovana => dve komponenty stejneho jmena
+        this.$components[st.path] = comp;
+      }
+      //notifikace
+      if (st.$subscribers.indexOf(comp.state.path) >= 0) throw new flux.Exception(`${comp.state.path}: st.$subscribers.indexOf(comp.state.path) >= 0`); //ta sama komponenta je subscribed dvakrat
       //evidence
-      this.$components[st.path] = comp;
-      st.$subscribers.push(st.path);
+      st.$subscribers.push(comp.state.path);
     } else { //unmount
-      //kontroly
-      if (!this.$components[st.path]) throw new flux.Exception(`${st.path}: !Sync.path2Component[p]`);
+      //komponenta
+      if (includingComponent) {
+        if (!this.$components[st.path]) throw new flux.Exception(`${st.path}: !Sync.path2Component[p]`);
+        delete this.$components[st.path];
+      }
       //st.path nemusi byt v st.$subscribers, protoze st muze byt vytvoreno uplne znova (v ramci zmen parenta).
       //var idx: number; if ((idx = st.$subscribers.indexOf(st.path)) < 0) throw new flux.Exception(`${st.path}: !st.$componentIds || (idx = st.$componentIds.indexOf(p)) < 0`);
-      var idx = st.$subscribers.indexOf(st.path);
+      var idx = st.$subscribers.indexOf(comp.state.path);
       //undo evidence
-      delete this.$components[st.path];
       if (idx >= 0) st.$subscribers.splice(idx, 1);
     }
   }
 
-  render(): JSX.Element { return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
+  render(): JSX.Element { 
+    return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
 
   findStore(path: string): Store { var res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
 
@@ -407,6 +449,25 @@ export abstract class StoreApp extends Store { //global Application store (root 
     return null;
   }
 
+}
+
+//******************  bind to state
+interface BindToStateProps extends flux.IPropsEx { $stores: Array<flux.Store> | flux.Store; }
+
+export class BindToState extends flux.Component<BindToStateStore, BindToStateProps> { }
+
+@flux.StoreDef({ moduleId: moduleId, componentClass: BindToState })
+export class BindToStateStore extends flux.Store {
+  $stores: Array<flux.Store> | flux.Store;
+  componentCreated(comp: flux.TComponent) {
+    super.componentCreated(comp);
+    if (this.$stores) this.stores().forEach(st => st.subscribe(comp, false));
+  }
+  componentWillUnmount(comp: flux.TComponent) {
+    super.componentWillUnmount(comp);
+    if (this.$stores) this.stores().forEach(st => st.unSubscribe(comp, false));
+  }
+  private stores(): Array<flux.Store> { return Array.isArray(this.$stores) ? this.$stores as Array<flux.Store> : [this.$stores as flux.Store]; }
 }
 
 //***************** POPSTATE EVENT
