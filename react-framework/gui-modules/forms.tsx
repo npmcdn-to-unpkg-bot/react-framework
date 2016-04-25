@@ -23,9 +23,6 @@ interface InputProps extends flux.IPropsEx {
 
 //@flux.StoreDef({ moduleId: moduleId })
 export abstract class InputStore extends flux.Store {
-  constructor($parent: flux.Store, instanceId?:string) {
-    super($parent, instanceId);
-  }
   //props
   $title: string;
   $defaultValue: string;
@@ -61,6 +58,8 @@ export abstract class InputStore extends flux.Store {
         //this.setAndValidate(false, par.value, er => completed(er ? new Error(er) : null));
         this.setAndValidate(false, par.value, er => completed(null));
         break;
+      default:
+        super.doDispatchAction(id, par, completed);
     }
   }
 
@@ -103,11 +102,11 @@ export abstract class InputStore extends flux.Store {
       var obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
         self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
       });
-      self.asyncConnectable = obs.publish();
-      self.asyncSubscription = self.asyncConnectable.connect();
+      self.$asyncConnectable = obs.publish();
+      self.$asyncSubscription = self.$asyncConnectable.connect();
     }
     function asyncSubscribe(completed?: (error: string) => void) { //subscribe to async validation result
-      self.asyncConnectable.subscribe(null, err => refreshComponent(err), () => refreshComponent(null));
+      self.$asyncConnectable.subscribe(null, err => refreshComponent(err), () => refreshComponent(null));
     }
 
     //******* no validation
@@ -121,15 +120,17 @@ export abstract class InputStore extends flux.Store {
     }
 
     //******* async validation
+    if (!this.$validatorAsync) { refreshComponent(null); return; }
     //** at handleChange 
     //no async validation at the handleChange
     if (inHandleChange) { self.asyncCancel(); refreshComponent(null); return; }
 
     //** at blur or validate
     //already validated value is the same
-    if (val == self.asyncValidatingValue) {
+    if (val == self.$asyncValidatingValue) {
+      debugger;
       console.log('val == self.validatingValue');
-      if (!self.asyncSubscription) {
+      if (!self.$asyncSubscription) {
         if (completed) completed(self.error); //async validation not running => noop
       } else
         asyncSubscribe(err => completed(err)); //async validation already running => subscribe to its result
@@ -137,28 +138,28 @@ export abstract class InputStore extends flux.Store {
     }
     //value is not validated yet:
     asyncStart(); //start validation
-    self.asyncValidatingValue = val; //remember just validated value
+    self.$asyncValidatingValue = val; //remember just validated value
     asyncSubscribe(completed); //subscribe to validation result
   }
 
   //asunchronni validace
-  private asyncSubscription: rx.Subscription;
-  private asyncConnectable: rx.ConnectableObservable<any>;
+  private $asyncSubscription: rx.Subscription;
+  private $asyncConnectable: rx.ConnectableObservable<any>;
   asyncCancel() {
-    if (!this.asyncSubscription) return;
+    if (!this.$asyncSubscription) return;
     console.log('asyncCancel');
-    this.asyncSubscription.unsubscribe();
+    this.$asyncSubscription.unsubscribe();
     this.asyncDelete();
   }
-  private asyncDelete() { delete this.asyncSubscription; delete this.asyncConnectable; delete this.asyncValidatingValue; this.validating = false; }
-  private asyncValidatingValue: string;
+  private asyncDelete() { delete this.$asyncSubscription; delete this.$asyncConnectable; delete this.$asyncValidatingValue; this.validating = false; }
+  private $asyncValidatingValue: string;
 }
 
 //export class InputLow extends flux.Component<InputStore, InputProps> {
-export class InputLow extends flux.Component<InputStore, InputProps> {
+export abstract class InputLow extends flux.Component<InputStore, InputProps> {
   componentWillUnmount(): void { this.state.asyncCancel(); super.componentWillUnmount(); }
 
-  //static childContextTypes: {} = { MyInput: React.PropTypes.any }; //neco divneho je v kompatibilite
+  //static childContextTypes: {} = { MyInput: React.PropTypes.any }; //neco je divneho, hlasi chybu kompatibility s TComponentClass
   getChildContext(): IInputContext { return { MyInput: this.state }; }
 }
 InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };

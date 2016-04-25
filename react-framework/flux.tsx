@@ -387,14 +387,23 @@ export abstract class StoreApp extends Store { //global Application store (root 
 
   render(): JSX.Element { return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
 
-  findStore(path: string): Store { var res = this._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
+  findStore(path: string): Store { var res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
 
   private $components: { [path: string]: TComponent; } = {}; //all existing app component
 
-  private _findStore(path: string, obj): Store {
+  private static _findStore(path: string, obj): Store {
     if (obj instanceof Store && (obj as Store).path == path) return obj as Store;
-    if (Array.isArray(obj)) for (var o of obj) { let res = this._findStore(path, o); if (res) return res; }
-    else if (obj instanceof Object) for (var p in obj) { if (p.startsWith('$')) continue; let res = this._findStore(path, obj[p]); if (res) return res; }
+    if (Array.isArray(obj)) {
+      let res = null;
+      (obj as Array<any>).find(o => !!(res = StoreApp._findStore(path, o)));
+      return res;
+    } else if (typeof obj == 'object') {
+      var isStore = obj instanceof Store; var isLiteral = obj && obj.constructor == Object;
+      if (!isStore && !isLiteral) return null;
+      let res = null;
+      Object.keys(obj).find(p => { if (isStore && p.startsWith('$')) return false; res = StoreApp._findStore(path, obj[p]); if (res) return true; });
+      return res;
+    } 
     return null;
   }
 

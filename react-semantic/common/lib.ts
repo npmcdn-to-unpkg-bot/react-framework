@@ -1,4 +1,8 @@
-﻿export {TSyncValidator, TSyncCompleted, IInputLowProps, IFormProps, TInputLowTemplate} from './forms';
+﻿import * as React from 'react';
+
+//export {TSyncValidator, TSyncCompleted, IInputLowProps, IFormProps, TInputLowTemplate} from './forms';
+export type TSyncValidator = (val: string) => string;
+export type TSyncCompleted = (err: string) => void;
 
 export type convertResult = string | {};
 export abstract class propConverter {
@@ -16,6 +20,11 @@ export class htmlTags {
   static a = 6;
   static div = 7;
   static span = 8;
+}
+
+export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props, context) => {
+  var props: React.HTMLAttributes = Object.assign({}, props); if (!props.type) props.type = 'text';
+  return React.createElement('input', props);
 }
 
 //-----------------------

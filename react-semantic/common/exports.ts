@@ -1,6 +1,6 @@
 ﻿export {
 StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, 
-enumValToProp, enumStrings, enumNumbers,
+enumValToProp, enumStrings, enumNumbers, InputTag,
 IProps, htmlTags, TSyncCompleted, 
 } from './lib';
 
@@ -10,7 +10,7 @@ source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
 
 export {rangeValidator, requiredValidator } from './validators';
-export {InputTag, InputSmart} from './forms';
+//export {InputTag, InputSmart} from './forms';
 
 export {
 animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,
@@ -68,4 +68,3 @@ export {DividerTest} from '../doc/elements/dividerTest';
 export {ImageTest} from '../doc/elements/imageTest';
 export {HeaderTest} from '../doc/elements/headerTest';
 export {InputTest} from '../doc/elements/inputTest';
-export {InputSmartTest} from '../doc/elements/inputSmartTest';

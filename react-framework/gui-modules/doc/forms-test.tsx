@@ -12,7 +12,7 @@ import {
   //InputSmart
 } from '../../../react-semantic/common/exports';
 
-import {InputSmart, InputStore, InputTag} from '../forms';
+import {InputSmart, InputSmartStore, InputTag, TInputTemplate} from '../forms';
 import * as flux from '../../flux';
 
 import * as ui from '../../../react-semantic/common/exports';
@@ -21,33 +21,50 @@ const moduleId = 'formsTest';
 
 export class FormTest extends flux.Component<FormTestStore, flux.IPropsEx> { }
 
+var inpTemplate: TInputTemplate = self =>
+  <div>
+    <Input $iconLeft $loading={self.validating}>
+      <InputTag placeholder="Search..." /><Icon $Icon={icon.search}/>
+    </Input>
+    <Label $tiny $pointingLeft $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>
+  </div>;
+
+enum TAction { click };
+
 @flux.StoreDef({ moduleId: moduleId, componentClass: FormTest })
 export class FormTestStore extends flux.Store {
+  constructor($parent: flux.Store, instanceId?: string) {
+    super($parent, instanceId);
+    this.name = new InputSmartStore(this, 'name');
+    this.password = new InputSmartStore(this, 'password');
+  }
   render(): JSX.Element {
     return <div>
       <h1>Input Validation</h1>
 
-      <InputSmart $title='Input 1' $defaultValue='3' $parent={this}
-        //ref={self => this.field = self.state}
+      <InputSmart $title='Name' $defaultValue='3' $parent={this} initState={this.name}
         $validators = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
         $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
-        $template = {self => <div>
-          <Input $iconLeft $loading={self.validating}>
-            <InputTag placeholder="Search..." /><Icon $Icon={icon.search}/>
-          </Input>
-          <Label $tiny $pointingLeft $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>
-        </div>}
+        $template = {inpTemplate}
         />
+      <InputSmart $title='Password' $parent={this} initState={this.password} $validator = {ui.requiredValidator()} $template = {inpTemplate} />
       <hr/>
-      <a href='#' onClick={this.click.bind(this) }>OK</a>
+      <a href='#' onClick={ev => this.clickAction(ev, TAction.click, 'click') }>OK</a>
       <hr/>
     </div >;
   }
-  field: InputStore;
 
-  click(ev: React.MouseEvent) {
-    ev.preventDefault();
-    //console.log('OK click');
-    //this.field.validate(err => { console.log('OK done'); });
+  name: InputSmartStore;
+  password: InputSmartStore;
+
+  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+    switch (id) {
+      case TAction.click:
+        this.name.validate(err => this.password.validate(err => completed(null)));
+        return;
+      default:
+        super.doDispatchAction(id, par, completed);
+    }
   }
+
 }

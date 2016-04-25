@@ -26,7 +26,7 @@ import {
   Row,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
-  FlagTest, GridTest, ContainerTest, DividerTest, HeaderTest, ImageTest, InputTest, InputSmartTest
+  FlagTest, GridTest, ContainerTest, DividerTest, HeaderTest, ImageTest, InputTest, 
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
@@ -81,7 +81,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       </div>
       <CodeGenerator2/>
       <CodeGenerator/>
-      <InputSmartTest/>
+      <FormTest $parent={this}/>
       <InputTest/>
       <ImageTest/>
       <HeaderTest/>
