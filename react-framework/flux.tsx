@@ -73,32 +73,10 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(props, componentToStore(this.constructor as TComponentClass), props.instanceId); }
     this.state.componentCreated(this); //notificiation
-    //this.state = props.initState;
-    ////state to parent child states
-    //if (!this.state) { this.state = Store.createInRender<T>(this.props, componentToStore(this.constructor as TComponentClass), this.props.instanceId); }
-    //Object.assign(this.state, props); delete this.state['initState']; //props to state:
-    //debugger;
-    //this.state.componentCreated(this); //notificiation
-    //this.state.trace('create');
-    //this.state.subscribe(this);
   }
   state: T;
-  componentWillUnmount() {
-    this.state.componentWillUnmount(this);
-    //if (this.props.$parent && this.props.$parent.childStores && this.state) delete this.props.$parent.childStores[this.state.getIdInParent()]; //undo adjustComponentState
-    //this.state.unSubscribe(this);
-    //this.state.trace('destroy');
-  }
-  render(): JSX.Element {
-    return this.state.render(this);
-    //var res = this.state.render(); if (res) return res;
-    //var childCount = this.props.children ? React.Children.count(this.props.children) : 0;
-    //switch (childCount) {
-    //  case 0: return <div>Missing $template component property</div>;
-    //  case 1: return React.Children.only(this.props.children);
-    //  default: return React.createElement('div', null, this.props.children);
-    //}
-  }
+  componentWillUnmount() { this.state.componentWillUnmount(this); }
+  render(): JSX.Element { return this.state.render(this); }
 }
 
 export type TComponent = Component<Store, IPropsEx>;
@@ -125,6 +103,7 @@ export abstract class Store implements IStore, ITypedObj {
 
   $template: TTemplate;
   $subscribers: Array<string> = []; //components path's, using this store as a status
+  $context: any;
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
@@ -180,32 +159,31 @@ export abstract class Store implements IStore, ITypedObj {
       comp.forceUpdate();
     });
   }
-  subscribe(comp: TComponent, includingComponent: boolean) { store.doSubscribe(this, comp, true, includingComponent); } //called in React.Component constructor
-  unSubscribe(comp: TComponent, includingComponent: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
+  subscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, true, includingComponent); } //called in React.Component constructor
+  unSubscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
+  trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
+  //************** Component management
   render(comp: TComponent): JSX.Element {
     if (this.$template) return this.$template(this);
     var childCount = this.children ? React.Children.count(this.children) : 0;
     switch (childCount) {
-      case 0: return <div>Missing $template component property</div>;
+      case 0: return <div>Missing children or $template component property</div>;
       case 1: return React.Children.only(this.children);
       default: return React.createElement('div', null, this.children);
     }
   }
-
   componentCreated(comp: TComponent) {
     Object.assign(this, comp.props); delete this['initState']; //props to state:
-    //this.componentCreated(comp); //notificiation
+    this.$context = comp.context;
     this.trace('create');
     this.subscribe(comp, true);
-    /*sance reagovat na prave assignovane component properties*/
   }
   componentWillUnmount(comp: TComponent) {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
     this.unSubscribe(comp, true);
     this.trace('destroy');
   }
-  trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
   //************** Action Binding
   initStore(par: IActionPar, completed: TCreateStoreCallback) { completed(this); } //inicializace store po jeho vytvoreni. Muze byt asynchronni
@@ -461,11 +439,11 @@ export class BindToStateStore extends flux.Store {
   $stores: Array<flux.Store> | flux.Store;
   componentCreated(comp: flux.TComponent) {
     super.componentCreated(comp);
-    if (this.$stores) this.stores().forEach(st => st.subscribe(comp, false));
+    if (this.$stores) this.stores().forEach(st => st.subscribe(comp));
   }
   componentWillUnmount(comp: flux.TComponent) {
     super.componentWillUnmount(comp);
-    if (this.$stores) this.stores().forEach(st => st.unSubscribe(comp, false));
+    if (this.$stores) this.stores().forEach(st => st.unSubscribe(comp));
   }
   private stores(): Array<flux.Store> { return Array.isArray(this.$stores) ? this.$stores as Array<flux.Store> : [this.$stores as flux.Store]; }
 }
