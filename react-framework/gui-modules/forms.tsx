@@ -6,6 +6,10 @@ import * as flux from '../flux';
 
 const moduleId = 'forms';
 
+//types for validators
+export type TSyncValidator = (val: string) => string;
+export type TSyncCompleted = (err: string) => void;
+
 interface IInputContext { MyInput: InputStore; }
 enum TInputActions { setState };
 interface InputActionPar extends flux.IActionPar { value: string; }
@@ -18,8 +22,6 @@ interface InputProps extends flux.IPropsEx {
   $validators?: Array<TSyncValidator>;
 }
 
-
-//@flux.StoreDef({ moduleId: moduleId })
 export abstract class InputStore extends flux.Store {
   //props
   $title: string;
@@ -27,6 +29,9 @@ export abstract class InputStore extends flux.Store {
   $validatorAsync: (val: string, completed: TSyncCompleted) => void;
   $validator: TSyncValidator;
   $validators: Array<TSyncValidator>;
+  //inherited
+  $context: IFormContext;
+  $myForm: FormStore;
   //state
   value: string;
   error: string;
@@ -34,26 +39,26 @@ export abstract class InputStore extends flux.Store {
   validating: boolean;
   //engine
 
-  //render(): JSX.Element {
-  //  return this.$template ? this.$template(this) : <div>Missing $template component property</div>;
-  //}
-  componentCreated(comp: flux.TComponent) {
+  componentCreated(comp: InputLow) {
     super.componentCreated(comp);
-    if (this.value===undefined) this.value = this.$defaultValue ? this.$defaultValue : '';
+    if (this.value === undefined) this.value = this.$defaultValue ? this.$defaultValue : '';
+    if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
   }
+  componentWillUnmount(comp: InputLow): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
+
   validate(completed?: (error: string) => void) {
     this.blured = true;
     this.setAndValidate(false, this.value, completed);
   }
   reset() {
     this.asyncCancel();
+    delete this.$asyncLastResult;
     this.modify(st => st.value = this.$defaultValue ? this.$defaultValue : '');
   }
   doDispatchAction(id: number, par: InputActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TInputActions.setState:
         this.blured = true;
-        //this.setAndValidate(false, par.value, er => completed(er ? new Error(er) : null));
         this.setAndValidate(false, par.value, er => completed(null));
         break;
       default:
@@ -94,14 +99,15 @@ export abstract class InputStore extends flux.Store {
     function asyncStart() { //start of async validation
       console.log('asyncStart');
       self.asyncCancel();
-      self.modify(st => { st.validating = true; st.error = null;});
+      self.modify(st => { st.validating = true; st.error = null; });
       var obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
-        self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
+        self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); self.$asyncLastResult = { value: val, error: err }; if (err) obs.error(err); else obs.complete(); });
+        return () => { };
       });
       self.$asyncConnectable = obs.publish();
       self.$asyncSubscription = self.$asyncConnectable.connect();
     }
-    function asyncSubscribe(completed?: (error: string) => void) { //subscribe to async validation result
+    function asyncSubscribe() { //subscribe to async validation result
       self.$asyncConnectable.subscribe(null, err => refreshComponent(err), () => refreshComponent(null));
     }
 
@@ -115,29 +121,27 @@ export abstract class InputStore extends flux.Store {
       if ((this.$validator ? [this.$validator] : this.$validators).find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
     }
 
-    //******* async validation
     if (!this.$validatorAsync) { refreshComponent(null); return; }
-    //** at handleChange 
+
+    //******* async validation
+    //** at handleChange
     //no async validation at the handleChange
     if (inHandleChange) { self.asyncCancel(); refreshComponent(null); return; }
 
     //** at blur or validate
-    //already validated value is the same
-    if (val == self.$asyncValidatingValue) {
-      console.log('val == self.validatingValue');
-      if (!self.$asyncSubscription) {
-        if (completed) completed(self.error); //async validation not running => noop
-      } else
-        asyncSubscribe(err => completed(err)); //async validation already running => subscribe to its result
-      return;
-    }
+    //just validating value is the same => subscribe to its result
+    if (val == self.$asyncValidatingValue) { asyncSubscribe(); return; }//async validation already running => subscribe to its result
+
+    //use last validation: value does not changed => show last error
+    if (self.$asyncLastResult && self.$asyncLastResult.value == val) { if (completed) completed(self.$asyncLastResult.error); return; }
+
     //value is not validated yet:
-    asyncStart(); //start validation
     self.$asyncValidatingValue = val; //remember just validated value
-    asyncSubscribe(completed); //subscribe to validation result
+    asyncStart(); //start validation
+    asyncSubscribe(); //subscribe to validation result
   }
 
-  //asunchronni validace
+  //asynchronni validace
   private $asyncSubscription: rx.Subscription;
   private $asyncConnectable: rx.ConnectableObservable<any>;
   asyncCancel() {
@@ -146,28 +150,75 @@ export abstract class InputStore extends flux.Store {
     this.$asyncSubscription.unsubscribe();
     this.asyncDelete();
   }
-  private asyncDelete() { delete this.$asyncSubscription; delete this.$asyncConnectable; delete this.$asyncValidatingValue; this.validating = false; }
+  private asyncDelete() { delete this.$asyncSubscription; delete this.$asyncConnectable; delete this.$asyncValidatingValue; delete this.validating; }
   private $asyncValidatingValue: string;
+  private $asyncLastResult: { value: string; error: string; };
+
 }
 
-//export class InputLow extends flux.Component<InputStore, InputProps> {
+//************** InputLow
 export abstract class InputLow extends flux.Component<InputStore, InputProps> {
-  componentWillUnmount(): void { this.state.asyncCancel(); super.componentWillUnmount(); }
-
   //static childContextTypes: {} = { MyInput: React.PropTypes.any }; //neco je divneho, hlasi chybu kompatibility s TComponentClass
   getChildContext(): IInputContext { return { MyInput: this.state }; }
 }
 InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };
+InputLow['contextTypes'] = { MyForm: React.PropTypes.any };
 
-//types for validators
-export type TSyncValidator = (val: string) => string;
-export type TSyncCompleted = (err: string) => void;
-
-interface IFieldInputContext { MyInput: InputStore; }
+//************** InputTag
 export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: InputProps, context: IInputContext) => InputStore.renderInputTag(props, context);
 InputTag.contextTypes = { MyInput: React.PropTypes.any };
 
-
+//************** InputSmart
 export class InputSmart extends InputLow { }
 @flux.StoreDef({ moduleId: moduleId, componentClass: InputSmart })
 export class InputSmartStore extends InputStore { }
+
+//************** FormResult
+export class FormResult extends flux.Component<FormResultStore, flux.IPropsEx> { }
+FormResult['contextTypes'] = { MyForm: React.PropTypes.any };
+
+@flux.StoreDef({ moduleId: moduleId, componentClass: FormResult })
+export class FormResultStore extends flux.Store {
+  $myForm: FormStore;
+  componentCreated(comp: InputLow) {
+    super.componentCreated(comp);
+    if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
+  }
+  componentWillUnmount(comp: InputLow): void { if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
+}
+
+//************** Form
+export class Form extends flux.Component<FormStore, InputProps> {
+  getChildContext(): IFormContext { return { MyForm: this.state }; }
+}
+Form['childContextTypes'] = { MyForm: React.PropTypes.any };
+interface IFormContext { MyForm: FormStore; }
+
+@flux.StoreDef({ moduleId: moduleId, componentClass: Form })
+export class FormStore extends flux.Store {
+  register(input: InputStore | FormResultStore, isRegister: boolean) {
+    if (isRegister) {
+      input.$myForm = this;
+      if (input instanceof InputStore) this.$inputs.push(input); else this.$results.push(input);
+    } else {
+      if (input instanceof InputStore) {
+        let idx = this.$inputs.indexOf(input);
+        if (idx >= 0) this.$inputs = this.$inputs.slice(idx);
+      } else {
+        let idx = this.$results.indexOf(input);
+        if (idx >= 0) this.$results = this.$results.slice(idx);
+      }
+    }
+  }
+  $inputs: Array<InputStore> = [];
+  $results: Array<FormResultStore> = [];
+
+  validate(completed: (errors: Array<InputStore>) => void) {
+    let res: Array<InputStore> = [];
+    let obss = rx.Observable.from(this.$inputs.map(inp => rx.Observable.create((obs: rx.Subscriber<InputStore>) => {
+      inp.validate(err => { obs.next(inp); obs.complete(); })
+    }))).mergeAll() as rx.Observable<InputStore>;
+    obss.subscribe((inpRes: InputStore) => { if (inpRes.error) res.push(inpRes); }, err => new flux.Exception(err.toString()), () => completed(res.length == 0 ? null : res));
+  }
+  reset() { this.$inputs.forEach(inp => inp.reset()); }
+}

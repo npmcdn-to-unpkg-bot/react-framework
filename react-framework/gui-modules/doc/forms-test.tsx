@@ -12,9 +12,9 @@ import {
   //InputSmart
 } from '../../../react-semantic/common/exports';
 
-import {InputSmart, InputSmartStore, InputTag} from '../forms';
-import * as flux from '../../flux';
-import {BindToState} from '../../flux';
+import {InputSmart, InputSmartStore, InputTag, Form, FormStore, FormResult, FormResultStore} from '../forms';
+import * as flux from '../../js';
+import {BindToState} from '../../js';
 
 
 import * as ui from '../../../react-semantic/common/exports';
@@ -38,18 +38,19 @@ export class FormTestStore extends flux.Store {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);
     this.name = new InputSmartStore(this, 'name');
-    this.password = new InputSmartStore(this, 'password');
+    this.password = new InputSmartStore(this, 'password'); 
   }
   render(): JSX.Element {
     return <div>
       <h1>Input Validation</h1>
-
-      <InputSmart $title='Name' $defaultValue='3' $parent={this} initState={this.name}
-        $validators = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
-        $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
-        $template = {inpTemplate}
-        />
-      <InputSmart $title='Password' $parent={this} initState={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
+      <Form $parent={this} ref={f => this.form = f.state}>
+        <InputSmart $title='Name' $defaultValue='3' $parent={this} initState={this.name}
+          $validators = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
+          $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
+          $template = {inpTemplate}
+          />
+        <InputSmart $title='Password' $parent={this} initState={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
+      </Form>
       <hr/>
       <BindToState $stores={[this.password, this.name]} $parent={this} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
       <hr/>
@@ -60,11 +61,12 @@ export class FormTestStore extends flux.Store {
 
   name: InputSmartStore;
   password: InputSmartStore;
+  form: FormStore;
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TAction.click:
-        this.name.validate(err => this.password.validate(err => completed(null)));
+        this.form.validate(errs => { if (errs) alert('Error'); completed(null); });
         return;
       default:
         super.doDispatchAction(id, par, completed);
