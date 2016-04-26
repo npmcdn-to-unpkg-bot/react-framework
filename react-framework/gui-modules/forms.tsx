@@ -100,16 +100,17 @@ export abstract class InputStore extends flux.Store {
       console.log('asyncStart');
       self.asyncCancel();
       self.modify(st => { st.validating = true; st.error = null; });
-      let lastVal = val;
       let obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
-        self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); self.$asyncLastResult = { value: lastVal, error: err }; if (err) obs.error(err); else obs.complete(); });
+        self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
         return () => { };
       });
       self.$asyncConnectable = obs.publish();
       self.$asyncSubscription = self.$asyncConnectable.connect();
     }
     function asyncSubscribe() { //subscribe to async validation result
-      self.$asyncConnectable.subscribe(null, err => refreshComponent(err), () => refreshComponent(null));
+      let lastVal = val;
+      let done = err => { self.$asyncLastResult = { value: lastVal, error: err}; refreshComponent(err); }
+      self.$asyncConnectable.subscribe(null, err => done(err), () => done(null));
     }
 
     //******* no validation
