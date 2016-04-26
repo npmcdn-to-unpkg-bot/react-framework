@@ -15,13 +15,13 @@ export class ActionRecorder {
 
   //***** recording
   startRecording() {
-    var json = appStateToJSON(flux.store, 2);
+    let json = appStateToJSON(flux.store, 2);
     this.data = { playList: [], store: JSON.parse(json) };
     this.status = TPlayRecordStatus.recording;
   }
   onStoreAction(getAction: () => flux.TAction) {
     if (this.status != TPlayRecordStatus.recording) return;
-    var act = getAction();
+    let act = getAction();
     this.data.playList.push(act);
   }
   saveRecording(saveId: string) {
@@ -48,24 +48,24 @@ export function getRecording(saveId: string): string {
   return localStorage.getItem(storageKey(saveId));
 }
 export function getAllRecordings(): string {
-  var res: { [key: string]: {}; } = {};
-  for (var i = 0; i < localStorage.length; i++) {
-    var key = localStorage.key(i); var saveId = objKey(key); if (!saveId) continue;
+  let res: { [key: string]: {}; } = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i); let saveId = objKey(key); if (!saveId) continue;
     res[saveId] = JSON.parse(getRecording(saveId));
   }
   return JSON.stringify(res, null, 2);
 }
 export function saveAllRecordings(obj: {}) {
-  for (var p in obj) doSaveRecording(p, obj[p]);
+  for (let p in obj) doSaveRecording(p, obj[p]);
 }
 
 //***** playing
 export function startPlaying(saveId: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) {
-  var str = getRecording(saveId); if (!str) { completed(new flux.Exception(`Recording not found: ${saveId}`)); return; }
-  var data: IData = JSON.parse(str);
-  var playList = data.playList;
+  let str = getRecording(saveId); if (!str) { completed(new flux.Exception(`Recording not found: ${saveId}`)); return; }
+  let data: IData = JSON.parse(str);
+  let playList = data.playList;
   if (!playList || playList.length <= 0) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
-  var len = playList.length; var pos = 1;
+  let len = playList.length; let pos = 1;
   flux.StoreApp.bootApp(data.store, err => {
     if (err) { completed(err); return; }
     flux.store.$recorder.playListCancel = flux.playActions(playList).subscribe(() => progress(pos++, len), err => completed(err), () => completed(null));
@@ -92,7 +92,7 @@ function objKey(storageKey: string): string { if (!storageKey || !storageKey.sta
 export const enum TPlayRecordStatus { no, playing, recording }
 
 function doSaveRecording(saveId: string, obj: {}) {
-  var res = JSON.stringify(obj, null, 2);
+  let res = JSON.stringify(obj, null, 2);
   localStorage.setItem(storageKey(saveId), res);
 }
 
@@ -103,19 +103,19 @@ export interface IData {
 
 function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flux.Store {
   if (!literal || !literal._type) throw new flux.Exception(JSON.stringify(literal));
-  var st = flux.Store.createInJSON(parentStore, literal._type);
+  let st = flux.Store.createInJSON(parentStore, literal._type);
   Object.assign(st, literal);
   traverseToRepl(st, st);
   return st;
 }
 
 function traverseToRepl(parentStore: flux.Store, obj: Object) {
-  for (var p in obj) {
+  for (let p in obj) {
     if (p.startsWith('$')) continue;
     let res = obj[p]; if (!res) continue;
     if (Array.isArray(res)) {
-      var arr = res as Array<any>;
-      for (var i = 0; i < arr.length; i++) {
+      let arr = res as Array<any>;
+      for (let i = 0; i < arr.length; i++) {
         let subRes = arr[i]; if (!subRes) continue;
         if (subRes._type) arr[i] = literalsToStores(parentStore, subRes); else traverseToRepl(parentStore, subRes);
       }

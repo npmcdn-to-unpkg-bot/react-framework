@@ -4,14 +4,14 @@ import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
 
 export function encodeUrl(st: flux.TRouteActionPar): string {
-  var res: Array<string> = [];
+  let res: Array<string> = [];
   encodeUrlLow(res, st, null);
-  var url = res.join('');
+  let url = res.join('');
   return clearSlashes(url.replace(/(\$\/)*$/g, ''));
 }
 
 export function encodeFullUrl(st: flux.TRouteActionPar): string {
-  var urlStr = encodeUrl(st);
+  let urlStr = encodeUrl(st);
   return flux.store.$basicUrl + (urlStr ? (flux.store.$isHashRouter ? '#' : '/') + urlStr : '');
 }
 
@@ -34,10 +34,10 @@ export function decodeUrl(url?: string): flux.TRouteActionPar {
 }
 
 export function createRoute<T extends flux.IActionPar>(storeClass: flux.TStoreClass, par?: T, routeHookDefault?: flux.TRouteActionPar, otherHooks?: { [name: string]: flux.TRouteActionPar; }): flux.TRouteActionPar {
-  var res: flux.TRouteActionPar = { storeId: flux.Store.getClassMeta(storeClass).id, par: par };
+  let res: flux.TRouteActionPar = { storeId: flux.Store.getClassMeta(storeClass).id, par: par };
   if (routeHookDefault) { res.routeHookDefault = routeHookDefault; delete routeHookDefault.hookId; }
   if (otherHooks)
-    for (var p in otherHooks) { var hk = res[p] = otherHooks[p]; hk.hookId = p; }
+    for (let p in otherHooks) { let hk = res[p] = otherHooks[p]; hk.hookId = p; }
   return res;
 }
 
@@ -51,11 +51,11 @@ export function getChildRoutes(st: flux.TRouteActionPar): Array<string> {
 
 function decodeUrlLow(url: string): flux.TRouteActionPar {
   url = '{' + url.replace(/\$\//g, '}').replace(/\//g, '{');
-  let stack: Array<IDecodeStack> = []; var i = 0; var ch: string; var res: IDecodeStack = null;
+  let stack: Array<IDecodeStack> = []; let i = 0; let ch: string; let res: IDecodeStack = null;
   let parseRoute = (endIdx: number, st: IDecodeStack) => {
-    var s = url.substring(st.openIdx, endIdx - 1);
-    var parts = s.split(';');
-    var propComp = parts[0].split('-'); if (propComp.length > 2) throw new flux.Exception('propComp.length > 2');
+    let s = url.substring(st.openIdx, endIdx - 1);
+    let parts = s.split(';');
+    let propComp = parts[0].split('-'); if (propComp.length > 2) throw new flux.Exception('propComp.length > 2');
     st.hookId = propComp.length == 1 ? null : propComp[0];
     st.route = { storeId: propComp.length == 1 ? propComp[0] : propComp[1] };
     for (let i = 1; i < parts.length; i++) {

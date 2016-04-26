@@ -55,11 +55,11 @@ export const enum UsesExportType { generatedExports, exports, import, test }
 
 function UsesExport(type: UsesExportType) {
   function myEnums(c: g.genComponent) {
-    var res = c.enumProps.filter(e => !e.isSystem).map(e => ', ' + e.name);
+    let res = c.enumProps.filter(e => !e.isSystem).map(e => ', ' + e.name);
     return res.join('');
   }
   let join = '';
-  var res = g.source.codeData.map(c => {
+  let res = g.source.codeData.map(c => {
     switch (type) {
       case UsesExportType.exports: join = '\r\n'; return `export {${up(c.name)}, ${up(c.name)}Props${myEnums(c)}} from './${tp(c)}/${c.name}';
 export {${up(c.name)}Test} from './${tp(c)}/${c.name}Test';`;
@@ -111,8 +111,8 @@ import * as ui from '../exports';
     {/*<ComponentGenLow comp={comp}/>*/}
     {`
 export const ${up(comp.name)}: ui.StatelessComponent<${up(comp.name)}Props> = pr => {
-  var props = ui.enumValToProp(pr);
-  var rest = ui.propsToClasses(['ui ${comp.name}'], ui.projection(props, ${comp.name}PropsDescr));
+  let props = ui.enumValToProp(pr);
+  let rest = ui.propsToClasses(['ui ${comp.name}'], ui.projection(props, ${comp.name}PropsDescr));
   return React.createElement('div', rest);
 }
 
@@ -124,7 +124,7 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
   let enumDef = comp.enumProps.filter(en => !en.isSystem).map(en => EnumDef(en))
   function enumPropsType(enumProps: Array<g.genEnumProp>): string {
     //var res = enumProps.map(en => ', ' + (en.isSystem ? `IProps${up(en.name)}` : `IProps${up(en.name)}Prop`));
-    var res = enumProps.map(en => `, IProps${up(en.name)}Prop`);
+    let res = enumProps.map(en => `, IProps${up(en.name)}Prop`);
     return res.join('');
   }
   function enumProp(pr: g.genEnumProp, isMeta: boolean): string {
@@ -133,7 +133,7 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
       `  $${enumPropName(pr)}?: ${en(pr)};`;
   }
   function boolProp(pr: g.genBoolProp, isMeta: boolean): string {
-    var meta = '';
+    let meta = '';
     if (pr.ignore) meta += ', true'; if (!pr.ignore && pr.alias) meta += ', false';
     if (pr.alias) meta += ', \'' + pr.alias + '\'';
     return isMeta ?
@@ -169,8 +169,8 @@ export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val =>
     {!comp.autoTag ? '' : `
 
 export const ${up(comp.name)}: ui.StatelessComponent<${up(comp.name)}Props> = pr => {
-  var props: ${up(comp.name)}Props = ui.enumValToProp(pr, ${comp.name}PropsDescr);
-  var rest = ui.propsToClasses([${comp.autoClass}], ui.projection(props, ${comp.name}PropsDescr));
+  let props: ${up(comp.name)}Props = ui.enumValToProp(pr, ${comp.name}PropsDescr);
+  let rest = ui.propsToClasses([${comp.autoClass}], ui.projection(props, ${comp.name}PropsDescr));
   return React.createElement(${comp.autoTag}, rest, pr.children);
 }
 
@@ -184,12 +184,12 @@ function enumPropName(pr: g.genEnumProp): string { return pr.aliasPropName ? pr.
 //****************************************
 function EnumDef(en: g.genEnumProp) {
   function item(val: Array<string>, isProp: boolean) {
-    var arr = val.slice(0);
-    for (var i = 1; i < arr.length; i++) {
-      var parts = arr[i].split('=');
+    let arr = val.slice(0);
+    for (let i = 1; i < arr.length; i++) {
+      let parts = arr[i].split('=');
       arr[i] = '$' + parts[0] + (isProp || parts.length==1 ? '' : ' = ' + parts[1]);
     }
-    var arr = isProp ? arr.slice(1) : arr;
+    let arr = isProp ? arr.slice(1) : arr;
     let res: Array<String> = arr.map(val => isProp ? `${val}?: boolean; ` : `${val}, `);
     return res.join('')
   };

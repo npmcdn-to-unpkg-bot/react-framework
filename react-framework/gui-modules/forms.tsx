@@ -67,9 +67,9 @@ export abstract class InputStore extends flux.Store {
   }
 
   static renderInputTag = (pr: InputProps, context: IInputContext) => {
-    var props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
+    let props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
     if (!context || !context.MyInput) return React.createElement('input', props);
-    var store = context.MyInput;
+    let store = context.MyInput;
     props.value = store.value;
     props.onChange = store.handleChange.bind(store); if (store.hasValidator()) props.onBlur = store.blur.bind(store);
     return React.createElement('input', props);
@@ -88,7 +88,7 @@ export abstract class InputStore extends flux.Store {
   }
 
   private setAndValidate(inHandleChange: boolean, val: string, completed?: TSyncCompleted) {
-    var self = this;
+    let self = this;
     self.value = val;
 
     //******* local functions
@@ -100,8 +100,8 @@ export abstract class InputStore extends flux.Store {
       console.log('asyncStart');
       self.asyncCancel();
       self.modify(st => { st.validating = true; st.error = null; });
-      var lastVal = val;
-      var obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
+      let lastVal = val;
+      let obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
         self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); self.$asyncLastResult = { value: lastVal, error: err }; if (err) obs.error(err); else obs.complete(); });
         return () => { };
       });
@@ -118,7 +118,7 @@ export abstract class InputStore extends flux.Store {
     //******* sync validation
     if (this.$validator || this.$validators) {
       if (!self.blured) { refreshComponent(null); return; }
-      var error = null;
+      let error = null;
       if ((this.$validator ? [this.$validator] : this.$validators).find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
     }
 
@@ -217,7 +217,7 @@ export class FormStore extends flux.Store {
   validate(completed: (errors: Array<InputStore>) => void) {
     let res: Array<InputStore> = [];
     let obss = rx.Observable.from(this.$inputs.map(inp => rx.Observable.create((obs: rx.Subscriber<InputStore>) => {
-      inp.validate(err => { obs.next(inp); obs.complete(); })
+      inp.validate(err => { obs.next(inp); obs.complete(); }); return () => { };
     }))).mergeAll() as rx.Observable<InputStore>;
     obss.subscribe((inpRes: InputStore) => { if (inpRes.error) res.push(inpRes); }, err => new flux.Exception(err.toString()), () => completed(res.length == 0 ? null : res));
   }

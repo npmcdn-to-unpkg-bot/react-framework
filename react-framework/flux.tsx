@@ -36,7 +36,7 @@ export interface IStoreMeta {
   loginNeeded?: boolean; //true x false. Iff undefined => bere se StoreApp.defaultLoginNeeded.
 }
 function componentToStore(componentClass: TComponentClass): TStoreClass {
-  var res = storeMetas.find(m => m.componentClass == componentClass);
+  let res = storeMetas.find(m => m.componentClass == componentClass);
   if (!res || !res.storeClass) throw new flux.Exception(`Missing StoreDef componentClass info: ${flux.getClassName(componentClass)}`);
   return res.storeClass;
 }
@@ -55,7 +55,7 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
   return rx.Observable.from(actions).concatMap((act: TAction) =>
     rx.Observable.timer(300).concat(
       rx.Observable.create((obs: rx.Subscriber<any>) => {
-        var actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new flux.Exception(`Cannot find store ${act.dispPath}`)); return; }
+        let actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new flux.Exception(`Cannot find store ${act.dispPath}`)); return; }
         try {
           actStore.action(act.actionId, act.descr, act.par, err => { if (err) obs.error(err); else obs.complete(); });
         } catch (err) {
@@ -111,20 +111,20 @@ export abstract class Store implements IStore, ITypedObj {
 
   constructor(public $parent: Store, public instanceId?: string) {
     this._type = this.getMeta().id;
-    var idInParent = this.getIdInParent();
+    let idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
   static createInStore<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
-    var cls = Store.getStoreClass(storeId);
+    let cls = Store.getStoreClass(storeId);
     if (store.loginNeeded(cls)) return completed(new ELoginNeeded());
-    var res = new cls(parent, instanceId);
+    let res = new cls(parent, instanceId);
     res.initStore(routePar, completed);
   }
   static createInRender<T extends Store>(props: TProps & IPropsEx, storeId: string | TStoreClass, instanceId?: string): T {
-    var parent = props.$parent; if (!parent) throw new flux.Exception(`"${flux.getClassName(this.constructor)}" component: missing $parent property`);
-    var cls = Store.getStoreClass(storeId);
-    var idInParent = Store.getClassIdInParent(cls, instanceId);
-    var res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
+    let parent = props.$parent; if (!parent) throw new flux.Exception(`"${flux.getClassName(this.constructor)}" component: missing $parent property`);
+    let cls = Store.getStoreClass(storeId);
+    let idInParent = Store.getClassIdInParent(cls, instanceId);
+    let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
     if (res) return res;
     res = new cls(parent, instanceId) as T;
     //Object.assign(res, props); //component props field () to store.
@@ -134,14 +134,14 @@ export abstract class Store implements IStore, ITypedObj {
 
   }
   static createInJSON(parent: Store, _type: string): Store {
-    var meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
+    let meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
     return new meta.storeClass(parent);
   }
 
   getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
-    var res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
+    let res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
   static getStoreClass(storeId: string | TStoreClass): TStoreClass {
     if (typeof storeId === 'string') {
@@ -154,7 +154,7 @@ export abstract class Store implements IStore, ITypedObj {
   modify(modifyProc?: (st: this) => void) { //modify store and rerender all $subscribers
     if (modifyProc) modifyProc(this);
     this.$subscribers.forEach(path => {
-      var comp = store.findComponent(path);
+      let comp = store.findComponent(path);
       this.trace('changeState');
       comp.forceUpdate();
     });
@@ -166,7 +166,7 @@ export abstract class Store implements IStore, ITypedObj {
   //************** Component management
   render(comp: TComponent): JSX.Element {
     if (this.$template) return this.$template(this);
-    var childCount = this.children ? React.Children.count(this.children) : 0;
+    let childCount = this.children ? React.Children.count(this.children) : 0;
     switch (childCount) {
       case 0: return <div>Missing children or $template component property</div>;
       case 1: return React.Children.only(this.children);
@@ -232,7 +232,7 @@ export class StoreRouteHook extends Store implements IStoreRouteHook { //Route H
           this.hookedStore = res;
           //process child routes
           let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
-          var childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
+          let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
           rx.Observable.concat.apply(this, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
         } else {
           completed(res);
@@ -295,7 +295,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
   }
 
   //************************** CONFIGURATION SECTION
-  protected getBasicUrl(startUrl: string): string { var idx = startUrl.toLowerCase().indexOf('.html'); return idx >= 0 ? startUrl.substr(0, idx + 5) : startUrl; }
+  protected getBasicUrl(startUrl: string): string { let idx = startUrl.toLowerCase().indexOf('.html'); return idx >= 0 ? startUrl.substr(0, idx + 5) : startUrl; }
   $basicUrl: string;
   protected getIsHashRouter(): boolean { return false; }
   $isHashRouter: boolean;
@@ -335,7 +335,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
     if (!source) { if (compl) compl(null); return; }
     //create
     if ((source as ITypedObj)._type) { //from StoreApp encoded do JSON literal object
-      var literal = source as ITypedObj;
+      let literal = source as ITypedObj;
       flux.literalToAppState(literal); //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
       store.bindRouteToStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
         delete store.saveRoute;
@@ -344,7 +344,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
         if (compl) compl(null);
       });
     } else { //from StoreApp constructor
-      var cls = source as TStoreAppClass;
+      let cls = source as TStoreAppClass;
       new cls(); //vedlejsi efekt je naplneni store
       ReactDOM.render(store.render(), store.$appElement); //render pouze StoreApp a jeji hook
       if (startRoute === null) startRoute = store.getStartRoute();
@@ -353,19 +353,19 @@ export abstract class StoreApp extends Store { //global Application store (root 
   }
 
   pushState() {
-    var urlStr = flux.encodeFullUrl(this.actRoutes());
+    let urlStr = flux.encodeFullUrl(this.actRoutes());
     console.log(`> pushState: ${urlStr}`);
     history.pushState(null, null, urlStr);
   }
   navigateError(err: Error, completed: TExceptionCallback) {
     if (err instanceof ELoginNeeded) {
       console.log(`> navigateError, redirect to login`)
-      var logUrl = this.getLoginRoute((err as ELoginNeeded).returnUrl);
+      let logUrl = this.getLoginRoute((err as ELoginNeeded).returnUrl);
       flux.navigate(logUrl, completed);
     }
   }
   loginNeeded(storeClass: TStoreClass): boolean {
-    var ln = Store.getClassMeta(storeClass).loginNeeded; //priznak u komponenty...
+    let ln = Store.getClassMeta(storeClass).loginNeeded; //priznak u komponenty...
     if (ln === undefined) ln = this.$defaultLoginNeeded; //...neni nastaven, pouzij defaultLoginNeeded
     if (!ln) return false; //vrat "neni potreba login"
     if (this.getIsLogged()) return false; //jiz je zalogovano => vrat "neni potreba login"
@@ -377,7 +377,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
   routeHookDefault: StoreRouteHook; //hook for root React component
 
   getUnique(): number { return this.unique++; }
-  findComponent(path: string): TComponent { var comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }
+  findComponent(path: string): TComponent { let comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }
 
   doSubscribe(st: Store, comp: TComponent, isSubscribe: boolean, includingComponent:boolean) { //prihlas x odhlas se k notifikaci o zmene stavu. Volano v TComponent konstructoru x TComponent.unmount.
     if (isSubscribe) { //konstructor
@@ -398,7 +398,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
       }
       //st.path nemusi byt v st.$subscribers, protoze st muze byt vytvoreno uplne znova (v ramci zmen parenta).
       //var idx: number; if ((idx = st.$subscribers.indexOf(st.path)) < 0) throw new flux.Exception(`${st.path}: !st.$componentIds || (idx = st.$componentIds.indexOf(p)) < 0`);
-      var idx = st.$subscribers.indexOf(comp.state.path);
+      let idx = st.$subscribers.indexOf(comp.state.path);
       //undo evidence
       if (idx >= 0) st.$subscribers.splice(idx, 1);
     }
@@ -407,7 +407,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
   render(): JSX.Element { 
     return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
 
-  findStore(path: string): Store { var res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
+  findStore(path: string): Store { let res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
 
   private $components: { [path: string]: TComponent; } = {}; //all existing app component
 
@@ -418,7 +418,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
       (obj as Array<any>).find(o => !!(res = StoreApp._findStore(path, o)));
       return res;
     } else if (typeof obj == 'object') {
-      var isStore = obj instanceof Store; var isLiteral = obj && obj.constructor == Object;
+      let isStore = obj instanceof Store; let isLiteral = obj && obj.constructor == Object;
       if (!isStore && !isLiteral) return null;
       let res = null;
       Object.keys(obj).find(p => { if (isStore && p.startsWith('$')) return false; res = StoreApp._findStore(path, obj[p]); if (res) return true; });
@@ -469,8 +469,8 @@ export class ENotImplemented extends Exception {
 export type TCallback = () => void;
 
 export function getClassName(constructor: Function): string {
-  var res = constructor['name']; if (res) return res;
-  var arr = constructor.toString().match(/function\s*(\w+)/);
+  let res = constructor['name']; if (res) return res;
+  let arr = constructor.toString().match(/function\s*(\w+)/);
   return arr && arr.length == 2 ? arr[1] : undefined;
 }
 
