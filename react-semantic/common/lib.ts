@@ -101,7 +101,7 @@ export function enumValToProp<T extends IProps>(props: T, allProps?: TPropsDescr
   }
   let res = Object.assign(initEnums, props);
   for (let propId in res) {
-    let propInfo = enumValueToProp[propId]; if (!propInfo) continue;
+    let propInfo = enumValueToProp[propId]; if (!propInfo || !allProps[propInfo.propName]) continue;
     res[propInfo.propName] = propInfo.enumType[propId]; delete res[propId]; 
   }
   return res;

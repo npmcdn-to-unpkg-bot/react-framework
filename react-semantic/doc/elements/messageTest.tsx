@@ -56,6 +56,18 @@ export const MessageTest: ui.StatelessComponent<ui.IProps> = props => {
 
 
     <h2>Attached</h2>
+    <Message $attachedTop $colBlue>
+      <Header>Header</Header>
+      <p>Content</p>
+    </Message>
+    <Message $attachedBoth>
+      <Header>Header</Header>
+      <p>Content</p>
+    </Message>
+    <Message $attachedBottom $colTeal>
+      <Header>Header</Header>
+      <p>Content</p>
+    </Message>
 
     <h2>Warning</h2>
     <Message $warning>

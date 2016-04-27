@@ -190,13 +190,13 @@ export class FormResultStore extends flux.Store {
 }
 
 //************** Form
-export class Form extends flux.Component<FormStore, InputProps> {
+export class FormSmart extends flux.Component<FormStore, InputProps> {
   getChildContext(): IFormContext { return { MyForm: this.state }; }
 }
-Form['childContextTypes'] = { MyForm: React.PropTypes.any };
+FormSmart['childContextTypes'] = { MyForm: React.PropTypes.any };
 interface IFormContext { MyForm: FormStore; }
 
-@flux.StoreDef({ moduleId: moduleId, componentClass: Form })
+@flux.StoreDef({ moduleId: moduleId, componentClass: FormSmart })
 export class FormStore extends flux.Store {
   register(input: InputStore | FormResultStore, isRegister: boolean) {
     if (isRegister) {
