@@ -54,13 +54,14 @@
     <TypeScriptCompile Include="apps\test-react-semantic\app.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
-    <TypeScriptCompile Include="react-framework\gui-modules\doc\forms-test.tsx" />
-    <TypeScriptCompile Include="react-framework\gui-modules\forms.tsx" />
+    <TypeScriptCompile Include="react-semantic\behaviors\forms-test.tsx" />
+    <TypeScriptCompile Include="react-framework\behaviors\forms.tsx" />
     <TypeScriptCompile Include="react-framework\js.ts" />
     <TypeScriptCompile Include="react-framework\router.ts" />
     <TypeScriptCompile Include="apps\test-config.ts" />
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
+    <TypeScriptCompile Include="react-semantic\behaviors\forms.tsx" />
     <TypeScriptCompile Include="react-semantic\common\validators.tsx" />
     <TypeScriptCompile Include="react-semantic\common\sourceForGenerated.ts" />
     <TypeScriptCompile Include="react-semantic\common\generated.ts" />

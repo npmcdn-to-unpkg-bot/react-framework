@@ -2,7 +2,7 @@
 
 
 import {
-  Icon, icon, flipped, rotated, circularIcon, bordered,
+  Icon, icon, flipped, rotated, circularIcon, bordered, color,
   Input, iconInput, action,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Button, attachedButton,
@@ -16,14 +16,15 @@ import {
   Fields, eqWidthFields,
   Message, stateMessage, sizeMessage,
   //InputSmart
-} from '../../../react-semantic/common/exports';
+} from '../common/exports';
 
-import {InputSmart, InputSmartStore, InputTag, FormSmart, FormStore, FormResult, FormResultStore} from '../forms';
-import * as flux from '../../js';
-import {BindToState} from '../../js';
+import {InputSmart, InputSmartStore, InputTag} from '../../react-framework/behaviors/forms';
+import {FormSmart, FormSmartStore, FieldSmart, FieldSmartStore} from './forms';
+import * as flux from '../../react-framework/flux';
+import {BindToState} from '../../react-framework/flux';
 
 
-import * as ui from '../../../react-semantic/common/exports';
+import * as ui from '../common/exports';
 
 const moduleId = 'formsTest';
 
@@ -34,15 +35,19 @@ var inpTemplate: flux.TTemplate = (self: InputSmartStore) =>
     <Input $error={!!self.error} $iconLeft $loading={self.validating}>
       <InputTag placeholder="Search..." /><Icon $Icon={icon.search}/>
     </Input>
-    <Label $tiny $pointingLeft $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>
+    <Label $tiny $pointingLeft $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px', }}>{self.error} in {self.$title}</Label>
   </div>;
 
-var fieldTemplate: flux.TTemplate = (self: InputSmartStore) => 
-  <Field $error={!!self.error} $required>
-    <label>{self.$title}</label>
-    <InputTag placeholder={self.$title}/>
-    <Label $tiny $pointingAbove $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>
-  </Field>;
+var fieldTemplate: flux.TTemplate = (self: InputSmartStore) =>
+  [<label>{self.$title}</label>,
+    <InputTag placeholder={self.$title}/>,
+    <Label $small $colRed $basic style={{ visibility: self.error || self.validating ? 'visible' : 'hidden', border: '0', }}>
+      <span style={{ display: self.error ? null : 'none' }}>{self.error} in {self.$title}</span>
+      <Icon $disabled $Color={color.no} style={{ display: self.validating ? null : 'none' }} $Icon={icon.circleNotched} $loading />
+    </Label>,
+
+    /*<div className='ui red' style={{ visibility: self.error ? 'visible' : 'hidden'}}>{self.error} in {self.$title}</div>,
+    /*<Label $tiny $pointingAbove $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>*/]
 
 enum TAction { click, click2 };
 
@@ -51,7 +56,11 @@ export class FormTestStore extends flux.Store {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);
     this.name = new InputSmartStore(this, 'name');
-    this.password = new InputSmartStore(this, 'password'); 
+    this.password = new InputSmartStore(this, 'password');
+    //form2:
+    this.form2 = new FormSmartStore(this, '2');
+    this.name2 = new FieldSmartStore(this, '2');
+    this.name2.$validatorAsync = (val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000);
   }
   render(): JSX.Element {
     return <Container>
@@ -71,13 +80,12 @@ export class FormTestStore extends flux.Store {
       <hr/>
 
       <h1>Form, Fields</h1>
-      <FormSmart $parent={this} instanceId='2' ref={f => this.form2 = f.state}>
-        <Form>
-          <Fields $equalWidth>
-            <InputSmart $title='First Name' instanceId='fn' $parent={this} $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
-            <InputSmart $title='Last Name' instanceId='ln' $parent={this} $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
-          </Fields>
-        </Form>
+      <FormSmart $equalWidth initState={this.form2}>
+        <Fields>
+          <FieldSmart $title='First Name' instanceId='0' $parent={this} $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
+          <FieldSmart $title='Last Name' instanceId='1' $parent={this} $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
+          <FieldSmart $title='Name' $defaultValue='3' initState={this.name2} $template = {fieldTemplate} />
+        </Fields>
       </FormSmart>
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TAction.click2, 'click2') }>OK</a>
@@ -85,9 +93,10 @@ export class FormTestStore extends flux.Store {
   }
 
   name: InputSmartStore;
+  name2: FieldSmartStore;
   password: InputSmartStore;
-  form: FormStore;
-  form2: FormStore;
+  form: FormSmartStore;
+  form2: FormSmartStore;
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {

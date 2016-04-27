@@ -4,6 +4,8 @@ import * as ReactDOM from 'react-dom';
 
 import * as flux from '../flux';
 
+//import {Form, FormProps} from '../../react-semantic/common/generated';
+
 const moduleId = 'forms';
 
 //types for validators
@@ -14,7 +16,7 @@ interface IInputContext { MyInput: InputStore; }
 enum TInputActions { setState };
 interface InputActionPar extends flux.IActionPar { value: string; }
 
-interface InputProps extends flux.IPropsEx {
+export interface InputProps extends flux.IPropsEx {
   $title?: string;
   $defaultValue?: string;
   $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
@@ -39,12 +41,12 @@ export abstract class InputStore extends flux.Store {
   validating: boolean;
   //engine
 
-  componentCreated(comp: InputLow) {
+  componentCreated(comp: TInputComponent) {
     super.componentCreated(comp);
     if (this.value === undefined) this.value = this.$defaultValue ? this.$defaultValue : '';
     if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
   }
-  componentWillUnmount(comp: InputLow): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
+  componentWillUnmount(comp: TInputComponent): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
 
   validate(completed?: (error: string) => void) {
     this.blured = true;
@@ -158,62 +160,77 @@ export abstract class InputStore extends flux.Store {
 
 }
 
-//************** InputLow
-export abstract class InputLow extends flux.Component<InputStore, InputProps> {
-  //static childContextTypes: {} = { MyInput: React.PropTypes.any }; //neco je divneho, hlasi chybu kompatibility s TComponentClass
-  getChildContext(): IInputContext { return { MyInput: this.state }; }
-}
-InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };
-InputLow['contextTypes'] = { MyForm: React.PropTypes.any };
+type TInputComponent = flux.Component<InputStore, InputProps>;
 
 //************** InputTag
 export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: InputProps, context: IInputContext) => InputStore.renderInputTag(props, context);
 InputTag.contextTypes = { MyInput: React.PropTypes.any };
 
+//************** InputLow
+//export abstract class InputLow extends flux.Component<InputStore, InputProps> {
+//  getChildContext(): IInputContext { return { MyInput: this.state }; }
+//}
+//InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };
+//InputLow['contextTypes'] = { MyForm: React.PropTypes.any };
+
 //************** InputSmart
-export class InputSmart extends InputLow { }
+export class InputSmart extends flux.Component<InputStore, InputProps> { getChildContext(): IInputContext { return { MyInput: this.state }; } }
+InputSmart['childContextTypes'] = { MyInput: React.PropTypes.any };
+InputSmart['contextTypes'] = { MyForm: React.PropTypes.any };
+
 @flux.StoreDef({ moduleId: moduleId, componentClass: InputSmart })
 export class InputSmartStore extends InputStore { }
 
 //************** FormResult
-export class FormResult extends flux.Component<FormResultStore, flux.IPropsEx> { }
-FormResult['contextTypes'] = { MyForm: React.PropTypes.any };
+//export class FormResult extends flux.Component<FormResultStore, flux.IPropsEx> { }
+//FormResult['contextTypes'] = { MyForm: React.PropTypes.any };
 
-@flux.StoreDef({ moduleId: moduleId, componentClass: FormResult })
-export class FormResultStore extends flux.Store {
-  $myForm: FormStore;
-  componentCreated(comp: InputLow) {
-    super.componentCreated(comp);
-    if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
-  }
-  componentWillUnmount(comp: InputLow): void { if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
-}
+//@flux.StoreDef({ moduleId: moduleId, componentClass: FormResult })
+//export class FormResultStore extends flux.Store {
+//  $myForm: FormStore;
+//  componentCreated(comp: InputLow) {
+//    super.componentCreated(comp);
+//    if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
+//  }
+//  componentWillUnmount(comp: InputLow): void { if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
+//}
 
 //************** Form
-export class FormSmart extends flux.Component<FormStore, InputProps> {
+export class FormSmart extends flux.Component<FormStore, flux.IPropsEx> {
   getChildContext(): IFormContext { return { MyForm: this.state }; }
 }
 FormSmart['childContextTypes'] = { MyForm: React.PropTypes.any };
 interface IFormContext { MyForm: FormStore; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FormSmart })
-export class FormStore extends flux.Store {
-  register(input: InputStore | FormResultStore, isRegister: boolean) {
+export class FormStore extends flux.Store  {
+  //register(input: InputStore | FormResultStore, isRegister: boolean) {
+  //  if (isRegister) {
+  //    input.$myForm = this;
+  //    if (input instanceof InputStore) this.$inputs.push(input); else this.$results.push(input);
+  //  } else {
+  //    if (input instanceof InputStore) {
+  //      let idx = this.$inputs.indexOf(input);
+  //      if (idx >= 0) this.$inputs = this.$inputs.slice(idx);
+  //    } else {
+  //      let idx = this.$results.indexOf(input);
+  //      if (idx >= 0) this.$results = this.$results.slice(idx);
+  //    }
+  //  }
+  //}
+ register(input: InputStore, isRegister: boolean) {
     if (isRegister) {
       input.$myForm = this;
-      if (input instanceof InputStore) this.$inputs.push(input); else this.$results.push(input);
+      this.$inputs.push(input); 
     } else {
-      if (input instanceof InputStore) {
-        let idx = this.$inputs.indexOf(input);
-        if (idx >= 0) this.$inputs = this.$inputs.slice(idx);
-      } else {
-        let idx = this.$results.indexOf(input);
-        if (idx >= 0) this.$results = this.$results.slice(idx);
-      }
+      let idx = this.$inputs.indexOf(input);
+      if (idx >= 0) this.$inputs = this.$inputs.slice(idx);
     }
   }
+
   $inputs: Array<InputStore> = [];
-  $results: Array<FormResultStore> = [];
+
+  //$results: Array<FormResultStore> = [];
 
   validate(completed: (errors: Array<InputStore>) => void) {
     let res: Array<InputStore> = [];

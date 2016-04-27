@@ -90,7 +90,7 @@ export interface IProps<T extends Store> {
   initState?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
 }
 export type TProps = IProps<Store> & IPropsEx;
-export type TTemplate = (self: Store) => JSX.Element;
+export type TTemplate = (self: Store) => React.ReactNode;
 
 
 //IPropsEx x Store relationship:
@@ -165,7 +165,10 @@ export abstract class Store implements IStore, ITypedObj {
 
   //************** Component management
   render(comp: TComponent): JSX.Element {
-    if (this.$template) return this.$template(this);
+    if (this.$template) {
+      var res = this.$template(this);
+      if (Array.isArray(res)) return <div>{res}</div>; else return res as JSX.Element;
+    }
     let childCount = this.children ? React.Children.count(this.children) : 0;
     switch (childCount) {
       case 0: return <div>Missing children or $template component property</div>;
