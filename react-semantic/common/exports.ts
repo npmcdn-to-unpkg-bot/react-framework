@@ -13,7 +13,7 @@ export {rangeValidator, requiredValidator } from './validators';
 //export {InputTag, InputSmart} from './forms';
 
 export {
-animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached,
+animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, wide,
 Button, ButtonProps, attachedButton,
 ButtonAnimatedProps,
 ButtonIconProps,
@@ -22,7 +22,10 @@ ButtonsProps, eqWidth,
 ButtonSocialProps, social,
 Container, ContainerProps,
 Divider, DividerProps, divider,
+Field, FieldProps,
+Fields, FieldsProps, eqWidthFields,
 Flag, FlagProps,
+Form, FormProps, outerTagForm, stateForm, sizeForm,
 Header, HeaderProps, sizeHeader, outerTagHeader, subHeader,
 Icon, IconProps, flipped, rotated, circularIcon, bordered,
 Icons, IconsProps,
@@ -33,6 +36,7 @@ Label, LabelProps, pointing, corner, attachedLabel, circularLabel, ribbon,
 Labels, LabelsProps,
 ListProps,
 LoaderProps,
+Message, MessageProps, stateMessage, sizeMessage,
 RailProps,
 RevealProps,
 Segment, SegmentProps, raised, padded, emphasis,
@@ -45,11 +49,9 @@ FeedProps,
 ItemProps,
 StatisticProps,
 BreadcrumbProps,
-Column, ColumnProps, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
-FormProps,
+Column, ColumnProps, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
 Grid, GridProps, divided, celled, paddedGrid,
 MenuProps,
-MessageProps,
 Row, RowProps,
 TableProps,
 } from './generated';
@@ -68,3 +70,5 @@ export {DividerTest} from '../doc/elements/dividerTest';
 export {ImageTest} from '../doc/elements/imageTest';
 export {HeaderTest} from '../doc/elements/headerTest';
 export {InputTest} from '../doc/elements/inputTest';
+export {MessageTest} from '../doc/elements/messageTest';
+export {FormsTest} from '../doc/elements/formsTest';

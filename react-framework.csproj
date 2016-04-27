@@ -70,6 +70,8 @@
     <TypeScriptCompile Include="react-semantic\doc\doc.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\buttonTest.tsx" />
     <None Include="trash\flag.tsx_" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\formsTest.tsx" />
+    <TypeScriptCompile Include="react-semantic\doc\elements\messageTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\inputTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\imageTest.tsx" />
     <TypeScriptCompile Include="react-semantic\doc\elements\headerTest.tsx" />

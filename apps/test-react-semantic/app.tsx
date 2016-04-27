@@ -26,11 +26,11 @@ import {
   Row,
 
   ButtonTest, ButtonAnimatedTest, ButtonLabeledTest, ButtonIconTest, IconTest, ButtonsTest, ButtonSocialTest, LabelTest, SegmentTest,
-  FlagTest, GridTest, ContainerTest, DividerTest, HeaderTest, ImageTest, InputTest, 
+  FlagTest, GridTest, ContainerTest, DividerTest, HeaderTest, ImageTest, InputTest, MessageTest, FormsTest,
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
-import {FormTest} from '../../react-framework/gui-modules/doc/forms-test';
+import {FormSmartTest} from '../../react-framework/gui-modules/doc/forms-test';
 
 
 var moduleId = 'testReactSemantic'
@@ -43,7 +43,7 @@ export function init() {
 //****************** App Store
 @flux.StoreDef({ moduleId: moduleId })
 export class AppStore extends flux.StoreApp {
-  getStartRoute(): flux.TRouteActionPar { return flux.createRoute(AppRootStore);  }
+  getStartRoute(): flux.TRouteActionPar { return flux.createRoute(AppRootStore); }
   getIsHashRouter(): boolean { return true; }
 }
 
@@ -58,7 +58,7 @@ enum TActions { };//, refreshState };
 export class AppRootStore extends flux.Store implements IStoreApp {
   render(): JSX.Element {
     return <div>
-      <FormTest $parent={this}/>
+      <MessageTest/>
       {/*
       <div className="ui form">
         <div className="three fields">
@@ -81,7 +81,9 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       </div>
       <CodeGenerator2/>
       <CodeGenerator/>
-      <FormTest $parent={this}/>
+      <FormSmartTest $parent={this}/>
+      <MessageTest/>
+      <FormsTest/>
       <InputTest/>
       <ImageTest/>
       <HeaderTest/>

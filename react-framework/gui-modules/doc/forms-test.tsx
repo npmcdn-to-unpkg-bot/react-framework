@@ -21,7 +21,7 @@ import * as ui from '../../../react-semantic/common/exports';
 
 const moduleId = 'formsTest';
 
-export class FormTest extends flux.Component<FormTestStore, flux.IPropsEx> { }
+export class FormSmartTest extends flux.Component<FormTestStore, flux.IPropsEx> { }
 
 var inpTemplate: flux.TTemplate = (self: InputSmartStore) =>
   <div>
@@ -33,7 +33,7 @@ var inpTemplate: flux.TTemplate = (self: InputSmartStore) =>
 
 enum TAction { click };
 
-@flux.StoreDef({ moduleId: moduleId, componentClass: FormTest })
+@flux.StoreDef({ moduleId: moduleId, componentClass: FormSmartTest })
 export class FormTestStore extends flux.Store {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);

@@ -64,25 +64,52 @@ export var source: genSource = {
       : `, { $alignedTop:'topAligned', $alignedBottom:'bottomAligned', $alignedMiddle:'middleAligned' } `
     },
     { name: 'attached', values: ['no', 'attachedTop', 'attachedBottom', 'attachedBoth'], alias: `, { $attachedBoth: 'attached'} ` },
+    { name: 'wide', values: ['no', 'twoWide', 'threeWide', 'fourWide', 'fiveWide', 'sixWide', 'sevenWide', 'eightWide', 'nineWide', 'tenWide', 'elevenWide', 'twelveWide', 'thirteenWide', 'fourteenWide', 'fifteenWide', 'sixteenWide'] },
   ],
   codeData: [
-   /*
     {
-      name: 'form',
-      otherExtends: ', ui.IFormProps',
-      boolProps: [],
+      name: 'message',
+      autoClass: `'ui message'`,
+      autoTag: `'div'`,
+
+      boolProps: [{ name: 'icon' }, { name: 'hidden' }, { name: 'visible' }, { name: 'floating' }, { name: 'compact' }, ],
       enumProps: [
+        { name: 'attached', isSystem: true },
+        { name: 'stateMessage', aliasPropName: 'State', values: ['no', 'success', 'error', 'warning', 'info', 'positive', 'negative'] },
+        { name: 'color', isSystem: true },
+        { name: 'sizeMessage', aliasPropName: 'Size', values: ['no', 'small=6', 'large=8', 'huge=12', 'massive=14'] },
       ],
-      inheritsFrom: 'input'
     },
     {
-      name: 'inputSmart',
-      otherExtends: ', ui.IFieldProps',
-      boolProps: [],
+      name: 'form',
+      autoClass: `'ui form'`,
+      autoTag: `'div'`,
+      
+      boolProps: [{ name: 'loading' }, { name: 'success' }, { name: 'equalWidth' }, {name:'inverted'}],
       enumProps: [
+        { name: 'outerTagForm', aliasPropName: 'OuterTag', values: ['no', 'form=htmlTags.form'] },
+        { name: 'stateForm', aliasPropName: 'State', values: ['no', 'success', 'error', 'warning'] },
+        { name: 'sizeForm', aliasPropName: 'Size', values: ['no', 'small=6', 'large=8', 'huge=12'] },
       ],
-      inheritsFrom: 'input'
-    },*/
+    },
+    {
+      name: 'fields',
+      autoClass: `'fields'`,
+      autoTag: `'div'`,
+      boolProps: [{ name: 'inline' }, { name: 'grouped' }, { name: 'equalWidth' }, ],
+      enumProps: [
+        { name: 'eqWidthFields', aliasPropName: 'EqWidth', values: ['no', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'] },
+      ],
+    },
+    {
+      name: 'field',
+      autoClass: `'field'`,
+      autoTag: `'div'`,
+      boolProps: [{ name: 'inline' }, { name: 'error' }, { name: 'disabled' }, { name: 'required' }],
+      enumProps: [
+        { name: 'wide', isSystem: true },
+      ],
+    },
     {
       name: 'input',
       autoClass: `'ui input'`,
@@ -103,7 +130,7 @@ export var source: genSource = {
         { name: 'size', isSystem: true },
         { name: 'floated', isSystem: true },
         { name: 'verticalAligned', aliasPropName: 'Aligned', isSystem: true },
-        { name: 'outerTagImage', aliasPropName: 'OuterTag', values: ['no', 'a=ui.htmlTags.a'] },
+        { name: 'outerTagImage', aliasPropName: 'OuterTag', values: ['no', 'a=htmlTags.a'] },
       ]
     },
     {
@@ -122,7 +149,7 @@ export var source: genSource = {
       boolProps: [{ name: 'icon' }, { name: 'disabled' }, { name: 'dividing' }, { name: 'block' }, { name: 'inverted' }, { name: 'justified' }],
       enumProps: [
         { name: 'sizeHeader', aliasPropName: 'Size', values: ['no', 'tiny=4', 'small=6', 'large=8', 'huge=12', 'medium=99'] },
-        { name: 'outerTagHeader', aliasPropName:'OuterTag', values: ['no', 'h1=ui.htmlTags.h1', 'h2=ui.htmlTags.h2', 'h3=ui.htmlTags.h3', 'h4=ui.htmlTags.h4', 'h5=ui.htmlTags.h5'] },
+        { name: 'outerTagHeader', aliasPropName:'OuterTag', values: ['no', 'h1=htmlTags.h1', 'h2=htmlTags.h2', 'h3=htmlTags.h3', 'h4=htmlTags.h4', 'h5=htmlTags.h5'] },
         { name: 'attached', isSystem: true },
         { name: 'floated', isSystem: true },
         { name: 'textAligned', aliasPropName: 'Aligned', isSystem: true },
@@ -187,7 +214,6 @@ export var source: genSource = {
       type: genComponentType.collections,
       boolProps: [{ name: 'relaxed' }],
       enumProps: [
-        { name: 'wide', values: ['no', 'twoWide', 'threeWide', 'fourWide', 'fiveWide', 'sixWide', 'sevenWide', 'eightWide', 'nineWide', 'tenWide', 'elevenWide', 'twelveWide', 'thirteenWide', 'fourteenWide', 'fifteenWide', 'sixteenWide'] },
         { name: 'wideMobile', values: ['no', 'twoWideMobile', 'threeWideMobile', 'fourWideMobile', 'fiveWideMobile', 'sixWideMobile', 'sevenWideMobile', 'eightWideMobile', 'nineWideMobile', 'tenWideMobile', 'elevenWideMobile', 'twelveWideMobile', 'thirteenWideMobile', 'fourteenWideMobile', 'fifteenWideMobile', 'sixteenWideMobile'] },
         { name: 'wideTablet', values: ['no', 'twoWideTablet', 'threeWideTablet', 'fourWideTablet', 'fiveWideTablet', 'sixWideTablet', 'sevenWideTablet', 'eightWideTablet', 'nineWideTablet', 'tenWideTablet', 'elevenWideTablet', 'twelveWideTablet', 'thirteenWideTablet', 'fourteenWideTablet', 'fifteenWideTablet', 'sixteenWideTablet'] },
         { name: 'wideComputer', values: ['no', 'twoWideComputer', 'threeWideComputer', 'fourWideComputer', 'fiveWideComputer', 'sixWideComputer', 'sevenWideComputer', 'eightWideComputer', 'nineWideComputer', 'tenWideComputer', 'elevenWideComputer', 'twelveWideComputer', 'thirteenWideComputer', 'fourteenWideComputer', 'fifteenWideComputer', 'sixteenWideComputer'] },
@@ -196,6 +222,7 @@ export var source: genSource = {
         { name: 'floated', isSystem: true },
         { name: 'aligned', isSystem: true },
         { name: 'color', isSystem: true },
+        { name: 'wide', isSystem: true },
         { name: 'deviceOnlyGrid', isSystem: true },
       ]
     },
@@ -313,7 +340,7 @@ export interface animateTo {
         { name: 'bordered', values: ['no', 'borderedStandard', 'borderedInverted'], alias: `, { $borderedStandard: 'bordered' }` },
         { name: 'icon', isSystem: true },
         { name: 'size', isSystem: true },
-        { name: 'color', isSystem: true }
+        { name: 'color', isSystem: true },
       ]
     },
     {
@@ -358,7 +385,7 @@ export interface animateTo {
       autoTag: `'i'`,
       locked: true,
       otherProps: '  $Flag?: flag;\r\n  $FlagShort?: flagShort;',
-      otherPropDescr: '    ,$Flag: new ui.enumConverter<flag>(flag, val.$Flag),\r\n    $FlagShort: new ui.enumConverter<flagShort>(flagShort, val.$FlagShort),',
+      otherPropDescr: '    ,$Flag: new enumConverter<flag>(flag, val.$Flag),\r\n    $FlagShort: new enumConverter<flagShort>(flagShort, val.$FlagShort),',
       boolProps: [],
       enumProps: [
         { name: 'color', isSystem: true }
@@ -402,21 +429,7 @@ export interface animateTo {
       ]
     },
     {
-      name: 'form',
-      type: genComponentType.collections,
-      boolProps: [],
-      enumProps: [
-      ]
-    },
-    {
       name: 'menu',
-      type: genComponentType.collections,
-      boolProps: [],
-      enumProps: [
-      ]
-    },
-    {
-      name: 'message',
       type: genComponentType.collections,
       boolProps: [],
       enumProps: [

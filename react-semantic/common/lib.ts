@@ -20,10 +20,11 @@ export class htmlTags {
   static a = 6;
   static div = 7;
   static span = 8;
+  static form = 9;
 }
 
-export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props, context) => {
-  let props: React.HTMLAttributes = Object.assign({}, props); if (!props.type) props.type = 'text';
+export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (pr, context) => {
+  let props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
   return React.createElement('input', props);
 }
 

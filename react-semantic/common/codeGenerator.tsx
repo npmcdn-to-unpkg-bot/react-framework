@@ -23,7 +23,7 @@ export const CodeGenerator2: React.StatelessComponent<any> = dt => {
   return <div>
     <pre>
       {`import * as React from 'react';
-import * as ui from './lib';
+import {htmlTags, registerEnum, createDescr, IProps, enumConverter, boolConverter, StatelessComponent, enumValToProp, propsToClasses, projection} from './lib';
 import {icon, flag, flagShort} from './largeEnums';
 
 //********* This code is generated - do not modify it!
@@ -129,7 +129,7 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
   }
   function enumProp(pr: g.genEnumProp, isMeta: boolean): string {
     return isMeta ?
-      `    $${enumPropName(pr)}: new ui.enumConverter<${en(pr)}>(${en(pr)}, val.$${enumPropName(pr)})` :
+      `    $${enumPropName(pr)}: new enumConverter<${en(pr)}>(${en(pr)}, val.$${enumPropName(pr)})` :
       `  $${enumPropName(pr)}?: ${en(pr)};`;
   }
   function boolProp(pr: g.genBoolProp, isMeta: boolean): string {
@@ -137,7 +137,7 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
     if (pr.ignore) meta += ', true'; if (!pr.ignore && pr.alias) meta += ', false';
     if (pr.alias) meta += ', \'' + pr.alias + '\'';
     return isMeta ?
-      `    $${pr.name}: new ui.boolConverter(val.$${pr.name}${meta})` :
+      `    $${pr.name}: new boolConverter(val.$${pr.name}${meta})` :
       `  $${pr.name}?: boolean;`;
   }
   let enumProps = comp.enumProps.map(en => { });
@@ -152,13 +152,13 @@ function ComponentGenLow(comp: g.genComponent): JSX.Element {
     {comp.otherCode ? comp.otherCode : ''}
     {enumDef}
     {`    
-export interface ${up(comp.name)}Props extends ${comp.inheritsFrom ? up(comp.inheritsFrom) + 'Props' : 'ui.IProps'}${comp.otherExtends ? comp.otherExtends : ''}${enumPropsType(comp.enumProps)} {
+export interface ${up(comp.name)}Props extends ${comp.inheritsFrom ? up(comp.inheritsFrom) + 'Props' : 'IProps'}${comp.otherExtends ? comp.otherExtends : ''}${enumPropsType(comp.enumProps)} {
 `}
     {comp.enumProps.map(en => enumProp(en, false)).concat(comp.boolProps.map(en => boolProp(en, false))).join('\r\n') + '\r\n'}
     {comp.otherProps ? comp.otherProps + '\r\n' : ''}
     {`}
 
-export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val => {
+export var ${comp.name}PropsDescr = createDescr<${up(comp.name)}Props>(val => {
   return {
 `}
     {comp.enumProps.map(en => enumProp(en, true)).concat(comp.boolProps.map(en => boolProp(en, true))).join(',\r\n') + '\r\n' }
@@ -168,9 +168,9 @@ export var ${comp.name}PropsDescr = ui.createDescr<${up(comp.name)}Props>(val =>
 
     {!comp.autoTag ? '' : `
 
-export const ${up(comp.name)}: ui.StatelessComponent<${up(comp.name)}Props> = pr => {
-  let props: ${up(comp.name)}Props = ui.enumValToProp(pr, ${comp.name}PropsDescr);
-  let rest = ui.propsToClasses([${comp.autoClass}], ui.projection(props, ${comp.name}PropsDescr));
+export const ${up(comp.name)}: StatelessComponent<${up(comp.name)}Props> = pr => {
+  let props: ${up(comp.name)}Props = enumValToProp(pr, ${comp.name}PropsDescr);
+  let rest = propsToClasses([${comp.autoClass}], projection(props, ${comp.name}PropsDescr));
   return React.createElement(${comp.autoTag}, rest, pr.children);
 }
 
@@ -189,13 +189,13 @@ function EnumDef(en: g.genEnumProp) {
       let parts = arr[i].split('=');
       arr[i] = '$' + parts[0] + (isProp || parts.length==1 ? '' : ' = ' + parts[1]);
     }
-    let arr = isProp ? arr.slice(1) : arr;
+    arr = isProp ? arr.slice(1) : arr;
     let res: Array<String> = arr.map(val => isProp ? `${val}?: boolean; ` : `${val}, `);
     return res.join('')
   };
   return <pre>{`
 export enum ${en.name} { ${item(en.values, false)}}
-ui.registerEnum(${en.name}, '$${enumPropName(en)}'${en.alias ? en.alias : ''});
+registerEnum(${en.name}, '$${enumPropName(en)}'${en.alias ? en.alias : ''});
 export interface IProps${up(en.name)}Prop { ${item(en.values, true)}}
 `}
   </pre>;

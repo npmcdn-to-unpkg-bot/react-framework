@@ -1,12 +1,12 @@
 ﻿import * as React from 'react';
-import * as ui from './lib';
+import {htmlTags, registerEnum, createDescr, IProps, enumConverter, boolConverter, StatelessComponent, enumValToProp, propsToClasses, projection} from './lib';
 import {icon, flag, flagShort} from './largeEnums';
 
 //********* This code is generated - do not modify it!
 
 //content for "import {} from '???/exports"'
 /*
-  icon, flag, flagShort, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, 
+  icon, flag, flagShort, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, wide, 
   Button, attachedButton,
   ButtonAnimated,
   ButtonIcon,
@@ -15,7 +15,10 @@ import {icon, flag, flagShort} from './largeEnums';
   ButtonSocial, social,
   Container,
   Divider, divider,
+  Field,
+  Fields, eqWidthFields,
   Flag,
+  Form, outerTagForm, stateForm, sizeForm,
   Header, sizeHeader, outerTagHeader, subHeader,
   Icon, flipped, rotated, circularIcon, bordered,
   Icons,
@@ -26,6 +29,7 @@ import {icon, flag, flagShort} from './largeEnums';
   Labels,
   List,
   Loader,
+  Message, stateMessage, sizeMessage,
   Rail,
   Reveal,
   Segment, raised, padded, emphasis,
@@ -38,11 +42,9 @@ import {icon, flag, flagShort} from './largeEnums';
   Item,
   Statistic,
   Breadcrumb,
-  Column, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
-  Form,
+  Column, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
   Grid, divided, celled, paddedGrid,
   Menu,
-  Message,
   Row,
   Table
 */
@@ -50,7 +52,7 @@ import {icon, flag, flagShort} from './largeEnums';
 //content for "export {} from '/.generated"'
 /*
 export {
-  animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, 
+  animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, wide, 
   Button, ButtonProps, attachedButton,
   ButtonAnimatedProps,
   ButtonIconProps,
@@ -59,7 +61,10 @@ export {
   ButtonSocialProps, social,
   Container, ContainerProps,
   Divider, DividerProps, divider,
+  Field, FieldProps,
+  Fields, FieldsProps, eqWidthFields,
   Flag, FlagProps,
+  Form, FormProps, outerTagForm, stateForm, sizeForm,
   Header, HeaderProps, sizeHeader, outerTagHeader, subHeader,
   Icon, IconProps, flipped, rotated, circularIcon, bordered,
   Icons, IconsProps,
@@ -70,6 +75,7 @@ export {
   Labels, LabelsProps,
   ListProps,
   LoaderProps,
+  Message, MessageProps, stateMessage, sizeMessage,
   RailProps,
   RevealProps,
   Segment, SegmentProps, raised, padded, emphasis,
@@ -82,11 +88,9 @@ export {
   ItemProps,
   StatisticProps,
   BreadcrumbProps,
-  Column, ColumnProps, wide, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
-  FormProps,
+  Column, ColumnProps, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
   Grid, GridProps, divided, celled, paddedGrid,
   MenuProps,
-  MessageProps,
   Row, RowProps,
   TableProps,
 } from './generated';
@@ -95,54 +99,58 @@ export {
 export interface IPropsIconProp { }
 
 export enum color { no, $colRed, $colOrange, $colYellow, $colOlive, $colGreen, $colTeal, $colBlue, $colViolet, $colPurple, $colPink, $colBrown, $colGrey, $colBlack, }
-ui.registerEnum(color, '$Color', { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black' });
+registerEnum(color, '$Color', { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black' });
 export interface IPropsColorProp { $colRed?: boolean; $colOrange?: boolean; $colYellow?: boolean; $colOlive?: boolean; $colGreen?: boolean; $colTeal?: boolean; $colBlue?: boolean; $colViolet?: boolean; $colPurple?: boolean; $colPink?: boolean; $colBrown?: boolean; $colGrey?: boolean; $colBlack?: boolean; }
 
 export enum size { no, $s3, $mini, $s2, $tiny, $s1, $small, $1, $large, $2, $big, $3, $huge, $4, $massive, }
-ui.registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' });
+registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large', $2: 'big', $3: 'huge', $4: 'massive' });
 export interface IPropsSizeProp { $s3?: boolean; $mini?: boolean; $s2?: boolean; $tiny?: boolean; $s1?: boolean; $small?: boolean; $1?: boolean; $large?: boolean; $2?: boolean; $big?: boolean; $3?: boolean; $huge?: boolean; $4?: boolean; $massive?: boolean; }
 
 export enum floated { no, $floatedLeft, $floatedRight, }
-ui.registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight: 'rightFloated' });
+registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight: 'rightFloated' });
 export interface IPropsFloatedProp { $floatedLeft?: boolean; $floatedRight?: boolean; }
 
 export enum aligned { no, $alignedLeft, $alignedCenter, $alignedRight, $alignedTop, $alignedBottom, $alignedMiddle, }
-ui.registerEnum(aligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
+registerEnum(aligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
 export interface IPropsAlignedProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; $alignedTop?: boolean; $alignedBottom?: boolean; $alignedMiddle?: boolean; }
 
 export enum column { no, $twoColumn, $threeColumn, $fourColumn, $fiveColumn, $sixColumn, $sevenColumn, $eightColumn, $nineColumn, $tenColumn, $elevenColumn, $twelveColumn, $thirteenColumn, $fourteenColumn, $fifteenColumn, $sixteenColumn, }
-ui.registerEnum(column, '$Column');
+registerEnum(column, '$Column');
 export interface IPropsColumnProp { $twoColumn?: boolean; $threeColumn?: boolean; $fourColumn?: boolean; $fiveColumn?: boolean; $sixColumn?: boolean; $sevenColumn?: boolean; $eightColumn?: boolean; $nineColumn?: boolean; $tenColumn?: boolean; $elevenColumn?: boolean; $twelveColumn?: boolean; $thirteenColumn?: boolean; $fourteenColumn?: boolean; $fifteenColumn?: boolean; $sixteenColumn?: boolean; }
 
 export enum deviceOnlyGrid { no, $mobileOnly, $tabletOnly, $computerOnly, $largeScreenOnly, $widescreenOnly, }
-ui.registerEnum(deviceOnlyGrid, '$DeviceOnlyGrid');
+registerEnum(deviceOnlyGrid, '$DeviceOnlyGrid');
 export interface IPropsDeviceOnlyGridProp { $mobileOnly?: boolean; $tabletOnly?: boolean; $computerOnly?: boolean; $largeScreenOnly?: boolean; $widescreenOnly?: boolean; }
 
 export enum relaxed { no, $relaxed, $relaxedVery, }
-ui.registerEnum(relaxed, '$Relaxed', { $relaxedVery: 'veryRelaxed' });
+registerEnum(relaxed, '$Relaxed', { $relaxedVery: 'veryRelaxed' });
 export interface IPropsRelaxedProp { $relaxed?: boolean; $relaxedVery?: boolean; }
 
 export enum textAligned { no, $alignedLeft, $alignedCenter, $alignedRight, }
-ui.registerEnum(textAligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', });
+registerEnum(textAligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', });
 export interface IPropsTextAlignedProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; }
 
 export enum verticalAligned { no, $alignedTop = 4, $alignedBottom = 5, $alignedMiddle = 6, }
-ui.registerEnum(verticalAligned, '$Aligned', { $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
+registerEnum(verticalAligned, '$Aligned', { $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
 export interface IPropsVerticalAlignedProp { $alignedTop?: boolean; $alignedBottom?: boolean; $alignedMiddle?: boolean; }
 
 export enum attached { no, $attachedTop, $attachedBottom, $attachedBoth, }
-ui.registerEnum(attached, '$Attached', { $attachedBoth: 'attached' });
+registerEnum(attached, '$Attached', { $attachedBoth: 'attached' });
 export interface IPropsAttachedProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedBoth?: boolean; }
+
+export enum wide { no, $twoWide, $threeWide, $fourWide, $fiveWide, $sixWide, $sevenWide, $eightWide, $nineWide, $tenWide, $elevenWide, $twelveWide, $thirteenWide, $fourteenWide, $fifteenWide, $sixteenWide, }
+registerEnum(wide, '$Wide');
+export interface IPropsWideProp { $twoWide?: boolean; $threeWide?: boolean; $fourWide?: boolean; $fiveWide?: boolean; $sixWide?: boolean; $sevenWide?: boolean; $eightWide?: boolean; $nineWide?: boolean; $tenWide?: boolean; $elevenWide?: boolean; $twelveWide?: boolean; $thirteenWide?: boolean; $fourteenWide?: boolean; $fifteenWide?: boolean; $sixteenWide?: boolean; }
 
 //**************************************************************
 //*   BUTTON
 //**************************************************************
 
 export enum attachedButton { no, $attachedTop, $attachedBottom, $attachedLeft, $attachedRight, }
-ui.registerEnum(attachedButton, '$Attached');
+registerEnum(attachedButton, '$Attached');
 export interface IPropsAttachedButtonProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedLeft?: boolean; $attachedRight?: boolean; }
 
-export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, IPropsSizeProp, IPropsColorProp, IPropsFloatedProp {
+export interface ButtonProps extends IProps, IPropsAttachedButtonProp, IPropsSizeProp, IPropsColorProp, IPropsFloatedProp {
   $Attached?: attachedButton;
   $Size?: size;
   $Color?: color;
@@ -161,30 +169,30 @@ export interface ButtonProps extends ui.IProps, IPropsAttachedButtonProp, IProps
   $negative?: boolean;
 }
 
-export var buttonPropsDescr = ui.createDescr<ButtonProps>(val => {
+export var buttonPropsDescr = createDescr<ButtonProps>(val => {
   return {
-    $Attached: new ui.enumConverter<attachedButton>(attachedButton, val.$Attached),
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
-    $basic: new ui.boolConverter(val.$basic),
-    $inverted: new ui.boolConverter(val.$inverted),
-    $compact: new ui.boolConverter(val.$compact),
-    $fluid: new ui.boolConverter(val.$fluid),
-    $circular: new ui.boolConverter(val.$circular),
-    $active: new ui.boolConverter(val.$active, true),
-    $loading: new ui.boolConverter(val.$loading),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $primary: new ui.boolConverter(val.$primary),
-    $secondary: new ui.boolConverter(val.$secondary),
-    $positive: new ui.boolConverter(val.$positive),
-    $negative: new ui.boolConverter(val.$negative)
+    $Attached: new enumConverter<attachedButton>(attachedButton, val.$Attached),
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $Floated: new enumConverter<floated>(floated, val.$Floated),
+    $basic: new boolConverter(val.$basic),
+    $inverted: new boolConverter(val.$inverted),
+    $compact: new boolConverter(val.$compact),
+    $fluid: new boolConverter(val.$fluid),
+    $circular: new boolConverter(val.$circular),
+    $active: new boolConverter(val.$active, true),
+    $loading: new boolConverter(val.$loading),
+    $disabled: new boolConverter(val.$disabled),
+    $primary: new boolConverter(val.$primary),
+    $secondary: new boolConverter(val.$secondary),
+    $positive: new boolConverter(val.$positive),
+    $negative: new boolConverter(val.$negative)
   };
 });
 
-export const Button: ui.StatelessComponent<ButtonProps> = pr => {
-  var props: ButtonProps = ui.enumValToProp(pr, buttonPropsDescr);
-  var rest = ui.propsToClasses(['ui button', { active: props.$active }], ui.projection(props, buttonPropsDescr));
+export const Button: StatelessComponent<ButtonProps> = pr => {
+  let props: ButtonProps = enumValToProp(pr, buttonPropsDescr);
+  let rest = propsToClasses(['ui button', { active: props.$active }], projection(props, buttonPropsDescr));
   return React.createElement(props.$Attached ? 'div' : 'button', rest, pr.children);
 }
 
@@ -203,7 +211,7 @@ export interface ButtonAnimatedProps extends ButtonProps {
   $animateTo: animateTo;
 }
 
-export var buttonAnimatedPropsDescr = ui.createDescr<ButtonAnimatedProps>(val => {
+export var buttonAnimatedPropsDescr = createDescr<ButtonAnimatedProps>(val => {
   return {
 
     $animateTo: null,
@@ -218,10 +226,10 @@ export interface ButtonIconProps extends ButtonProps, IPropsIconProp {
   $left?: boolean;
 }
 
-export var buttonIconPropsDescr = ui.createDescr<ButtonIconProps>(val => {
+export var buttonIconPropsDescr = createDescr<ButtonIconProps>(val => {
   return {
-    $Icon: new ui.enumConverter<icon>(icon, val.$Icon),
-    $left: new ui.boolConverter(val.$left)
+    $Icon: new enumConverter<icon>(icon, val.$Icon),
+    $left: new boolConverter(val.$left)
   };
 }, buttonPropsDescr);
 
@@ -234,10 +242,10 @@ export interface ButtonLabeledProps extends ButtonProps {
   $label: React.ReactElement<any>;
 }
 
-export var buttonLabeledPropsDescr = ui.createDescr<ButtonLabeledProps>(val => {
+export var buttonLabeledPropsDescr = createDescr<ButtonLabeledProps>(val => {
   return {
-    $pointing: new ui.boolConverter(val.$pointing),
-    $left: new ui.boolConverter(val.$left)
+    $pointing: new boolConverter(val.$pointing),
+    $left: new boolConverter(val.$left)
     , $label: null
   };
 }, buttonPropsDescr);
@@ -247,10 +255,10 @@ export var buttonLabeledPropsDescr = ui.createDescr<ButtonLabeledProps>(val => {
 //**************************************************************
 
 export enum eqWidth { no, $two, $three, $four, $five, $six, $seven, $eight, $nine, $ten, $eleven, $twelve, }
-ui.registerEnum(eqWidth, '$EqWidth');
+registerEnum(eqWidth, '$EqWidth');
 export interface IPropsEqWidthProp { $two?: boolean; $three?: boolean; $four?: boolean; $five?: boolean; $six?: boolean; $seven?: boolean; $eight?: boolean; $nine?: boolean; $ten?: boolean; $eleven?: boolean; $twelve?: boolean; }
 
-export interface ButtonsProps extends ui.IProps, IPropsEqWidthProp, IPropsSizeProp, IPropsColorProp {
+export interface ButtonsProps extends IProps, IPropsEqWidthProp, IPropsSizeProp, IPropsColorProp {
   $EqWidth?: eqWidth;
   $Size?: size;
   $Color?: color;
@@ -260,15 +268,15 @@ export interface ButtonsProps extends ui.IProps, IPropsEqWidthProp, IPropsSizePr
   $hasIcon?: boolean;
 }
 
-export var buttonsPropsDescr = ui.createDescr<ButtonsProps>(val => {
+export var buttonsPropsDescr = createDescr<ButtonsProps>(val => {
   return {
-    $EqWidth: new ui.enumConverter<eqWidth>(eqWidth, val.$EqWidth),
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $vertical: new ui.boolConverter(val.$vertical),
-    $labeled: new ui.boolConverter(val.$labeled),
-    $basic: new ui.boolConverter(val.$basic),
-    $hasIcon: new ui.boolConverter(val.$hasIcon)
+    $EqWidth: new enumConverter<eqWidth>(eqWidth, val.$EqWidth),
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $vertical: new boolConverter(val.$vertical),
+    $labeled: new boolConverter(val.$labeled),
+    $basic: new boolConverter(val.$basic),
+    $hasIcon: new boolConverter(val.$hasIcon)
   };
 });
 
@@ -277,41 +285,41 @@ export var buttonsPropsDescr = ui.createDescr<ButtonsProps>(val => {
 //**************************************************************
 
 export enum social { no, $facebook, $twitter, $googlePlus, $vk, $linkedin, $instagram, $youtube, }
-ui.registerEnum(social, '$Social');
+registerEnum(social, '$Social');
 export interface IPropsSocialProp { $facebook?: boolean; $twitter?: boolean; $googlePlus?: boolean; $vk?: boolean; $linkedin?: boolean; $instagram?: boolean; $youtube?: boolean; }
 
 export interface ButtonSocialProps extends ButtonProps, IPropsSocialProp {
   $Social?: social;
 }
 
-export var buttonSocialPropsDescr = ui.createDescr<ButtonSocialProps>(val => {
+export var buttonSocialPropsDescr = createDescr<ButtonSocialProps>(val => {
   return {
-    $Social: new ui.enumConverter<social>(social, val.$Social)
+    $Social: new enumConverter<social>(social, val.$Social)
   };
 }, buttonPropsDescr);
 
 //**************************************************************
 //*   CONTAINER
 //**************************************************************    
-export interface ContainerProps extends ui.IProps, IPropsTextAlignedProp {
+export interface ContainerProps extends IProps, IPropsTextAlignedProp {
   $Aligned?: textAligned;
   $text?: boolean;
   $justified?: boolean;
   $fluid?: boolean;
 }
 
-export var containerPropsDescr = ui.createDescr<ContainerProps>(val => {
+export var containerPropsDescr = createDescr<ContainerProps>(val => {
   return {
-    $Aligned: new ui.enumConverter<textAligned>(textAligned, val.$Aligned),
-    $text: new ui.boolConverter(val.$text),
-    $justified: new ui.boolConverter(val.$justified),
-    $fluid: new ui.boolConverter(val.$fluid)
+    $Aligned: new enumConverter<textAligned>(textAligned, val.$Aligned),
+    $text: new boolConverter(val.$text),
+    $justified: new boolConverter(val.$justified),
+    $fluid: new boolConverter(val.$fluid)
   };
 });
 
-export const Container: ui.StatelessComponent<ContainerProps> = pr => {
-  var props: ContainerProps = ui.enumValToProp(pr, containerPropsDescr);
-  var rest = ui.propsToClasses(['ui container'], ui.projection(props, containerPropsDescr));
+export const Container: StatelessComponent<ContainerProps> = pr => {
+  let props: ContainerProps = enumValToProp(pr, containerPropsDescr);
+  let rest = propsToClasses(['ui container'], projection(props, containerPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -321,10 +329,10 @@ export const Container: ui.StatelessComponent<ContainerProps> = pr => {
 //**************************************************************
 
 export enum divider { no, $horizontal, $vertical, }
-ui.registerEnum(divider, '$Divider');
+registerEnum(divider, '$Divider');
 export interface IPropsDividerProp { $horizontal?: boolean; $vertical?: boolean; }
 
-export interface DividerProps extends ui.IProps, IPropsDividerProp {
+export interface DividerProps extends IProps, IPropsDividerProp {
   $Divider?: divider;
   $clearing?: boolean;
   $section?: boolean;
@@ -333,20 +341,79 @@ export interface DividerProps extends ui.IProps, IPropsDividerProp {
   $inverted?: boolean;
 }
 
-export var dividerPropsDescr = ui.createDescr<DividerProps>(val => {
+export var dividerPropsDescr = createDescr<DividerProps>(val => {
   return {
-    $Divider: new ui.enumConverter<divider>(divider, val.$Divider),
-    $clearing: new ui.boolConverter(val.$clearing),
-    $section: new ui.boolConverter(val.$section),
-    $hidden: new ui.boolConverter(val.$hidden),
-    $fitted: new ui.boolConverter(val.$fitted),
-    $inverted: new ui.boolConverter(val.$inverted)
+    $Divider: new enumConverter<divider>(divider, val.$Divider),
+    $clearing: new boolConverter(val.$clearing),
+    $section: new boolConverter(val.$section),
+    $hidden: new boolConverter(val.$hidden),
+    $fitted: new boolConverter(val.$fitted),
+    $inverted: new boolConverter(val.$inverted)
   };
 });
 
-export const Divider: ui.StatelessComponent<DividerProps> = pr => {
-  var props: DividerProps = ui.enumValToProp(pr, dividerPropsDescr);
-  var rest = ui.propsToClasses(['ui divider'], ui.projection(props, dividerPropsDescr));
+export const Divider: StatelessComponent<DividerProps> = pr => {
+  let props: DividerProps = enumValToProp(pr, dividerPropsDescr);
+  let rest = propsToClasses(['ui divider'], projection(props, dividerPropsDescr));
+  return React.createElement('div', rest, pr.children);
+}
+
+
+//**************************************************************
+//*   FIELD
+//**************************************************************    
+export interface FieldProps extends IProps, IPropsWideProp {
+  $Wide?: wide;
+  $inline?: boolean;
+  $error?: boolean;
+  $disabled?: boolean;
+  $required?: boolean;
+}
+
+export var fieldPropsDescr = createDescr<FieldProps>(val => {
+  return {
+    $Wide: new enumConverter<wide>(wide, val.$Wide),
+    $inline: new boolConverter(val.$inline),
+    $error: new boolConverter(val.$error),
+    $disabled: new boolConverter(val.$disabled),
+    $required: new boolConverter(val.$required)
+  };
+});
+
+export const Field: StatelessComponent<FieldProps> = pr => {
+  let props: FieldProps = enumValToProp(pr, fieldPropsDescr);
+  let rest = propsToClasses(['field'], projection(props, fieldPropsDescr));
+  return React.createElement('div', rest, pr.children);
+}
+
+
+//**************************************************************
+//*   FIELDS
+//**************************************************************
+
+export enum eqWidthFields { no, $two, $three, $four, $five, $six, $seven, $eight, $nine, $ten, }
+registerEnum(eqWidthFields, '$EqWidth');
+export interface IPropsEqWidthFieldsProp { $two?: boolean; $three?: boolean; $four?: boolean; $five?: boolean; $six?: boolean; $seven?: boolean; $eight?: boolean; $nine?: boolean; $ten?: boolean; }
+
+export interface FieldsProps extends IProps, IPropsEqWidthFieldsProp {
+  $EqWidth?: eqWidthFields;
+  $inline?: boolean;
+  $grouped?: boolean;
+  $equalWidth?: boolean;
+}
+
+export var fieldsPropsDescr = createDescr<FieldsProps>(val => {
+  return {
+    $EqWidth: new enumConverter<eqWidthFields>(eqWidthFields, val.$EqWidth),
+    $inline: new boolConverter(val.$inline),
+    $grouped: new boolConverter(val.$grouped),
+    $equalWidth: new boolConverter(val.$equalWidth)
+  };
+});
+
+export const Fields: StatelessComponent<FieldsProps> = pr => {
+  let props: FieldsProps = enumValToProp(pr, fieldsPropsDescr);
+  let rest = propsToClasses(['fields'], projection(props, fieldsPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -354,24 +421,69 @@ export const Divider: ui.StatelessComponent<DividerProps> = pr => {
 //**************************************************************
 //*   FLAG
 //**************************************************************    
-export interface FlagProps extends ui.IProps, IPropsColorProp {
+export interface FlagProps extends IProps, IPropsColorProp {
   $Color?: color;
   $Flag?: flag;
   $FlagShort?: flagShort;
 }
 
-export var flagPropsDescr = ui.createDescr<FlagProps>(val => {
+export var flagPropsDescr = createDescr<FlagProps>(val => {
   return {
-    $Color: new ui.enumConverter<color>(color, val.$Color)
-    , $Flag: new ui.enumConverter<flag>(flag, val.$Flag),
-    $FlagShort: new ui.enumConverter<flagShort>(flagShort, val.$FlagShort),
+    $Color: new enumConverter<color>(color, val.$Color)
+    , $Flag: new enumConverter<flag>(flag, val.$Flag),
+    $FlagShort: new enumConverter<flagShort>(flagShort, val.$FlagShort),
   };
 });
 
-export const Flag: ui.StatelessComponent<FlagProps> = pr => {
-  var props: FlagProps = ui.enumValToProp(pr, flagPropsDescr);
-  var rest = ui.propsToClasses(['ui flag'], ui.projection(props, flagPropsDescr));
+export const Flag: StatelessComponent<FlagProps> = pr => {
+  let props: FlagProps = enumValToProp(pr, flagPropsDescr);
+  let rest = propsToClasses(['ui flag'], projection(props, flagPropsDescr));
   return React.createElement('i', rest, pr.children);
+}
+
+
+//**************************************************************
+//*   FORM
+//**************************************************************
+
+export enum outerTagForm { no, $form = htmlTags.form, }
+registerEnum(outerTagForm, '$OuterTag');
+export interface IPropsOuterTagFormProp { $form?: boolean; }
+
+export enum stateForm { no, $success, $error, $warning, }
+registerEnum(stateForm, '$State');
+export interface IPropsStateFormProp { $success?: boolean; $error?: boolean; $warning?: boolean; }
+
+export enum sizeForm { no, $small = 6, $large = 8, $huge = 12, }
+registerEnum(sizeForm, '$Size');
+export interface IPropsSizeFormProp { $small?: boolean; $large?: boolean; $huge?: boolean; }
+
+export interface FormProps extends IProps, IPropsOuterTagFormProp, IPropsStateFormProp, IPropsSizeFormProp {
+  $OuterTag?: outerTagForm;
+  $State?: stateForm;
+  $Size?: sizeForm;
+  $loading?: boolean;
+  $success?: boolean;
+  $equalWidth?: boolean;
+  $inverted?: boolean;
+}
+
+export var formPropsDescr = createDescr<FormProps>(val => {
+  return {
+    $OuterTag: new enumConverter<outerTagForm>(outerTagForm, val.$OuterTag),
+    $State: new enumConverter<stateForm>(stateForm, val.$State),
+    $Size: new enumConverter<sizeForm>(sizeForm, val.$Size),
+    $loading: new boolConverter(val.$loading),
+    $success: new boolConverter(val.$success),
+    $equalWidth: new boolConverter(val.$equalWidth),
+    $inverted: new boolConverter(val.$inverted)
+  };
+});
+
+export const Form: StatelessComponent<FormProps> = pr => {
+  let props: FormProps = enumValToProp(pr, formPropsDescr);
+  let rest = propsToClasses(['ui form'], projection(props, formPropsDescr));
+  return React.createElement('div', rest, pr.children);
 }
 
 
@@ -380,18 +492,18 @@ export const Flag: ui.StatelessComponent<FlagProps> = pr => {
 //**************************************************************
 
 export enum sizeHeader { no, $tiny = 4, $small = 6, $large = 8, $huge = 12, $medium = 99, }
-ui.registerEnum(sizeHeader, '$Size');
+registerEnum(sizeHeader, '$Size');
 export interface IPropsSizeHeaderProp { $tiny?: boolean; $small?: boolean; $large?: boolean; $huge?: boolean; $medium?: boolean; }
 
-export enum outerTagHeader { no, $h1 = ui.htmlTags.h1, $h2 = ui.htmlTags.h2, $h3 = ui.htmlTags.h3, $h4 = ui.htmlTags.h4, $h5 = ui.htmlTags.h5, }
-ui.registerEnum(outerTagHeader, '$OuterTag');
+export enum outerTagHeader { no, $h1 = htmlTags.h1, $h2 = htmlTags.h2, $h3 = htmlTags.h3, $h4 = htmlTags.h4, $h5 = htmlTags.h5, }
+registerEnum(outerTagHeader, '$OuterTag');
 export interface IPropsOuterTagHeaderProp { $h1?: boolean; $h2?: boolean; $h3?: boolean; $h4?: boolean; $h5?: boolean; }
 
 export enum subHeader { no, $sub, $subUppercase, }
-ui.registerEnum(subHeader, '$SubHeader');
+registerEnum(subHeader, '$SubHeader');
 export interface IPropsSubHeaderProp { $sub?: boolean; $subUppercase?: boolean; }
 
-export interface HeaderProps extends ui.IProps, IPropsSizeHeaderProp, IPropsOuterTagHeaderProp, IPropsAttachedProp, IPropsFloatedProp, IPropsTextAlignedProp, IPropsColorProp, IPropsSubHeaderProp {
+export interface HeaderProps extends IProps, IPropsSizeHeaderProp, IPropsOuterTagHeaderProp, IPropsAttachedProp, IPropsFloatedProp, IPropsTextAlignedProp, IPropsColorProp, IPropsSubHeaderProp {
   $Size?: sizeHeader;
   $OuterTag?: outerTagHeader;
   $Attached?: attached;
@@ -407,27 +519,27 @@ export interface HeaderProps extends ui.IProps, IPropsSizeHeaderProp, IPropsOute
   $justified?: boolean;
 }
 
-export var headerPropsDescr = ui.createDescr<HeaderProps>(val => {
+export var headerPropsDescr = createDescr<HeaderProps>(val => {
   return {
-    $Size: new ui.enumConverter<sizeHeader>(sizeHeader, val.$Size),
-    $OuterTag: new ui.enumConverter<outerTagHeader>(outerTagHeader, val.$OuterTag),
-    $Attached: new ui.enumConverter<attached>(attached, val.$Attached),
-    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
-    $Aligned: new ui.enumConverter<textAligned>(textAligned, val.$Aligned),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $SubHeader: new ui.enumConverter<subHeader>(subHeader, val.$SubHeader),
-    $icon: new ui.boolConverter(val.$icon),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $dividing: new ui.boolConverter(val.$dividing),
-    $block: new ui.boolConverter(val.$block),
-    $inverted: new ui.boolConverter(val.$inverted),
-    $justified: new ui.boolConverter(val.$justified)
+    $Size: new enumConverter<sizeHeader>(sizeHeader, val.$Size),
+    $OuterTag: new enumConverter<outerTagHeader>(outerTagHeader, val.$OuterTag),
+    $Attached: new enumConverter<attached>(attached, val.$Attached),
+    $Floated: new enumConverter<floated>(floated, val.$Floated),
+    $Aligned: new enumConverter<textAligned>(textAligned, val.$Aligned),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $SubHeader: new enumConverter<subHeader>(subHeader, val.$SubHeader),
+    $icon: new boolConverter(val.$icon),
+    $disabled: new boolConverter(val.$disabled),
+    $dividing: new boolConverter(val.$dividing),
+    $block: new boolConverter(val.$block),
+    $inverted: new boolConverter(val.$inverted),
+    $justified: new boolConverter(val.$justified)
   };
 });
 
-export const Header: ui.StatelessComponent<HeaderProps> = pr => {
-  var props: HeaderProps = ui.enumValToProp(pr, headerPropsDescr);
-  var rest = ui.propsToClasses([(props.$SubHeader == subHeader.$sub ? 'sub header' : (props.$SubHeader == subHeader.$subUppercase) ? 'ui sub header' : 'ui header')], ui.projection(props, headerPropsDescr));
+export const Header: StatelessComponent<HeaderProps> = pr => {
+  let props: HeaderProps = enumValToProp(pr, headerPropsDescr);
+  let rest = propsToClasses([(props.$SubHeader == subHeader.$sub ? 'sub header' : (props.$SubHeader == subHeader.$subUppercase) ? 'ui sub header' : 'ui header')], projection(props, headerPropsDescr));
   return React.createElement(props.$OuterTag ? outerTagHeader[props.$OuterTag].replace('$', '') : 'div', rest, pr.children);
 }
 
@@ -437,22 +549,22 @@ export const Header: ui.StatelessComponent<HeaderProps> = pr => {
 //**************************************************************
 
 export enum flipped { no, $flippedHorizontally, $flippedVertically, }
-ui.registerEnum(flipped, '$Flipped');
+registerEnum(flipped, '$Flipped');
 export interface IPropsFlippedProp { $flippedHorizontally?: boolean; $flippedVertically?: boolean; }
 
 export enum rotated { no, $rotatedClockwise, $rotatedCounterclockwise, }
-ui.registerEnum(rotated, '$Rotated');
+registerEnum(rotated, '$Rotated');
 export interface IPropsRotatedProp { $rotatedClockwise?: boolean; $rotatedCounterclockwise?: boolean; }
 
 export enum circularIcon { no, $circularStandard, $circularInverted, }
-ui.registerEnum(circularIcon, '$Circular', { $circularStandard: 'circular' });
+registerEnum(circularIcon, '$Circular', { $circularStandard: 'circular' });
 export interface IPropsCircularIconProp { $circularStandard?: boolean; $circularInverted?: boolean; }
 
 export enum bordered { no, $borderedStandard, $borderedInverted, }
-ui.registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
+registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
 export interface IPropsBorderedProp { $borderedStandard?: boolean; $borderedInverted?: boolean; }
 
-export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, IPropsIconProp, IPropsSizeProp, IPropsColorProp {
+export interface IconProps extends IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, IPropsIconProp, IPropsSizeProp, IPropsColorProp {
   $Flipped?: flipped;
   $Rotated?: rotated;
   $Circular?: circularIcon;
@@ -468,27 +580,27 @@ export interface IconProps extends ui.IProps, IPropsFlippedProp, IPropsRotatedPr
   $corner?: boolean;
 }
 
-export var iconPropsDescr = ui.createDescr<IconProps>(val => {
+export var iconPropsDescr = createDescr<IconProps>(val => {
   return {
-    $Flipped: new ui.enumConverter<flipped>(flipped, val.$Flipped),
-    $Rotated: new ui.enumConverter<rotated>(rotated, val.$Rotated),
-    $Circular: new ui.enumConverter<circularIcon>(circularIcon, val.$Circular),
-    $Bordered: new ui.enumConverter<bordered>(bordered, val.$Bordered),
-    $Icon: new ui.enumConverter<icon>(icon, val.$Icon),
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $loading: new ui.boolConverter(val.$loading),
-    $fitted: new ui.boolConverter(val.$fitted),
-    $link: new ui.boolConverter(val.$link),
-    $inverted: new ui.boolConverter(val.$inverted),
-    $corner: new ui.boolConverter(val.$corner)
+    $Flipped: new enumConverter<flipped>(flipped, val.$Flipped),
+    $Rotated: new enumConverter<rotated>(rotated, val.$Rotated),
+    $Circular: new enumConverter<circularIcon>(circularIcon, val.$Circular),
+    $Bordered: new enumConverter<bordered>(bordered, val.$Bordered),
+    $Icon: new enumConverter<icon>(icon, val.$Icon),
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $disabled: new boolConverter(val.$disabled),
+    $loading: new boolConverter(val.$loading),
+    $fitted: new boolConverter(val.$fitted),
+    $link: new boolConverter(val.$link),
+    $inverted: new boolConverter(val.$inverted),
+    $corner: new boolConverter(val.$corner)
   };
 });
 
-export const Icon: ui.StatelessComponent<IconProps> = pr => {
-  var props: IconProps = ui.enumValToProp(pr, iconPropsDescr);
-  var rest = ui.propsToClasses(['icon'], ui.projection(props, iconPropsDescr));
+export const Icon: StatelessComponent<IconProps> = pr => {
+  let props: IconProps = enumValToProp(pr, iconPropsDescr);
+  let rest = propsToClasses(['icon'], projection(props, iconPropsDescr));
   return React.createElement('i', rest, pr.children);
 }
 
@@ -496,19 +608,19 @@ export const Icon: ui.StatelessComponent<IconProps> = pr => {
 //**************************************************************
 //*   ICONS
 //**************************************************************    
-export interface IconsProps extends ui.IProps, IPropsSizeProp {
+export interface IconsProps extends IProps, IPropsSizeProp {
   $Size?: size;
 }
 
-export var iconsPropsDescr = ui.createDescr<IconsProps>(val => {
+export var iconsPropsDescr = createDescr<IconsProps>(val => {
   return {
-    $Size: new ui.enumConverter<size>(size, val.$Size)
+    $Size: new enumConverter<size>(size, val.$Size)
   };
 });
 
-export const Icons: ui.StatelessComponent<IconsProps> = pr => {
-  var props: IconsProps = ui.enumValToProp(pr, iconsPropsDescr);
-  var rest = ui.propsToClasses(['icons'], ui.projection(props, iconsPropsDescr));
+export const Icons: StatelessComponent<IconsProps> = pr => {
+  let props: IconsProps = enumValToProp(pr, iconsPropsDescr);
+  let rest = propsToClasses(['icons'], projection(props, iconsPropsDescr));
   return React.createElement('i', rest, pr.children);
 }
 
@@ -517,11 +629,11 @@ export const Icons: ui.StatelessComponent<IconsProps> = pr => {
 //*   IMAGE
 //**************************************************************
 
-export enum outerTagImage { no, $a = ui.htmlTags.a, }
-ui.registerEnum(outerTagImage, '$OuterTag');
+export enum outerTagImage { no, $a = htmlTags.a, }
+registerEnum(outerTagImage, '$OuterTag');
 export interface IPropsOuterTagImageProp { $a?: boolean; }
 
-export interface ImageProps extends ui.IProps, IPropsSizeProp, IPropsFloatedProp, IPropsVerticalAlignedProp, IPropsOuterTagImageProp {
+export interface ImageProps extends IProps, IPropsSizeProp, IPropsFloatedProp, IPropsVerticalAlignedProp, IPropsOuterTagImageProp {
   $Size?: size;
   $Floated?: floated;
   $Aligned?: verticalAligned;
@@ -537,40 +649,40 @@ export interface ImageProps extends ui.IProps, IPropsSizeProp, IPropsFloatedProp
   $spaced?: boolean;
 }
 
-export var imagePropsDescr = ui.createDescr<ImageProps>(val => {
+export var imagePropsDescr = createDescr<ImageProps>(val => {
   return {
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
-    $Aligned: new ui.enumConverter<verticalAligned>(verticalAligned, val.$Aligned),
-    $OuterTag: new ui.enumConverter<outerTagImage>(outerTagImage, val.$OuterTag),
-    $hidden: new ui.boolConverter(val.$hidden),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $avatar: new ui.boolConverter(val.$avatar),
-    $bordered: new ui.boolConverter(val.$bordered),
-    $fluid: new ui.boolConverter(val.$fluid),
-    $rounded: new ui.boolConverter(val.$rounded),
-    $circular: new ui.boolConverter(val.$circular),
-    $centered: new ui.boolConverter(val.$centered),
-    $spaced: new ui.boolConverter(val.$spaced)
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Floated: new enumConverter<floated>(floated, val.$Floated),
+    $Aligned: new enumConverter<verticalAligned>(verticalAligned, val.$Aligned),
+    $OuterTag: new enumConverter<outerTagImage>(outerTagImage, val.$OuterTag),
+    $hidden: new boolConverter(val.$hidden),
+    $disabled: new boolConverter(val.$disabled),
+    $avatar: new boolConverter(val.$avatar),
+    $bordered: new boolConverter(val.$bordered),
+    $fluid: new boolConverter(val.$fluid),
+    $rounded: new boolConverter(val.$rounded),
+    $circular: new boolConverter(val.$circular),
+    $centered: new boolConverter(val.$centered),
+    $spaced: new boolConverter(val.$spaced)
   };
 });
 
 //**************************************************************
 //*   IMAGES
 //**************************************************************    
-export interface ImagesProps extends ui.IProps, IPropsSizeProp {
+export interface ImagesProps extends IProps, IPropsSizeProp {
   $Size?: size;
 }
 
-export var imagesPropsDescr = ui.createDescr<ImagesProps>(val => {
+export var imagesPropsDescr = createDescr<ImagesProps>(val => {
   return {
-    $Size: new ui.enumConverter<size>(size, val.$Size)
+    $Size: new enumConverter<size>(size, val.$Size)
   };
 });
 
-export const Images: ui.StatelessComponent<ImagesProps> = pr => {
-  var props: ImagesProps = ui.enumValToProp(pr, imagesPropsDescr);
-  var rest = ui.propsToClasses(['ui images'], ui.projection(props, imagesPropsDescr));
+export const Images: StatelessComponent<ImagesProps> = pr => {
+  let props: ImagesProps = enumValToProp(pr, imagesPropsDescr);
+  let rest = propsToClasses(['ui images'], projection(props, imagesPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -580,18 +692,18 @@ export const Images: ui.StatelessComponent<ImagesProps> = pr => {
 //**************************************************************
 
 export enum iconInput { no, $iconRight, $iconLeft, }
-ui.registerEnum(iconInput, '$IconInput', { $iconRight: 'icon', $iconLeft: 'left icon' });
+registerEnum(iconInput, '$IconInput', { $iconRight: 'icon', $iconLeft: 'left icon' });
 export interface IPropsIconInputProp { $iconRight?: boolean; $iconLeft?: boolean; }
 
 export enum action { no, $actionRight, $actionLeft, }
-ui.registerEnum(action, '$Action', { $actionRight: 'action', $actionLeft: 'leftAction' });
+registerEnum(action, '$Action', { $actionRight: 'action', $actionLeft: 'leftAction' });
 export interface IPropsActionProp { $actionRight?: boolean; $actionLeft?: boolean; }
 
 export enum labeledInput { no, $labeledLeft, $labeledRight, $labeledRightCorner, $labeledLeftCorner, }
-ui.registerEnum(labeledInput, '$Labeled', { $labeledLeft: 'labeled', $labeledRight: 'rightLabeled', $labeledRightCorner: 'cornerLabeled', $labeledLeftCorner: 'leftCornerLabeled' });
+registerEnum(labeledInput, '$Labeled', { $labeledLeft: 'labeled', $labeledRight: 'rightLabeled', $labeledRightCorner: 'cornerLabeled', $labeledLeftCorner: 'leftCornerLabeled' });
 export interface IPropsLabeledInputProp { $labeledLeft?: boolean; $labeledRight?: boolean; $labeledRightCorner?: boolean; $labeledLeftCorner?: boolean; }
 
-export interface InputProps extends ui.IProps, IPropsIconInputProp, IPropsActionProp, IPropsSizeProp, IPropsLabeledInputProp {
+export interface InputProps extends IProps, IPropsIconInputProp, IPropsActionProp, IPropsSizeProp, IPropsLabeledInputProp {
   $IconInput?: iconInput;
   $Action?: action;
   $Size?: size;
@@ -605,25 +717,25 @@ export interface InputProps extends ui.IProps, IPropsIconInputProp, IPropsAction
   $fluid?: boolean;
 }
 
-export var inputPropsDescr = ui.createDescr<InputProps>(val => {
+export var inputPropsDescr = createDescr<InputProps>(val => {
   return {
-    $IconInput: new ui.enumConverter<iconInput>(iconInput, val.$IconInput),
-    $Action: new ui.enumConverter<action>(action, val.$Action),
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Labeled: new ui.enumConverter<labeledInput>(labeledInput, val.$Labeled),
-    $error: new ui.boolConverter(val.$error),
-    $focus: new ui.boolConverter(val.$focus),
-    $loading: new ui.boolConverter(val.$loading),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $transparent: new ui.boolConverter(val.$transparent),
-    $inverted: new ui.boolConverter(val.$inverted),
-    $fluid: new ui.boolConverter(val.$fluid)
+    $IconInput: new enumConverter<iconInput>(iconInput, val.$IconInput),
+    $Action: new enumConverter<action>(action, val.$Action),
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Labeled: new enumConverter<labeledInput>(labeledInput, val.$Labeled),
+    $error: new boolConverter(val.$error),
+    $focus: new boolConverter(val.$focus),
+    $loading: new boolConverter(val.$loading),
+    $disabled: new boolConverter(val.$disabled),
+    $transparent: new boolConverter(val.$transparent),
+    $inverted: new boolConverter(val.$inverted),
+    $fluid: new boolConverter(val.$fluid)
   };
 });
 
-export const Input: ui.StatelessComponent<InputProps> = pr => {
-  var props: InputProps = ui.enumValToProp(pr, inputPropsDescr);
-  var rest = ui.propsToClasses(['ui input'], ui.projection(props, inputPropsDescr));
+export const Input: StatelessComponent<InputProps> = pr => {
+  let props: InputProps = enumValToProp(pr, inputPropsDescr);
+  let rest = propsToClasses(['ui input'], projection(props, inputPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -633,26 +745,26 @@ export const Input: ui.StatelessComponent<InputProps> = pr => {
 //**************************************************************
 
 export enum pointing { no, $pointingAbove, $pointingBelow, $pointingLeft, $pointingRight, }
-ui.registerEnum(pointing, '$Pointing', { $pointingAbove: 'pointing', $pointingLeft: 'leftPointing', $pointingRight: 'rightPointing' });
+registerEnum(pointing, '$Pointing', { $pointingAbove: 'pointing', $pointingLeft: 'leftPointing', $pointingRight: 'rightPointing' });
 export interface IPropsPointingProp { $pointingAbove?: boolean; $pointingBelow?: boolean; $pointingLeft?: boolean; $pointingRight?: boolean; }
 
 export enum corner { no, $cornerLeft, $cornerRight, }
-ui.registerEnum(corner, '$Corner');
+registerEnum(corner, '$Corner');
 export interface IPropsCornerProp { $cornerLeft?: boolean; $cornerRight?: boolean; }
 
 export enum attachedLabel { no, $attachedTop, $attachedBottom, $attachedTopRight, $attachedTopLeft, $attachedBottomRight, $attachedBottomLeft, }
-ui.registerEnum(attachedLabel, '$Attached', { $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached' });
+registerEnum(attachedLabel, '$Attached', { $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached' });
 export interface IPropsAttachedLabelProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedTopRight?: boolean; $attachedTopLeft?: boolean; $attachedBottomRight?: boolean; $attachedBottomLeft?: boolean; }
 
 export enum circularLabel { no, $circularStandard, $circularEmpty, }
-ui.registerEnum(circularLabel, '$Circular');
+registerEnum(circularLabel, '$Circular');
 export interface IPropsCircularLabelProp { $circularStandard?: boolean; $circularEmpty?: boolean; }
 
 export enum ribbon { no, $ribbonLeft, $ribbonRight, }
-ui.registerEnum(ribbon, '$Ribbon');
+registerEnum(ribbon, '$Ribbon');
 export interface IPropsRibbonProp { $ribbonLeft?: boolean; $ribbonRight?: boolean; }
 
-export interface LabelProps extends ui.IProps, IPropsPointingProp, IPropsCornerProp, IPropsAttachedLabelProp, IPropsCircularLabelProp, IPropsRibbonProp, IPropsSizeProp, IPropsColorProp {
+export interface LabelProps extends IProps, IPropsPointingProp, IPropsCornerProp, IPropsAttachedLabelProp, IPropsCircularLabelProp, IPropsRibbonProp, IPropsSizeProp, IPropsColorProp {
   $Pointing?: pointing;
   $Corner?: corner;
   $Attached?: attachedLabel;
@@ -668,26 +780,26 @@ export interface LabelProps extends ui.IProps, IPropsPointingProp, IPropsCornerP
   $outerTag?: string;
 }
 
-export var labelPropsDescr = ui.createDescr<LabelProps>(val => {
+export var labelPropsDescr = createDescr<LabelProps>(val => {
   return {
-    $Pointing: new ui.enumConverter<pointing>(pointing, val.$Pointing),
-    $Corner: new ui.enumConverter<corner>(corner, val.$Corner),
-    $Attached: new ui.enumConverter<attachedLabel>(attachedLabel, val.$Attached),
-    $Circular: new ui.enumConverter<circularLabel>(circularLabel, val.$Circular),
-    $Ribbon: new ui.enumConverter<ribbon>(ribbon, val.$Ribbon),
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $image: new ui.boolConverter(val.$image),
-    $basic: new ui.boolConverter(val.$basic),
-    $tag: new ui.boolConverter(val.$tag),
-    $horizontal: new ui.boolConverter(val.$horizontal),
-    $floating: new ui.boolConverter(val.$floating)
+    $Pointing: new enumConverter<pointing>(pointing, val.$Pointing),
+    $Corner: new enumConverter<corner>(corner, val.$Corner),
+    $Attached: new enumConverter<attachedLabel>(attachedLabel, val.$Attached),
+    $Circular: new enumConverter<circularLabel>(circularLabel, val.$Circular),
+    $Ribbon: new enumConverter<ribbon>(ribbon, val.$Ribbon),
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $image: new boolConverter(val.$image),
+    $basic: new boolConverter(val.$basic),
+    $tag: new boolConverter(val.$tag),
+    $horizontal: new boolConverter(val.$horizontal),
+    $floating: new boolConverter(val.$floating)
   };
 });
 
-export const Label: ui.StatelessComponent<LabelProps> = pr => {
-  var props: LabelProps = ui.enumValToProp(pr, labelPropsDescr);
-  var rest = ui.propsToClasses(['ui label'], ui.projection(props, labelPropsDescr));
+export const Label: StatelessComponent<LabelProps> = pr => {
+  let props: LabelProps = enumValToProp(pr, labelPropsDescr);
+  let rest = propsToClasses(['ui label'], projection(props, labelPropsDescr));
   return React.createElement(props.$outerTag ? props.$outerTag : 'span', rest, pr.children);
 }
 
@@ -695,25 +807,25 @@ export const Label: ui.StatelessComponent<LabelProps> = pr => {
 //**************************************************************
 //*   LABELS
 //**************************************************************    
-export interface LabelsProps extends ui.IProps, IPropsSizeProp, IPropsColorProp {
+export interface LabelsProps extends IProps, IPropsSizeProp, IPropsColorProp {
   $Size?: size;
   $Color?: color;
   $tag?: boolean;
   $circular?: boolean;
 }
 
-export var labelsPropsDescr = ui.createDescr<LabelsProps>(val => {
+export var labelsPropsDescr = createDescr<LabelsProps>(val => {
   return {
-    $Size: new ui.enumConverter<size>(size, val.$Size),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $tag: new ui.boolConverter(val.$tag),
-    $circular: new ui.boolConverter(val.$circular)
+    $Size: new enumConverter<size>(size, val.$Size),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $tag: new boolConverter(val.$tag),
+    $circular: new boolConverter(val.$circular)
   };
 });
 
-export const Labels: ui.StatelessComponent<LabelsProps> = pr => {
-  var props: LabelsProps = ui.enumValToProp(pr, labelsPropsDescr);
-  var rest = ui.propsToClasses(['ui labels'], ui.projection(props, labelsPropsDescr));
+export const Labels: StatelessComponent<LabelsProps> = pr => {
+  let props: LabelsProps = enumValToProp(pr, labelsPropsDescr);
+  let rest = propsToClasses(['ui labels'], projection(props, labelsPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -721,11 +833,11 @@ export const Labels: ui.StatelessComponent<LabelsProps> = pr => {
 //**************************************************************
 //*   LIST
 //**************************************************************    
-export interface ListProps extends ui.IProps {
+export interface ListProps extends IProps {
 
 }
 
-export var listPropsDescr = ui.createDescr<ListProps>(val => {
+export var listPropsDescr = createDescr<ListProps>(val => {
   return {
 
   };
@@ -734,24 +846,69 @@ export var listPropsDescr = ui.createDescr<ListProps>(val => {
 //**************************************************************
 //*   LOADER
 //**************************************************************    
-export interface LoaderProps extends ui.IProps {
+export interface LoaderProps extends IProps {
 
 }
 
-export var loaderPropsDescr = ui.createDescr<LoaderProps>(val => {
+export var loaderPropsDescr = createDescr<LoaderProps>(val => {
   return {
 
   };
 });
 
 //**************************************************************
+//*   MESSAGE
+//**************************************************************
+
+export enum stateMessage { no, $success, $error, $warning, $info, $positive, $negative, }
+registerEnum(stateMessage, '$State');
+export interface IPropsStateMessageProp { $success?: boolean; $error?: boolean; $warning?: boolean; $info?: boolean; $positive?: boolean; $negative?: boolean; }
+
+export enum sizeMessage { no, $small = 6, $large = 8, $huge = 12, $massive = 14, }
+registerEnum(sizeMessage, '$Size');
+export interface IPropsSizeMessageProp { $small?: boolean; $large?: boolean; $huge?: boolean; $massive?: boolean; }
+
+export interface MessageProps extends IProps, IPropsAttachedProp, IPropsStateMessageProp, IPropsColorProp, IPropsSizeMessageProp {
+  $Attached?: attached;
+  $State?: stateMessage;
+  $Color?: color;
+  $Size?: sizeMessage;
+  $icon?: boolean;
+  $hidden?: boolean;
+  $visible?: boolean;
+  $floating?: boolean;
+  $compact?: boolean;
+}
+
+export var messagePropsDescr = createDescr<MessageProps>(val => {
+  return {
+    $Attached: new enumConverter<attached>(attached, val.$Attached),
+    $State: new enumConverter<stateMessage>(stateMessage, val.$State),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $Size: new enumConverter<sizeMessage>(sizeMessage, val.$Size),
+    $icon: new boolConverter(val.$icon),
+    $hidden: new boolConverter(val.$hidden),
+    $visible: new boolConverter(val.$visible),
+    $floating: new boolConverter(val.$floating),
+    $compact: new boolConverter(val.$compact)
+  };
+});
+
+export const Message: StatelessComponent<MessageProps> = pr => {
+  let props: MessageProps = enumValToProp(pr, messagePropsDescr);
+  let rest = propsToClasses(['ui message'], projection(props, messagePropsDescr));
+  return React.createElement('div', rest, pr.children);
+}
+
+
+//**************************************************************
 //*   RAIL
 //**************************************************************    
-export interface RailProps extends ui.IProps {
+export interface RailProps extends IProps {
 
 }
 
-export var railPropsDescr = ui.createDescr<RailProps>(val => {
+export var railPropsDescr = createDescr<RailProps>(val => {
   return {
 
   };
@@ -760,11 +917,11 @@ export var railPropsDescr = ui.createDescr<RailProps>(val => {
 //**************************************************************
 //*   REVEAL
 //**************************************************************    
-export interface RevealProps extends ui.IProps {
+export interface RevealProps extends IProps {
 
 }
 
-export var revealPropsDescr = ui.createDescr<RevealProps>(val => {
+export var revealPropsDescr = createDescr<RevealProps>(val => {
   return {
 
   };
@@ -775,18 +932,18 @@ export var revealPropsDescr = ui.createDescr<RevealProps>(val => {
 //**************************************************************
 
 export enum raised { no, $raisedStandard, $raisedStacked, $raisedPiled, $raisedStackedTall, }
-ui.registerEnum(raised, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedStackedTall: 'stackedTall', $raisedPiled: 'piled' });
+registerEnum(raised, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedStackedTall: 'stackedTall', $raisedPiled: 'piled' });
 export interface IPropsRaisedProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; $raisedStackedTall?: boolean; }
 
 export enum padded { no, $paddedStandard, $paddedVery, }
-ui.registerEnum(padded, '$Padded', { $paddedVery: 'veryPadded' });
+registerEnum(padded, '$Padded', { $paddedVery: 'veryPadded' });
 export interface IPropsPaddedProp { $paddedStandard?: boolean; $paddedVery?: boolean; }
 
 export enum emphasis { no, $secondary, $tertiary, }
-ui.registerEnum(emphasis, '$Emphasis');
+registerEnum(emphasis, '$Emphasis');
 export interface IPropsEmphasisProp { $secondary?: boolean; $tertiary?: boolean; }
 
-export interface SegmentProps extends ui.IProps, IPropsRaisedProp, IPropsAttachedProp, IPropsPaddedProp, IPropsEmphasisProp, IPropsAlignedProp, IPropsColorProp, IPropsFloatedProp {
+export interface SegmentProps extends IProps, IPropsRaisedProp, IPropsAttachedProp, IPropsPaddedProp, IPropsEmphasisProp, IPropsAlignedProp, IPropsColorProp, IPropsFloatedProp {
   $Raised?: raised;
   $Attached?: attached;
   $Padded?: padded;
@@ -807,31 +964,31 @@ export interface SegmentProps extends ui.IProps, IPropsRaisedProp, IPropsAttache
   $outerTag?: string;
 }
 
-export var segmentPropsDescr = ui.createDescr<SegmentProps>(val => {
+export var segmentPropsDescr = createDescr<SegmentProps>(val => {
   return {
-    $Raised: new ui.enumConverter<raised>(raised, val.$Raised),
-    $Attached: new ui.enumConverter<attached>(attached, val.$Attached),
-    $Padded: new ui.enumConverter<padded>(padded, val.$Padded),
-    $Emphasis: new ui.enumConverter<emphasis>(emphasis, val.$Emphasis),
-    $Aligned: new ui.enumConverter<aligned>(aligned, val.$Aligned),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
-    $vertical: new ui.boolConverter(val.$vertical),
-    $disabled: new ui.boolConverter(val.$disabled),
-    $loading: new ui.boolConverter(val.$loading),
-    $inverted: new ui.boolConverter(val.$inverted),
-    $compact: new ui.boolConverter(val.$compact),
-    $circular: new ui.boolConverter(val.$circular),
-    $clearing: new ui.boolConverter(val.$clearing),
-    $basic: new ui.boolConverter(val.$basic),
-    $container: new ui.boolConverter(val.$container),
-    $containerText: new ui.boolConverter(val.$containerText, false, 'text')
+    $Raised: new enumConverter<raised>(raised, val.$Raised),
+    $Attached: new enumConverter<attached>(attached, val.$Attached),
+    $Padded: new enumConverter<padded>(padded, val.$Padded),
+    $Emphasis: new enumConverter<emphasis>(emphasis, val.$Emphasis),
+    $Aligned: new enumConverter<aligned>(aligned, val.$Aligned),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $Floated: new enumConverter<floated>(floated, val.$Floated),
+    $vertical: new boolConverter(val.$vertical),
+    $disabled: new boolConverter(val.$disabled),
+    $loading: new boolConverter(val.$loading),
+    $inverted: new boolConverter(val.$inverted),
+    $compact: new boolConverter(val.$compact),
+    $circular: new boolConverter(val.$circular),
+    $clearing: new boolConverter(val.$clearing),
+    $basic: new boolConverter(val.$basic),
+    $container: new boolConverter(val.$container),
+    $containerText: new boolConverter(val.$containerText, false, 'text')
   };
 });
 
-export const Segment: ui.StatelessComponent<SegmentProps> = pr => {
-  var props: SegmentProps = ui.enumValToProp(pr, segmentPropsDescr);
-  var rest = ui.propsToClasses(['ui segment'], ui.projection(props, segmentPropsDescr));
+export const Segment: StatelessComponent<SegmentProps> = pr => {
+  let props: SegmentProps = enumValToProp(pr, segmentPropsDescr);
+  let rest = propsToClasses(['ui segment'], projection(props, segmentPropsDescr));
   return React.createElement(props.$outerTag ? props.$outerTag : 'div', rest, pr.children);
 }
 
@@ -841,26 +998,26 @@ export const Segment: ui.StatelessComponent<SegmentProps> = pr => {
 //**************************************************************
 
 export enum raisedSegments { no, $raisedStandard, $raisedStacked, $raisedPiled, }
-ui.registerEnum(raisedSegments, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' });
+registerEnum(raisedSegments, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' });
 export interface IPropsRaisedSegmentsProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; }
 
-export interface SegmentsProps extends ui.IProps, IPropsRaisedSegmentsProp {
+export interface SegmentsProps extends IProps, IPropsRaisedSegmentsProp {
   $Raised?: raisedSegments;
   $compact?: boolean;
   $horizontal?: boolean;
 }
 
-export var segmentsPropsDescr = ui.createDescr<SegmentsProps>(val => {
+export var segmentsPropsDescr = createDescr<SegmentsProps>(val => {
   return {
-    $Raised: new ui.enumConverter<raisedSegments>(raisedSegments, val.$Raised),
-    $compact: new ui.boolConverter(val.$compact),
-    $horizontal: new ui.boolConverter(val.$horizontal)
+    $Raised: new enumConverter<raisedSegments>(raisedSegments, val.$Raised),
+    $compact: new boolConverter(val.$compact),
+    $horizontal: new boolConverter(val.$horizontal)
   };
 });
 
-export const Segments: ui.StatelessComponent<SegmentsProps> = pr => {
-  var props: SegmentsProps = ui.enumValToProp(pr, segmentsPropsDescr);
-  var rest = ui.propsToClasses(['ui segments'], ui.projection(props, segmentsPropsDescr));
+export const Segments: StatelessComponent<SegmentsProps> = pr => {
+  let props: SegmentsProps = enumValToProp(pr, segmentsPropsDescr);
+  let rest = propsToClasses(['ui segments'], projection(props, segmentsPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -868,11 +1025,11 @@ export const Segments: ui.StatelessComponent<SegmentsProps> = pr => {
 //**************************************************************
 //*   STEP
 //**************************************************************    
-export interface StepProps extends ui.IProps {
+export interface StepProps extends IProps {
 
 }
 
-export var stepPropsDescr = ui.createDescr<StepProps>(val => {
+export var stepPropsDescr = createDescr<StepProps>(val => {
   return {
 
   };
@@ -881,11 +1038,11 @@ export var stepPropsDescr = ui.createDescr<StepProps>(val => {
 //**************************************************************
 //*   AD
 //**************************************************************    
-export interface AdProps extends ui.IProps {
+export interface AdProps extends IProps {
 
 }
 
-export var adPropsDescr = ui.createDescr<AdProps>(val => {
+export var adPropsDescr = createDescr<AdProps>(val => {
   return {
 
   };
@@ -894,11 +1051,11 @@ export var adPropsDescr = ui.createDescr<AdProps>(val => {
 //**************************************************************
 //*   CARD
 //**************************************************************    
-export interface CardProps extends ui.IProps {
+export interface CardProps extends IProps {
 
 }
 
-export var cardPropsDescr = ui.createDescr<CardProps>(val => {
+export var cardPropsDescr = createDescr<CardProps>(val => {
   return {
 
   };
@@ -907,11 +1064,11 @@ export var cardPropsDescr = ui.createDescr<CardProps>(val => {
 //**************************************************************
 //*   COMMENT
 //**************************************************************    
-export interface CommentProps extends ui.IProps {
+export interface CommentProps extends IProps {
 
 }
 
-export var commentPropsDescr = ui.createDescr<CommentProps>(val => {
+export var commentPropsDescr = createDescr<CommentProps>(val => {
   return {
 
   };
@@ -920,11 +1077,11 @@ export var commentPropsDescr = ui.createDescr<CommentProps>(val => {
 //**************************************************************
 //*   FEED
 //**************************************************************    
-export interface FeedProps extends ui.IProps {
+export interface FeedProps extends IProps {
 
 }
 
-export var feedPropsDescr = ui.createDescr<FeedProps>(val => {
+export var feedPropsDescr = createDescr<FeedProps>(val => {
   return {
 
   };
@@ -933,11 +1090,11 @@ export var feedPropsDescr = ui.createDescr<FeedProps>(val => {
 //**************************************************************
 //*   ITEM
 //**************************************************************    
-export interface ItemProps extends ui.IProps {
+export interface ItemProps extends IProps {
 
 }
 
-export var itemPropsDescr = ui.createDescr<ItemProps>(val => {
+export var itemPropsDescr = createDescr<ItemProps>(val => {
   return {
 
   };
@@ -946,11 +1103,11 @@ export var itemPropsDescr = ui.createDescr<ItemProps>(val => {
 //**************************************************************
 //*   STATISTIC
 //**************************************************************    
-export interface StatisticProps extends ui.IProps {
+export interface StatisticProps extends IProps {
 
 }
 
-export var statisticPropsDescr = ui.createDescr<StatisticProps>(val => {
+export var statisticPropsDescr = createDescr<StatisticProps>(val => {
   return {
 
   };
@@ -959,11 +1116,11 @@ export var statisticPropsDescr = ui.createDescr<StatisticProps>(val => {
 //**************************************************************
 //*   BREADCRUMB
 //**************************************************************    
-export interface BreadcrumbProps extends ui.IProps {
+export interface BreadcrumbProps extends IProps {
 
 }
 
-export var breadcrumbPropsDescr = ui.createDescr<BreadcrumbProps>(val => {
+export var breadcrumbPropsDescr = createDescr<BreadcrumbProps>(val => {
   return {
 
   };
@@ -973,32 +1130,27 @@ export var breadcrumbPropsDescr = ui.createDescr<BreadcrumbProps>(val => {
 //*   COLUMN
 //**************************************************************
 
-export enum wide { no, $twoWide, $threeWide, $fourWide, $fiveWide, $sixWide, $sevenWide, $eightWide, $nineWide, $tenWide, $elevenWide, $twelveWide, $thirteenWide, $fourteenWide, $fifteenWide, $sixteenWide, }
-ui.registerEnum(wide, '$Wide');
-export interface IPropsWideProp { $twoWide?: boolean; $threeWide?: boolean; $fourWide?: boolean; $fiveWide?: boolean; $sixWide?: boolean; $sevenWide?: boolean; $eightWide?: boolean; $nineWide?: boolean; $tenWide?: boolean; $elevenWide?: boolean; $twelveWide?: boolean; $thirteenWide?: boolean; $fourteenWide?: boolean; $fifteenWide?: boolean; $sixteenWide?: boolean; }
-
 export enum wideMobile { no, $twoWideMobile, $threeWideMobile, $fourWideMobile, $fiveWideMobile, $sixWideMobile, $sevenWideMobile, $eightWideMobile, $nineWideMobile, $tenWideMobile, $elevenWideMobile, $twelveWideMobile, $thirteenWideMobile, $fourteenWideMobile, $fifteenWideMobile, $sixteenWideMobile, }
-ui.registerEnum(wideMobile, '$WideMobile');
+registerEnum(wideMobile, '$WideMobile');
 export interface IPropsWideMobileProp { $twoWideMobile?: boolean; $threeWideMobile?: boolean; $fourWideMobile?: boolean; $fiveWideMobile?: boolean; $sixWideMobile?: boolean; $sevenWideMobile?: boolean; $eightWideMobile?: boolean; $nineWideMobile?: boolean; $tenWideMobile?: boolean; $elevenWideMobile?: boolean; $twelveWideMobile?: boolean; $thirteenWideMobile?: boolean; $fourteenWideMobile?: boolean; $fifteenWideMobile?: boolean; $sixteenWideMobile?: boolean; }
 
 export enum wideTablet { no, $twoWideTablet, $threeWideTablet, $fourWideTablet, $fiveWideTablet, $sixWideTablet, $sevenWideTablet, $eightWideTablet, $nineWideTablet, $tenWideTablet, $elevenWideTablet, $twelveWideTablet, $thirteenWideTablet, $fourteenWideTablet, $fifteenWideTablet, $sixteenWideTablet, }
-ui.registerEnum(wideTablet, '$WideTablet');
+registerEnum(wideTablet, '$WideTablet');
 export interface IPropsWideTabletProp { $twoWideTablet?: boolean; $threeWideTablet?: boolean; $fourWideTablet?: boolean; $fiveWideTablet?: boolean; $sixWideTablet?: boolean; $sevenWideTablet?: boolean; $eightWideTablet?: boolean; $nineWideTablet?: boolean; $tenWideTablet?: boolean; $elevenWideTablet?: boolean; $twelveWideTablet?: boolean; $thirteenWideTablet?: boolean; $fourteenWideTablet?: boolean; $fifteenWideTablet?: boolean; $sixteenWideTablet?: boolean; }
 
 export enum wideComputer { no, $twoWideComputer, $threeWideComputer, $fourWideComputer, $fiveWideComputer, $sixWideComputer, $sevenWideComputer, $eightWideComputer, $nineWideComputer, $tenWideComputer, $elevenWideComputer, $twelveWideComputer, $thirteenWideComputer, $fourteenWideComputer, $fifteenWideComputer, $sixteenWideComputer, }
-ui.registerEnum(wideComputer, '$WideComputer');
+registerEnum(wideComputer, '$WideComputer');
 export interface IPropsWideComputerProp { $twoWideComputer?: boolean; $threeWideComputer?: boolean; $fourWideComputer?: boolean; $fiveWideComputer?: boolean; $sixWideComputer?: boolean; $sevenWideComputer?: boolean; $eightWideComputer?: boolean; $nineWideComputer?: boolean; $tenWideComputer?: boolean; $elevenWideComputer?: boolean; $twelveWideComputer?: boolean; $thirteenWideComputer?: boolean; $fourteenWideComputer?: boolean; $fifteenWideComputer?: boolean; $sixteenWideComputer?: boolean; }
 
 export enum wideLargeScreen { no, $twoWideLargeScreen, $threeWideLargeScreen, $fourWideLargeScreen, $fiveWideLargeScreen, $sixWideLargeScreen, $sevenWideLargeScreen, $eightWideLargeScreen, $nineWideLargeScreen, $tenWideLargeScreen, $elevenWideLargeScreen, $twelveWideLargeScreen, $thirteenWideLargeScreen, $fourteenWideLargeScreen, $fifteenWideLargeScreen, $sixteenWideScreen, }
-ui.registerEnum(wideLargeScreen, '$WideLargeScreen');
+registerEnum(wideLargeScreen, '$WideLargeScreen');
 export interface IPropsWideLargeScreenProp { $twoWideLargeScreen?: boolean; $threeWideLargeScreen?: boolean; $fourWideLargeScreen?: boolean; $fiveWideLargeScreen?: boolean; $sixWideLargeScreen?: boolean; $sevenWideLargeScreen?: boolean; $eightWideLargeScreen?: boolean; $nineWideLargeScreen?: boolean; $tenWideLargeScreen?: boolean; $elevenWideLargeScreen?: boolean; $twelveWideLargeScreen?: boolean; $thirteenWideLargeScreen?: boolean; $fourteenWideLargeScreen?: boolean; $fifteenWideLargeScreen?: boolean; $sixteenWideScreen?: boolean; }
 
 export enum wideWidescreen { no, $twoWideWidescreen, $threeWideWidescreen, $fourWideWidescreen, $fiveWideWidescreen, $sixWideWidescreen, $sevenWideWidescreen, $eightWideWidescreen, $nineWideWidescreen, $tenWideWidescreen, $elevenWideWidescreen, $twelveWideWidescreen, $thirteenWideWidescreen, $fourteenWideWidescreen, $fifteenWideWidescreen, $sixteenWideWideScreen, }
-ui.registerEnum(wideWidescreen, '$WideWidescreen');
+registerEnum(wideWidescreen, '$WideWidescreen');
 export interface IPropsWideWidescreenProp { $twoWideWidescreen?: boolean; $threeWideWidescreen?: boolean; $fourWideWidescreen?: boolean; $fiveWideWidescreen?: boolean; $sixWideWidescreen?: boolean; $sevenWideWidescreen?: boolean; $eightWideWidescreen?: boolean; $nineWideWidescreen?: boolean; $tenWideWidescreen?: boolean; $elevenWideWidescreen?: boolean; $twelveWideWidescreen?: boolean; $thirteenWideWidescreen?: boolean; $fourteenWideWidescreen?: boolean; $fifteenWideWidescreen?: boolean; $sixteenWideWideScreen?: boolean; }
 
-export interface ColumnProps extends ui.IProps, IPropsWideProp, IPropsWideMobileProp, IPropsWideTabletProp, IPropsWideComputerProp, IPropsWideLargeScreenProp, IPropsWideWidescreenProp, IPropsFloatedProp, IPropsAlignedProp, IPropsColorProp, IPropsDeviceOnlyGridProp {
-  $Wide?: wide;
+export interface ColumnProps extends IProps, IPropsWideMobileProp, IPropsWideTabletProp, IPropsWideComputerProp, IPropsWideLargeScreenProp, IPropsWideWidescreenProp, IPropsFloatedProp, IPropsAlignedProp, IPropsColorProp, IPropsWideProp, IPropsDeviceOnlyGridProp {
   $WideMobile?: wideMobile;
   $WideTablet?: wideTablet;
   $WideComputer?: wideComputer;
@@ -1007,63 +1159,51 @@ export interface ColumnProps extends ui.IProps, IPropsWideProp, IPropsWideMobile
   $Floated?: floated;
   $Aligned?: aligned;
   $Color?: color;
+  $Wide?: wide;
   $DeviceOnlyGrid?: deviceOnlyGrid;
   $relaxed?: boolean;
 }
 
-export var columnPropsDescr = ui.createDescr<ColumnProps>(val => {
+export var columnPropsDescr = createDescr<ColumnProps>(val => {
   return {
-    $Wide: new ui.enumConverter<wide>(wide, val.$Wide),
-    $WideMobile: new ui.enumConverter<wideMobile>(wideMobile, val.$WideMobile),
-    $WideTablet: new ui.enumConverter<wideTablet>(wideTablet, val.$WideTablet),
-    $WideComputer: new ui.enumConverter<wideComputer>(wideComputer, val.$WideComputer),
-    $WideLargeScreen: new ui.enumConverter<wideLargeScreen>(wideLargeScreen, val.$WideLargeScreen),
-    $WideWidescreen: new ui.enumConverter<wideWidescreen>(wideWidescreen, val.$WideWidescreen),
-    $Floated: new ui.enumConverter<floated>(floated, val.$Floated),
-    $Aligned: new ui.enumConverter<aligned>(aligned, val.$Aligned),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $DeviceOnlyGrid: new ui.enumConverter<deviceOnlyGrid>(deviceOnlyGrid, val.$DeviceOnlyGrid),
-    $relaxed: new ui.boolConverter(val.$relaxed)
+    $WideMobile: new enumConverter<wideMobile>(wideMobile, val.$WideMobile),
+    $WideTablet: new enumConverter<wideTablet>(wideTablet, val.$WideTablet),
+    $WideComputer: new enumConverter<wideComputer>(wideComputer, val.$WideComputer),
+    $WideLargeScreen: new enumConverter<wideLargeScreen>(wideLargeScreen, val.$WideLargeScreen),
+    $WideWidescreen: new enumConverter<wideWidescreen>(wideWidescreen, val.$WideWidescreen),
+    $Floated: new enumConverter<floated>(floated, val.$Floated),
+    $Aligned: new enumConverter<aligned>(aligned, val.$Aligned),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $Wide: new enumConverter<wide>(wide, val.$Wide),
+    $DeviceOnlyGrid: new enumConverter<deviceOnlyGrid>(deviceOnlyGrid, val.$DeviceOnlyGrid),
+    $relaxed: new boolConverter(val.$relaxed)
   };
 });
 
-export const Column: ui.StatelessComponent<ColumnProps> = pr => {
-  var props: ColumnProps = ui.enumValToProp(pr, columnPropsDescr);
-  var rest = ui.propsToClasses(['column'], ui.projection(props, columnPropsDescr));
+export const Column: StatelessComponent<ColumnProps> = pr => {
+  let props: ColumnProps = enumValToProp(pr, columnPropsDescr);
+  let rest = propsToClasses(['column'], projection(props, columnPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
-
-//**************************************************************
-//*   FORM
-//**************************************************************    
-export interface FormProps extends ui.IProps {
-
-}
-
-export var formPropsDescr = ui.createDescr<FormProps>(val => {
-  return {
-
-  };
-});
 
 //**************************************************************
 //*   GRID
 //**************************************************************
 
 export enum divided { no, $dividedHorizontally, $dividedVertically, }
-ui.registerEnum(divided, '$Divided', { $dividedHorizontally: 'divided', $dividedVertically: 'verticallyDivided' });
+registerEnum(divided, '$Divided', { $dividedHorizontally: 'divided', $dividedVertically: 'verticallyDivided' });
 export interface IPropsDividedProp { $dividedHorizontally?: boolean; $dividedVertically?: boolean; }
 
 export enum celled { no, $celled, $celledInternally, }
-ui.registerEnum(celled, '$Celled', { $celledInternally: 'internallyCelled' });
+registerEnum(celled, '$Celled', { $celledInternally: 'internallyCelled' });
 export interface IPropsCelledProp { $celled?: boolean; $celledInternally?: boolean; }
 
 export enum paddedGrid { no, $padded, $paddedHorizontally, $paddedVertically, }
-ui.registerEnum(paddedGrid, '$PaddedGrid', { $paddedHorizontally: '$horizontallyPadded', $paddedVertically: 'verticallyPadded' });
+registerEnum(paddedGrid, '$PaddedGrid', { $paddedHorizontally: '$horizontallyPadded', $paddedVertically: 'verticallyPadded' });
 export interface IPropsPaddedGridProp { $padded?: boolean; $paddedHorizontally?: boolean; $paddedVertically?: boolean; }
 
-export interface GridProps extends ui.IProps, IPropsDividedProp, IPropsCelledProp, IPropsPaddedGridProp, IPropsColumnProp, IPropsAlignedProp, IPropsRelaxedProp {
+export interface GridProps extends IProps, IPropsDividedProp, IPropsCelledProp, IPropsPaddedGridProp, IPropsColumnProp, IPropsAlignedProp, IPropsRelaxedProp {
   $Divided?: divided;
   $Celled?: celled;
   $PaddedGrid?: paddedGrid;
@@ -1079,27 +1219,27 @@ export interface GridProps extends ui.IProps, IPropsDividedProp, IPropsCelledPro
   $doubling?: boolean;
 }
 
-export var gridPropsDescr = ui.createDescr<GridProps>(val => {
+export var gridPropsDescr = createDescr<GridProps>(val => {
   return {
-    $Divided: new ui.enumConverter<divided>(divided, val.$Divided),
-    $Celled: new ui.enumConverter<celled>(celled, val.$Celled),
-    $PaddedGrid: new ui.enumConverter<paddedGrid>(paddedGrid, val.$PaddedGrid),
-    $Column: new ui.enumConverter<column>(column, val.$Column),
-    $Aligned: new ui.enumConverter<aligned>(aligned, val.$Aligned),
-    $Relaxed: new ui.enumConverter<relaxed>(relaxed, val.$Relaxed),
-    $internallyCelled: new ui.boolConverter(val.$internallyCelled),
-    $equalWidth: new ui.boolConverter(val.$equalWidth),
-    $centered: new ui.boolConverter(val.$centered),
-    $stackable: new ui.boolConverter(val.$stackable),
-    $container: new ui.boolConverter(val.$container),
-    $reversed: new ui.boolConverter(val.$reversed),
-    $doubling: new ui.boolConverter(val.$doubling)
+    $Divided: new enumConverter<divided>(divided, val.$Divided),
+    $Celled: new enumConverter<celled>(celled, val.$Celled),
+    $PaddedGrid: new enumConverter<paddedGrid>(paddedGrid, val.$PaddedGrid),
+    $Column: new enumConverter<column>(column, val.$Column),
+    $Aligned: new enumConverter<aligned>(aligned, val.$Aligned),
+    $Relaxed: new enumConverter<relaxed>(relaxed, val.$Relaxed),
+    $internallyCelled: new boolConverter(val.$internallyCelled),
+    $equalWidth: new boolConverter(val.$equalWidth),
+    $centered: new boolConverter(val.$centered),
+    $stackable: new boolConverter(val.$stackable),
+    $container: new boolConverter(val.$container),
+    $reversed: new boolConverter(val.$reversed),
+    $doubling: new boolConverter(val.$doubling)
   };
 });
 
-export const Grid: ui.StatelessComponent<GridProps> = pr => {
-  var props: GridProps = ui.enumValToProp(pr, gridPropsDescr);
-  var rest = ui.propsToClasses(['ui grid'], ui.projection(props, gridPropsDescr));
+export const Grid: StatelessComponent<GridProps> = pr => {
+  let props: GridProps = enumValToProp(pr, gridPropsDescr);
+  let rest = propsToClasses(['ui grid'], projection(props, gridPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -1107,24 +1247,11 @@ export const Grid: ui.StatelessComponent<GridProps> = pr => {
 //**************************************************************
 //*   MENU
 //**************************************************************    
-export interface MenuProps extends ui.IProps {
+export interface MenuProps extends IProps {
 
 }
 
-export var menuPropsDescr = ui.createDescr<MenuProps>(val => {
-  return {
-
-  };
-});
-
-//**************************************************************
-//*   MESSAGE
-//**************************************************************    
-export interface MessageProps extends ui.IProps {
-
-}
-
-export var messagePropsDescr = ui.createDescr<MessageProps>(val => {
+export var menuPropsDescr = createDescr<MenuProps>(val => {
   return {
 
   };
@@ -1133,7 +1260,7 @@ export var messagePropsDescr = ui.createDescr<MessageProps>(val => {
 //**************************************************************
 //*   ROW
 //**************************************************************    
-export interface RowProps extends ui.IProps, IPropsColumnProp, IPropsDeviceOnlyGridProp, IPropsAlignedProp, IPropsColorProp, IPropsRelaxedProp {
+export interface RowProps extends IProps, IPropsColumnProp, IPropsDeviceOnlyGridProp, IPropsAlignedProp, IPropsColorProp, IPropsRelaxedProp {
   $Column?: column;
   $DeviceOnlyGrid?: deviceOnlyGrid;
   $Aligned?: aligned;
@@ -1147,25 +1274,25 @@ export interface RowProps extends ui.IProps, IPropsColumnProp, IPropsDeviceOnlyG
   $justified?: boolean;
 }
 
-export var rowPropsDescr = ui.createDescr<RowProps>(val => {
+export var rowPropsDescr = createDescr<RowProps>(val => {
   return {
-    $Column: new ui.enumConverter<column>(column, val.$Column),
-    $DeviceOnlyGrid: new ui.enumConverter<deviceOnlyGrid>(deviceOnlyGrid, val.$DeviceOnlyGrid),
-    $Aligned: new ui.enumConverter<aligned>(aligned, val.$Aligned),
-    $Color: new ui.enumConverter<color>(color, val.$Color),
-    $Relaxed: new ui.enumConverter<relaxed>(relaxed, val.$Relaxed),
-    $reversed: new ui.boolConverter(val.$reversed),
-    $doubling: new ui.boolConverter(val.$doubling),
-    $equalWidth: new ui.boolConverter(val.$equalWidth),
-    $centered: new ui.boolConverter(val.$centered),
-    $stretched: new ui.boolConverter(val.$stretched),
-    $justified: new ui.boolConverter(val.$justified)
+    $Column: new enumConverter<column>(column, val.$Column),
+    $DeviceOnlyGrid: new enumConverter<deviceOnlyGrid>(deviceOnlyGrid, val.$DeviceOnlyGrid),
+    $Aligned: new enumConverter<aligned>(aligned, val.$Aligned),
+    $Color: new enumConverter<color>(color, val.$Color),
+    $Relaxed: new enumConverter<relaxed>(relaxed, val.$Relaxed),
+    $reversed: new boolConverter(val.$reversed),
+    $doubling: new boolConverter(val.$doubling),
+    $equalWidth: new boolConverter(val.$equalWidth),
+    $centered: new boolConverter(val.$centered),
+    $stretched: new boolConverter(val.$stretched),
+    $justified: new boolConverter(val.$justified)
   };
 });
 
-export const Row: ui.StatelessComponent<RowProps> = pr => {
-  var props: RowProps = ui.enumValToProp(pr, rowPropsDescr);
-  var rest = ui.propsToClasses(['ui row'], ui.projection(props, rowPropsDescr));
+export const Row: StatelessComponent<RowProps> = pr => {
+  let props: RowProps = enumValToProp(pr, rowPropsDescr);
+  let rest = propsToClasses(['ui row'], projection(props, rowPropsDescr));
   return React.createElement('div', rest, pr.children);
 }
 
@@ -1173,11 +1300,11 @@ export const Row: ui.StatelessComponent<RowProps> = pr => {
 //**************************************************************
 //*   TABLE
 //**************************************************************    
-export interface TableProps extends ui.IProps {
+export interface TableProps extends IProps {
 
 }
 
-export var tablePropsDescr = ui.createDescr<TableProps>(val => {
+export var tablePropsDescr = createDescr<TableProps>(val => {
   return {
 
   };
