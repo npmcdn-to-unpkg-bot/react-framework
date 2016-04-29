@@ -77,7 +77,7 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
     this.state = props.initState;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
-    else if (this.props.id && this.state.id && this.props.id!=this.state.id) throw new Exception(`Store "id" cannot be overrided by COmponent "id"`);
+    else if (this.props.id && this.state.id && this.props.id!=this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${this.props.id}"`);
     this.state.componentCreated(this); //notificiation
   }
   state: T;
@@ -161,8 +161,9 @@ export abstract class Store implements ITypedObj {
     } else
       return storeId;
   }
-  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string { 
-    return instanceId ? instanceId : Store.getClassMeta(storeClass).className;
+  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string {
+    //return Store.getClassMeta(storeClass).className.replace('Store','') + (instanceId ? '_' + instanceId : '');
+    return instanceId ? instanceId : Store.getClassMeta(storeClass).className.replace('Store','');
     //return Store.getClassMeta(storeClass).classId + (instanceId ? '.' + instanceId : ''); 
   }
   modify(modifyProc?: (st: this) => void) { //modify store and rerender all $subscribers
@@ -210,7 +211,7 @@ export abstract class Store implements ITypedObj {
   bindRouteToStore(isRestore: boolean, par: IActionPar, completed: TExceptionCallback) {
     let rPar = par as TRouteActionPar;
     let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
-    let hookStore = this[hookId] as StoreRouteHook; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
+    let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
     console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefaultName}, storeId=${rPar.storeId}`);
     hookStore.bindRouteToHookStore(isRestore, rPar, completed);
   }
@@ -233,10 +234,10 @@ export type TDispatchCallback = (store: Store) => void;
 //export interface IStoreRouteHook extends IStore { }
 export interface IPropsExRouteHook extends IPropsEx { }
 
-export class RouteHook extends Component<StoreRouteHook, IPropsExRouteHook> { }
+export class RouteHook extends Component<RouteHookStore, IPropsExRouteHook> { }
 
 @StoreDef({ moduleId: moduleId, componentClass: RouteHook })
-export class StoreRouteHook extends Store { //Route Hook component
+export class RouteHookStore extends Store { //Route Hook component
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
@@ -302,7 +303,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
     super(null);
     //configure App
     store = this;
-    this.routeHookDefault = new StoreRouteHook(this);
+    this.routeHookDefault = new RouteHookStore(this);
     this.$basicUrl = this.getBasicUrl(window.location.href);
     console.log(`> router basicUrl=${this.$basicUrl}`);
     this.$appElement = this.getAppElement();
@@ -391,7 +392,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
 
   private unique = 0;
 
-  routeHookDefault: StoreRouteHook; //hook for root React component
+  routeHookDefault: RouteHookStore; //hook for root React component
 
   getUnique(): number { return this.unique++; }
   findComponent(path: string): TComponent { let comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }

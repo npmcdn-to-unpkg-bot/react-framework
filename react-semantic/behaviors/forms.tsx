@@ -21,7 +21,7 @@ export class FieldSmart extends forms.InputLow<FieldSmartStore, ui.FieldProps> {
 export class FieldSmartStore extends forms.InputLowStore {
   render(): JSX.Element {
     var props: ui.FieldProps = Object.assign({}, this); 
-    props.$error = !!this.error;
+    props.$error = !!this.error; props['key'] = this.getIdInParent();
     return React.createElement(ui.Field, props, this.$template ? this.$template(this) : null);
   }
 }
