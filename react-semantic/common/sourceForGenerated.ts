@@ -68,6 +68,14 @@ export var source: genSource = {
   ],
   codeData: [
     {
+      name: 'checkBox',
+
+      boolProps: [{ name: 'compact' }, ],
+      enumProps: [
+        { name: 'color', isSystem: true },
+      ],
+    },
+    {
       name: 'message',
       autoClass: `'ui message'`,
       autoTag: `'div'`,

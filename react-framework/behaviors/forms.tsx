@@ -4,15 +4,13 @@ import * as ReactDOM from 'react-dom';
 
 import * as flux from '../flux';
 
-//import {Form, FormProps} from '../../react-semantic/common/generated';
-
 const moduleId = 'forms';
 
 //types for validators
 export type TSyncValidator = (val: string) => string;
 export type TSyncCompleted = (err: string) => void;
 
-interface IInputContext { MyInput: InputStore; }
+interface IInputContext extends flux.IComponentContext { MyInput: InputLowStore; }
 enum TInputActions { setState };
 interface InputActionPar extends flux.IActionPar { value: string; }
 
@@ -24,7 +22,8 @@ export interface InputProps extends flux.IPropsEx {
   $validators?: Array<TSyncValidator>;
 }
 
-export abstract class InputStore extends flux.Store {
+//************** InputLow
+export abstract class InputLowStore extends flux.Store {
   //props
   $title: string;
   $defaultValue: string;
@@ -33,7 +32,7 @@ export abstract class InputStore extends flux.Store {
   $validators: Array<TSyncValidator>;
   //inherited
   $context: IFormContext;
-  $myForm: FormStore;
+  $myForm: FormLowStore;
   //state
   value: string;
   error: string;
@@ -160,65 +159,31 @@ export abstract class InputStore extends flux.Store {
 
 }
 
-type TInputComponent = flux.Component<InputStore, InputProps>;
+export abstract class InputLow<T extends InputLowStore, P> extends flux.Component<T, InputProps & P> { getChildContext(): IInputContext { return { MyInput: this.state, $parent: this.state }; } }
+InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };
+InputLow['contextTypes'] = { MyForm: React.PropTypes.any };
+
+type TInputComponent = InputLow<InputLowStore, {}>;
 
 //************** InputTag
-export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: InputProps, context: IInputContext) => InputStore.renderInputTag(props, context);
+export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: InputProps, context: IInputContext) => InputLowStore.renderInputTag(props, context);
 InputTag.contextTypes = { MyInput: React.PropTypes.any };
 
-//************** InputLow
-//export abstract class InputLow extends flux.Component<InputStore, InputProps> {
-//  getChildContext(): IInputContext { return { MyInput: this.state }; }
-//}
-//InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };
-//InputLow['contextTypes'] = { MyForm: React.PropTypes.any };
-
 //************** InputSmart
-export class InputSmart extends flux.Component<InputStore, InputProps> { getChildContext(): IInputContext { return { MyInput: this.state }; } }
-InputSmart['childContextTypes'] = { MyInput: React.PropTypes.any };
-InputSmart['contextTypes'] = { MyForm: React.PropTypes.any };
+export class InputSmart extends InputLow<InputSmartStore, {}> { } 
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: InputSmart })
-export class InputSmartStore extends InputStore { }
+export class InputSmartStore extends InputLowStore { }
 
-//************** FormResult
-//export class FormResult extends flux.Component<FormResultStore, flux.IPropsEx> { }
-//FormResult['contextTypes'] = { MyForm: React.PropTypes.any };
-
-//@flux.StoreDef({ moduleId: moduleId, componentClass: FormResult })
-//export class FormResultStore extends flux.Store {
-//  $myForm: FormStore;
-//  componentCreated(comp: InputLow) {
-//    super.componentCreated(comp);
-//    if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
-//  }
-//  componentWillUnmount(comp: InputLow): void { if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
-//}
-
-//************** Form
-export class FormSmart extends flux.Component<FormStore, flux.IPropsEx> {
-  getChildContext(): IFormContext { return { MyForm: this.state }; }
+//************** FormLow
+export abstract class FormLow<T extends FormLowStore, P extends flux.IPropsEx> extends flux.Component<T, flux.IPropsEx & P> {
+  getChildContext(): IFormContext { return { MyForm: this.state, $parent:this.state }; }
 }
-FormSmart['childContextTypes'] = { MyForm: React.PropTypes.any };
-interface IFormContext { MyForm: FormStore; }
+FormLow['childContextTypes'] = { MyForm: React.PropTypes.any };
+interface IFormContext extends flux.IComponentContext { MyForm: FormLowStore; }
 
-@flux.StoreDef({ moduleId: moduleId, componentClass: FormSmart })
-export class FormStore extends flux.Store  {
-  //register(input: InputStore | FormResultStore, isRegister: boolean) {
-  //  if (isRegister) {
-  //    input.$myForm = this;
-  //    if (input instanceof InputStore) this.$inputs.push(input); else this.$results.push(input);
-  //  } else {
-  //    if (input instanceof InputStore) {
-  //      let idx = this.$inputs.indexOf(input);
-  //      if (idx >= 0) this.$inputs = this.$inputs.slice(idx);
-  //    } else {
-  //      let idx = this.$results.indexOf(input);
-  //      if (idx >= 0) this.$results = this.$results.slice(idx);
-  //    }
-  //  }
-  //}
- register(input: InputStore, isRegister: boolean) {
+export abstract class FormLowStore extends flux.Store  {
+ register(input: InputLowStore, isRegister: boolean) {
     if (isRegister) {
       input.$myForm = this;
       this.$inputs.push(input); 
@@ -228,16 +193,14 @@ export class FormStore extends flux.Store  {
     }
   }
 
-  $inputs: Array<InputStore> = [];
+  $inputs: Array<InputLowStore> = [];
 
-  //$results: Array<FormResultStore> = [];
-
-  validate(completed: (errors: Array<InputStore>) => void) {
-    let res: Array<InputStore> = [];
-    let obss = rx.Observable.from(this.$inputs.map(inp => rx.Observable.create((obs: rx.Subscriber<InputStore>) => {
+  validate(completed: (errors: Array<InputLowStore>) => void) {
+    let res: Array<InputLowStore> = [];
+    let obss = rx.Observable.from(this.$inputs.map(inp => rx.Observable.create((obs: rx.Subscriber<InputLowStore>) => {
       inp.validate(err => { obs.next(inp); obs.complete(); }); return () => { };
-    }))).mergeAll() as rx.Observable<InputStore>;
-    obss.subscribe((inpRes: InputStore) => { if (inpRes.error) res.push(inpRes); }, err => new flux.Exception(err.toString()), () => completed(res.length == 0 ? null : res));
+    }))).mergeAll() as rx.Observable<InputLowStore>;
+    obss.subscribe((inpRes: InputLowStore) => { if (inpRes.error) res.push(inpRes); }, err => new flux.Exception(err.toString()), () => completed(res.length == 0 ? null : res));
   }
   reset() { this.$inputs.forEach(inp => inp.reset()); }
 }

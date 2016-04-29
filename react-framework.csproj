@@ -89,6 +89,7 @@
     <None Include="trash\label.tsx_" />
     <TypeScriptCompile Include="react-semantic\elements\image.tsx" />
     <TypeScriptCompile Include="react-semantic\elements\button.tsx" />
+    <None Include="trash\checkBoxModule.ts_" />
     <TypeScriptCompile Include="trash\index.tsx" />
     <TypeScriptCompile Include="trash\flux2.tsx" />
     <TypeScriptCompile Include="trash\flux.tsx" />

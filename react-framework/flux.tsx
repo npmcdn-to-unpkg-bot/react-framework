@@ -77,7 +77,10 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
   state: T;
   componentWillUnmount() { this.state.componentWillUnmount(this); }
   render(): JSX.Element { return this.state.render(this); }
+  getChildContext(): IComponentContext { return { $parent: this.state }; }
 }
+Component['childContextTypes'] = { $parent: React.PropTypes.any };
+export interface IComponentContext { $parent: Store; }
 
 export type TComponent = Component<Store, IPropsEx>;
 export type TComponentClass = React.ComponentClass<TProps>;
