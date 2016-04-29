@@ -67,7 +67,7 @@ export class FormTestStore extends flux.Store {
       <h1>Input Validation</h1>
       <FormSmart id='form1' ref={f => this.form = f.state}>
         <InputSmart $title='Name' $defaultValue='3' initState={this.name}
-          $validators = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
+          $validator = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
           $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
           $template = {inpTemplate}
           />

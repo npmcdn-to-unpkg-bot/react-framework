@@ -18,8 +18,8 @@ export interface InputProps extends flux.IPropsEx {
   $title?: string;
   $defaultValue?: string;
   $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
-  $validator?: TSyncValidator;
-  $validators?: Array<TSyncValidator>;
+  $validator?: TSyncValidator | Array<TSyncValidator>;
+  //$validators?: Array<TSyncValidator>;
 }
 
 //************** InputLow
@@ -28,8 +28,8 @@ export abstract class InputLowStore extends flux.Store {
   $title: string;
   $defaultValue: string;
   $validatorAsync: (val: string, completed: TSyncCompleted) => void;
-  $validator: TSyncValidator;
-  $validators: Array<TSyncValidator>;
+  $validator: TSyncValidator | Array<TSyncValidator>;
+  //$validators: Array<TSyncValidator>;
   //inherited
   $context: IFormContext;
   $myForm: FormLowStore;
@@ -76,7 +76,7 @@ export abstract class InputLowStore extends flux.Store {
     return React.createElement('input', props);
   }
 
-  protected hasValidator(): boolean { return !!this.$validator || !!this.$validators || !!this.$validatorAsync; }
+  protected hasValidator(): boolean { return !!this.$validator || !!this.$validatorAsync; }
 
   private blur() {
     console.log('blur');
@@ -118,10 +118,11 @@ export abstract class InputLowStore extends flux.Store {
     if (!this.hasValidator()) { refreshComponent(null); return; }
 
     //******* sync validation
-    if (this.$validator || this.$validators) {
+    if (this.$validator) {
       if (!self.blured) { refreshComponent(null); return; }
       let error = null;
-      if ((this.$validator ? [this.$validator] : this.$validators).find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
+      var vals = Array.isArray(this.$validator) ? this.$validator as Array<TSyncValidator> : [this.$validator as TSyncValidator];
+      if (vals.find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
     }
 
     if (!this.$validatorAsync) { refreshComponent(null); return; }
