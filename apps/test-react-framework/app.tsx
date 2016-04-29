@@ -31,7 +31,7 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** Login page
-export interface IStoreLogin extends flux.IStore { returnUrl: string }
+//export interface IStoreLogin extends flux.IStore { returnUrl: string }
 export interface IPropsExLogin extends flux.IPropsEx { returnUrl?: string }
 
 export class Login extends flux.Component<LoginStore, IPropsExLogin> { }
@@ -39,7 +39,7 @@ export class Login extends flux.Component<LoginStore, IPropsExLogin> { }
 export interface ILoginRouteActionPar extends IPropsExLogin { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Login, loginNeeded: false })
-export class LoginStore extends flux.Store implements IStoreLogin {
+export class LoginStore extends flux.Store {
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -63,14 +63,14 @@ export class LoginStore extends flux.Store implements IStoreLogin {
 }
 
 //****************** AppRoot component
-export interface IStoreApp extends flux.IStore { title: string }
+//export interface IStoreApp extends flux.IStore { title: string }
 export interface IPropsExApp extends flux.IPropsEx { title?: string }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 enum TActions { appClick, childClick, navigate, login };//, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store implements IStoreApp {
+export class AppRootStore extends flux.Store {
   constructor($parent: flux.Store) {
     super($parent);
     this.routeHookDefault = new flux.StoreRouteHook(this, '1');
@@ -111,7 +111,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
       <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       <hr/>
-      <Child title='Not routed child' $parent={this} />
+      <Child title='Not routed child'/>
       <hr/>
       <RouteHook initState={this.routeHookDefault}/>
       <hr/>
@@ -124,7 +124,7 @@ export class AppRootStore extends flux.Store implements IStoreApp {
 }
 
 //****************** Child component
-export interface IStoreChild extends flux.IStore { title: string }
+//export interface IStoreChild extends flux.IStore { title: string }
 export interface IPropsExChild extends flux.IPropsEx { title?: string }
 
 export class Child extends flux.Component<ChildStore, IPropsExChild> { }
@@ -132,7 +132,7 @@ export class Child extends flux.Component<ChildStore, IPropsExChild> { }
 export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child, loginNeeded: true })
-export class ChildStore extends flux.Store implements IStoreChild {
+export class ChildStore extends flux.Store {
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {

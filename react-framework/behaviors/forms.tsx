@@ -160,8 +160,8 @@ export abstract class InputLowStore extends flux.Store {
 }
 
 export abstract class InputLow<T extends InputLowStore, P> extends flux.Component<T, InputProps & P> { getChildContext(): IInputContext { return { MyInput: this.state, $parent: this.state }; } }
-InputLow['childContextTypes'] = { MyInput: React.PropTypes.any };
-InputLow['contextTypes'] = { MyForm: React.PropTypes.any };
+InputLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.PropTypes.any };
+InputLow['contextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
 
 type TInputComponent = InputLow<InputLowStore, {}>;
 
@@ -179,7 +179,7 @@ export class InputSmartStore extends InputLowStore { }
 export abstract class FormLow<T extends FormLowStore, P extends flux.IPropsEx> extends flux.Component<T, flux.IPropsEx & P> {
   getChildContext(): IFormContext { return { MyForm: this.state, $parent:this.state }; }
 }
-FormLow['childContextTypes'] = { MyForm: React.PropTypes.any };
+FormLow['childContextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
 interface IFormContext extends flux.IComponentContext { MyForm: FormLowStore; }
 
 export abstract class FormLowStore extends flux.Store  {

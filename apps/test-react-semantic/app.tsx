@@ -48,17 +48,17 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-export interface IStoreApp extends flux.IStore { }
+//export interface IStoreApp extends flux.IStore { }
 export interface IPropsExApp extends flux.IPropsEx { }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 enum TActions { };//, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store implements IStoreApp {
+export class AppRootStore extends flux.Store {
   render(): JSX.Element {
     return <div>
-      <FormSmartTest $parent={this}/>
+      <FormSmartTest/>
       {/*
       <div className="ui form">
         <div className="three fields">

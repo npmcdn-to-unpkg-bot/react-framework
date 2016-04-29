@@ -13,13 +13,13 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-export interface IStoreApp extends flux.IStore { }
+//export interface IStoreApp extends flux.IStore { }
 export interface IPropsExApp extends flux.IPropsEx { }
 
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store implements IStoreApp {
+export class AppRootStore extends flux.Store {
   constructor($parent: flux.Store, instanceId?: string) {
     super($parent, instanceId);
     this.items = Object.keys(flux.Tests.tests).map(k => { return { key: k, value: flux.Tests.tests[k] }; }).map((kv, idx) => new TestItemStore(this, idx.toString(), kv.key, kv.value));

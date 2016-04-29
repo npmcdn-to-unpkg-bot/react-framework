@@ -41,7 +41,7 @@ var inpTemplate: flux.TTemplate = (self: InputSmartStore) =>
 var fieldTemplate: flux.TTemplate = (self: InputSmartStore) =>
   [<label>{self.$title}</label>,
     <InputTag placeholder={self.$title}/>,
-    <Label $small $colRed $basic style={{ visibility: self.error || self.validating ? 'visible' : 'hidden', border: '0', }}>
+    <Label $small $colRed $basic style={{ visibility: self.error || self.validating ? 'visible' : 'hidden', border: '0px', }}>
       <span style={{ display: self.error ? null : 'none' }}>{self.error} in {self.$title}</span>
       <Icon $disabled $Color={color.no} style={{ display: self.validating ? null : 'none' }} $Icon={icon.circleNotched} $loading />
     </Label>,
@@ -65,16 +65,16 @@ export class FormTestStore extends flux.Store {
   render(): JSX.Element {
     return <Container>
       <h1>Input Validation</h1>
-      <FormSmart $parent={this} instanceId='1' ref={f => this.form = f.state}>
-        <InputSmart $title='Name' $defaultValue='3' $parent={this} initState={this.name}
+      <FormSmart id='1' ref={f => this.form = f.state}>
+        <InputSmart $title='Name' $defaultValue='3' initState={this.name}
           $validators = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
           $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
           $template = {inpTemplate}
           />
-        <InputSmart $title='Password' $parent={this} initState={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
+        <InputSmart $title='Password' initState={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
       </FormSmart>
       <hr/>
-      <BindToState $stores={[this.password, this.name]} $parent={this} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
+      <BindToState $stores={[this.password, this.name]} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TAction.click, 'click') }>OK</a>
       <hr/>
@@ -82,8 +82,8 @@ export class FormTestStore extends flux.Store {
       <h1>Form, Fields</h1>
       <FormSmart $equalWidth initState={this.form2}>
         <Fields>
-          <FieldSmart $title='First Name' instanceId='0' $parent={this} $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
-          <FieldSmart $title='Last Name' instanceId='1' $parent={this} $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
+          <FieldSmart $title='First Name' id='0' $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
+          <FieldSmart $title='Last Name' id='1' $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
           <FieldSmart $title='Name' $defaultValue='3' initState={this.name2} $template = {fieldTemplate} />
         </Fields>
       </FormSmart>

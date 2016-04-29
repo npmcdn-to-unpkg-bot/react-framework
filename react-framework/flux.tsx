@@ -67,19 +67,21 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 
 //******************  REACT COMPONENTS
 export class Component<T extends Store, P extends IPropsEx> extends React.Component<IProps<T> & P, any> { //generic React component
-  constructor(props: IProps<T> & P, ctx) {
+  constructor(props: IProps<T> & P, ctx: IComponentContext) {
     super(props, ctx);
     this.state = props.initState;
     //state to parent child states
-    if (!this.state) { this.state = Store.createInRender<T>(props, componentToStore(this.constructor as TComponentClass), props.instanceId); }
+    if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
     this.state.componentCreated(this); //notificiation
   }
   state: T;
+  context: IComponentContext;
   componentWillUnmount() { this.state.componentWillUnmount(this); }
   render(): JSX.Element { return this.state.render(this); }
   getChildContext(): IComponentContext { return { $parent: this.state }; }
 }
 Component['childContextTypes'] = { $parent: React.PropTypes.any };
+Component['contextTypes'] = { $parent: React.PropTypes.any };
 export interface IComponentContext { $parent: Store; }
 
 export type TComponent = Component<Store, IPropsEx>;
@@ -87,8 +89,8 @@ export type TComponentClass = React.ComponentClass<TProps>;
 
 //****************** STORE
 export type IChildStores = { [path: string]: Store; };
-export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
-export interface IPropsEx { $parent?: Store; instanceId?: string; $template?: TTemplate; }
+//export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
+export interface IPropsEx { /*$parent?: Store;*/ id?: string; $template?: TTemplate; }
 export interface IProps<T extends Store> {
   initState?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
 }
@@ -102,7 +104,7 @@ export type TTemplate = (self: Store) => React.ReactNode;
 //THEN we have to have: class ExampleStore extends Store { title:string; }
 //Props are assigned to Store in component constructor (Object.assign(this.state, props); delete this.state['initState'];
 @StoreDef({ moduleId: moduleId })
-export abstract class Store implements IStore, ITypedObj {
+export abstract class Store implements ITypedObj {
 
   $template: TTemplate;
   $subscribers: Array<string> = []; //components path's, using this store as a status
@@ -123,8 +125,8 @@ export abstract class Store implements IStore, ITypedObj {
     let res = new cls(parent, instanceId);
     res.initStore(routePar, completed);
   }
-  static createInRender<T extends Store>(props: TProps & IPropsEx, storeId: string | TStoreClass, instanceId?: string): T {
-    let parent = props.$parent; if (!parent) throw new flux.Exception(`"${flux.getClassName(this.constructor)}" component: missing $parent property`);
+  static createInRender<T extends Store>(parent: Store, storeId: string | TStoreClass, instanceId?: string): T {
+    //let parent = props.$parent; if (!parent) throw new flux.Exception(`"${flux.getClassName(this.constructor)}" component: missing $parent property`);
     let cls = Store.getStoreClass(storeId);
     let idInParent = Store.getClassIdInParent(cls, instanceId);
     let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
@@ -219,13 +221,13 @@ export type TStoreClass = new ($parent: Store, instanceId?: string) => Store;
 export type TDispatchCallback = (store: Store) => void;
 
 //****************** ROUTER HOOK STORE
-export interface IStoreRouteHook extends IStore { }
+//export interface IStoreRouteHook extends IStore { }
 export interface IPropsExRouteHook extends IPropsEx { }
 
 export class RouteHook extends Component<StoreRouteHook, IPropsExRouteHook> { }
 
 @StoreDef({ moduleId: moduleId, componentClass: RouteHook })
-export class StoreRouteHook extends Store implements IStoreRouteHook { //Route Hook component
+export class StoreRouteHook extends Store { //Route Hook component
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
