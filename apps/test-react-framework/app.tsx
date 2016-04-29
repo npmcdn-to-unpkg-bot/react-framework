@@ -73,13 +73,13 @@ enum TActions { appClick, childClick, navigate, login };//, refreshState };
 export class AppRootStore extends flux.Store {
   constructor($parent: flux.Store) {
     super($parent);
-    this.routeHookDefault = new flux.StoreRouteHook(this, '1');
-    this.otherHook = new flux.StoreRouteHook(this, '2');
+    this.routeHookDefault = new flux.RouteHookStore(this, '1');
+    this.otherHook = new flux.RouteHookStore(this, '2');
   }
 
   title: string = 'Hello world'
-  routeHookDefault: flux.StoreRouteHook;
-  otherHook: flux.StoreRouteHook;
+  routeHookDefault: flux.RouteHookStore;
+  otherHook: flux.RouteHookStore;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.appClick:
@@ -137,8 +137,8 @@ export class ChildStore extends flux.Store {
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.childClick:
-        if (this.$parent instanceof flux.StoreRouteHook)
-          (this.$parent as flux.StoreRouteHook).subNavigate<IChildRouteActionPar>(st => st.par.title += 'x', completed);
+        if (this.$parent instanceof flux.RouteHookStore)
+          (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(st => st.par.title += 'x', completed);
           //flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
         else {
           this.modify(st => st.title += 'x');
