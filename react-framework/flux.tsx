@@ -16,11 +16,14 @@ export interface ITypedObj { _type: string; }
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
 export function StoreDef(meta: IStoreMeta): ClassDecorator {
   return (storeClass: TStoreClass) => {
-    if (!meta.id) meta.id = meta.moduleId + '.' + flux.getClassName(storeClass);
+    //create store meta info
+    meta.className = flux.getClassName(storeClass);
+    meta.classId = `${meta.moduleId}.${meta.className}`; //meta.moduleId + '.' + meta.className;
     meta.storeClass = storeClass;
-    storeClass.prototype[prototypeMeta] = meta;
-    storeMetasDir[meta.id] = meta;
-    storeMetas.push(meta);
+    //ulozeni meta informace
+    storeClass.prototype[prototypeMeta] = meta; //in class prototype
+    storeMetasDir[meta.classId] = meta; //in directory
+    storeMetas.push(meta); //in list
     return storeClass;
   }
 }
@@ -29,7 +32,9 @@ var storeMetasDir: { [id: string]: IStoreMeta; } = {};
 var storeMetas: Array<IStoreMeta> = [];
 export interface IStoreMeta {
   moduleId: string;
-  id?: string; //<moduleId>.<class name>
+  className?:string;
+  classId?:string;
+  //classId(): string {return `${this.moduleId}.${this.className}`; }
   //pro komponenty, co se binduji do route hook
   componentClass?: TComponentClass; //class nabindovana do route hook
   storeClass?: TStoreClass; //
@@ -72,6 +77,7 @@ export class Component<T extends Store, P extends IPropsEx> extends React.Compon
     this.state = props.initState;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
+    else if (this.props.id && this.state.id && this.props.id!=this.state.id) throw new Exception(`Store "id" cannot be overrided by COmponent "id"`);
     this.state.componentCreated(this); //notificiation
   }
   state: T;
@@ -114,8 +120,8 @@ export abstract class Store implements ITypedObj {
   childStores: IChildStores;
   children: React.ReactNode;
 
-  constructor(public $parent: Store, public instanceId?: string) {
-    this._type = this.getMeta().id;
+  constructor(public $parent: Store, public id?: string) {
+    this._type = this.getMeta().classId;
     let idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
@@ -144,7 +150,7 @@ export abstract class Store implements ITypedObj {
   }
 
   getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
-  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.instanceId); } //jednoznacna identifikace v parent child seznamu
+  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.id); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
     let res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
@@ -155,7 +161,10 @@ export abstract class Store implements ITypedObj {
     } else
       return storeId;
   }
-  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string { return Store.getClassMeta(storeClass).id + (instanceId ? '.' + instanceId : ''); }
+  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string { 
+    return instanceId ? instanceId : Store.getClassMeta(storeClass).className;
+    //return Store.getClassMeta(storeClass).classId + (instanceId ? '.' + instanceId : ''); 
+  }
   modify(modifyProc?: (st: this) => void) { //modify store and rerender all $subscribers
     if (modifyProc) modifyProc(this);
     this.$subscribers.forEach(path => {
@@ -208,7 +217,7 @@ export abstract class Store implements ITypedObj {
 
   action<T extends IActionPar>(id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);
-    store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr: this.getMeta().id + ': ' + descr }; });
+    store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr: this.getMeta().classId + ': ' + descr }; });
     this.doDispatchAction(id, par, completed ? completed : flux.noop);
   }
   clickAction<T extends IActionPar>(ev: React.MouseEvent, id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event

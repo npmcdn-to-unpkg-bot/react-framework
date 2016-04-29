@@ -59,7 +59,7 @@ export class FormTestStore extends flux.Store {
     this.password = new InputSmartStore(this, 'password');
     //form2:
     this.form2 = new FormSmartStore(this, '2');
-    this.name2 = new FieldSmartStore(this, '2');
+    this.name2 = new FieldSmartStore(this, '3');
     this.name2.$validatorAsync = (val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000);
   }
   render(): JSX.Element {

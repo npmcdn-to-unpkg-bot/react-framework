@@ -12,7 +12,6 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-//export interface IStoreApp extends flux.IStore { mode: AppRootMode; dumpKey: string; }
 export interface IPropsExApp extends flux.IPropsEx { mode?: AppRootMode; dumpKey?: string; }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
