@@ -18,7 +18,7 @@ import {
   //InputSmart
 } from '../common/exports';
 
-import {InputSmart, InputSmartStore, InputTag} from '../../react-framework/behaviors/forms';
+import {InputSmart, InputSmartStore, InputTag} from '../../react-framework/behaviors/input';
 import {FormSmart, FormSmartStore, FieldSmart, FieldSmartStore} from './forms';
 import * as flux from '../../react-framework/flux';
 import {BindToState} from '../../react-framework/flux';

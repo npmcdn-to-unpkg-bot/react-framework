@@ -6,30 +6,29 @@ import * as flux from '../flux';
 
 const moduleId = 'forms';
 
-//types for validators
-export type TSyncValidator = (val: string) => string;
-export type TSyncCompleted = (err: string) => void;
+//************** FIELD
 
-interface IInputContext extends flux.IComponentContext { MyInput: InputLowStore; }
-enum TInputActions { setState };
-interface InputActionPar extends flux.IActionPar { value: string; }
+enum TFieldActions { setState };
+interface FieldActionPar extends flux.IActionPar { value: string; }
 
-export interface InputProps extends flux.IPropsEx {
+export abstract class FieldLow<T extends FieldLowStore, P> extends flux.Component<T, FieldLowProps & P> {}
+
+type TFieldComponent = FieldLow<FieldLowStore, {}>;
+
+export interface FieldLowProps extends flux.IPropsEx {
   $title?: string;
   $defaultValue?: string;
-  $validatorAsync?: (val: string, completed: TSyncCompleted) => void;
-  $validator?: TSyncValidator | Array<TSyncValidator>;
-  //$validators?: Array<TSyncValidator>;
+  $validatorAsync?: (val: string, completed: flux.TSyncCompleted) => void;
+  $validator?: flux.TSyncValidator | Array<flux.TSyncValidator>;
 }
 
-//************** InputLow
-export abstract class InputLowStore extends flux.Store {
+//************** FieldLowStore
+export abstract class FieldLowStore extends flux.Store implements FieldLowProps {
   //props
   $title: string;
   $defaultValue: string;
-  $validatorAsync: (val: string, completed: TSyncCompleted) => void;
-  $validator: TSyncValidator | Array<TSyncValidator>;
-  //$validators: Array<TSyncValidator>;
+  $validatorAsync: (val: string, completed: flux.TSyncCompleted) => void;
+  $validator: flux.TSyncValidator | Array<flux.TSyncValidator>;
   //inherited
   $context: IFormContext;
   $myForm: FormLowStore;
@@ -40,12 +39,12 @@ export abstract class InputLowStore extends flux.Store {
   validating: boolean;
   //engine
 
-  componentCreated(comp: TInputComponent) {
+  componentCreated(comp: TFieldComponent) {
     super.componentCreated(comp);
     if (this.value === undefined) this.value = this.$defaultValue ? this.$defaultValue : '';
     if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
   }
-  componentWillUnmount(comp: TInputComponent): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
+  componentWillUnmount(comp: TFieldComponent): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
 
   validate(completed?: (error: string) => void) {
     this.blured = true;
@@ -56,9 +55,9 @@ export abstract class InputLowStore extends flux.Store {
     delete this.$asyncLastResult;
     this.modify(st => st.value = this.$defaultValue ? this.$defaultValue : '');
   }
-  doDispatchAction(id: number, par: InputActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: FieldActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case TInputActions.setState:
+      case TFieldActions.setState:
         this.blured = true;
         this.setAndValidate(false, par.value, er => completed(null));
         break;
@@ -67,28 +66,19 @@ export abstract class InputLowStore extends flux.Store {
     }
   }
 
-  static renderInputTag = (pr: InputProps, context: IInputContext) => {
-    let props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
-    if (!context || !context.MyInput) return React.createElement('input', props);
-    let store = context.MyInput;
-    props.value = store.value;
-    props.onChange = store.handleChange.bind(store); if (store.hasValidator()) props.onBlur = store.blur.bind(store);
-    return React.createElement('input', props);
-  }
-
   protected hasValidator(): boolean { return !!this.$validator || !!this.$validatorAsync; }
 
-  private blur() {
+  protected blur() {
     console.log('blur');
-    this.action<InputActionPar>(TInputActions.setState, 'setState', { value: this.value });
+    this.action<FieldActionPar>(TFieldActions.setState, 'setState', { value: this.value });
   }
 
-  private handleChange(event) {
+  protected handleChange(event) {
     this.asyncCancel();
     this.setAndValidate(true, event.target.value);
   }
 
-  private setAndValidate(inHandleChange: boolean, val: string, completed?: TSyncCompleted) {
+  private setAndValidate(inHandleChange: boolean, val: string, completed?: flux.TSyncCompleted) {
     let self = this;
     self.value = val;
 
@@ -121,7 +111,7 @@ export abstract class InputLowStore extends flux.Store {
     if (this.$validator) {
       if (!self.blured) { refreshComponent(null); return; }
       let error = null;
-      var vals = Array.isArray(this.$validator) ? this.$validator as Array<TSyncValidator> : [this.$validator as TSyncValidator];
+      var vals = Array.isArray(this.$validator) ? this.$validator as Array<flux.TSyncValidator> : [this.$validator as flux.TSyncValidator];
       if (vals.find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
     }
 
@@ -160,31 +150,17 @@ export abstract class InputLowStore extends flux.Store {
 
 }
 
-export abstract class InputLow<T extends InputLowStore, P> extends flux.Component<T, InputProps & P> { getChildContext(): IInputContext { return { MyInput: this.state, $parent: this.state }; } }
-InputLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.PropTypes.any };
-InputLow['contextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
 
-type TInputComponent = InputLow<InputLowStore, {}>;
-
-//************** InputTag
-export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (props: InputProps, context: IInputContext) => InputLowStore.renderInputTag(props, context);
-InputTag.contextTypes = { MyInput: React.PropTypes.any };
-
-//************** InputSmart
-export class InputSmart extends InputLow<InputSmartStore, {}> { } 
-
-@flux.StoreDef({ moduleId: moduleId, componentClass: InputSmart })
-export class InputSmartStore extends InputLowStore { }
 
 //************** FormLow
 export abstract class FormLow<T extends FormLowStore, P extends flux.IPropsEx> extends flux.Component<T, flux.IPropsEx & P> {
   getChildContext(): IFormContext { return { MyForm: this.state, $parent:this.state }; }
 }
 FormLow['childContextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
-interface IFormContext extends flux.IComponentContext { MyForm: FormLowStore; }
+export interface IFormContext extends flux.IComponentContext { MyForm: FormLowStore; }
 
 export abstract class FormLowStore extends flux.Store  {
- register(input: InputLowStore, isRegister: boolean) {
+ register(input: FieldLowStore, isRegister: boolean) {
     if (isRegister) {
       input.$myForm = this;
       this.$inputs.push(input); 
@@ -194,14 +170,14 @@ export abstract class FormLowStore extends flux.Store  {
     }
   }
 
-  $inputs: Array<InputLowStore> = [];
+  $inputs: Array<FieldLowStore> = [];
 
-  validate(completed: (errors: Array<InputLowStore>) => void) {
-    let res: Array<InputLowStore> = [];
-    let obss = rx.Observable.from(this.$inputs.map(inp => rx.Observable.create((obs: rx.Subscriber<InputLowStore>) => {
+  validate(completed: (errors: Array<FieldLowStore>) => void) {
+    let res: Array<FieldLowStore> = [];
+    let obss = rx.Observable.from(this.$inputs.map(inp => rx.Observable.create((obs: rx.Subscriber<FieldLowStore>) => {
       inp.validate(err => { obs.next(inp); obs.complete(); }); return () => { };
-    }))).mergeAll() as rx.Observable<InputLowStore>;
-    obss.subscribe((inpRes: InputLowStore) => { if (inpRes.error) res.push(inpRes); }, err => new flux.Exception(err.toString()), () => completed(res.length == 0 ? null : res));
+    }))).mergeAll() as rx.Observable<FieldLowStore>;
+    obss.subscribe((inpRes: FieldLowStore) => { if (inpRes.error) res.push(inpRes); }, err => new flux.Exception(err.toString()), () => completed(res.length == 0 ? null : res));
   }
   reset() { this.$inputs.forEach(inp => inp.reset()); }
 }

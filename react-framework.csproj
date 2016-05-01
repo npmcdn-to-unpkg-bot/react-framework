@@ -52,6 +52,7 @@
     <TypeScriptCompile Include="apps\mdl-d-ts\mdl-d-ts.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\app.tsx" />
     <TypeScriptCompile Include="apps\test-react-semantic\app.tsx" />
+    <TypeScriptCompile Include="react-framework\behaviors\input.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\checkBox.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />

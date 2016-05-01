@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 
 import * as ui from '../common/exports';
 import * as forms from '../../react-framework/behaviors/forms';
+import * as input from '../../react-framework/behaviors/input';
 import * as flux from '../../react-framework/flux';
 
 const moduleId = 'forms-ui';
@@ -15,10 +16,10 @@ export class FormSmartStore extends forms.FormLowStore {
   render(): JSX.Element { return React.createElement(ui.Form, this as any, this.children); }
 }
 
-export class FieldSmart extends forms.InputLow<FieldSmartStore, ui.FieldProps> { }
+export class FieldSmart extends input.InputLow<FieldSmartStore, ui.FieldProps> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FieldSmart })
-export class FieldSmartStore extends forms.InputLowStore {
+export class FieldSmartStore extends forms.FieldLowStore {
   render(): JSX.Element {
     var props: ui.FieldProps = Object.assign({}, this); 
     props.$error = !!this.error; props['key'] = this.getIdInParent();

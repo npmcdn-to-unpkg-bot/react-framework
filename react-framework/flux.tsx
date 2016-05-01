@@ -13,6 +13,10 @@ export class ELoginNeeded extends Error {
 }
 export interface ITypedObj { _type: string; }
 
+//types for validators
+export type TSyncValidator = (val: string) => string;
+export type TSyncCompleted = (err: string) => void;
+
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
 export function StoreDef(meta: IStoreMeta): ClassDecorator {
   return (storeClass: TStoreClass) => {
