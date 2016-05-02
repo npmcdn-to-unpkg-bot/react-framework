@@ -18,8 +18,8 @@ import {
   //InputSmart
 } from '../common/exports';
 
-import {InputSmart, InputSmartStore, InputTag} from '../../react-framework/behaviors/input';
-import {FormSmart, FormSmartStore, FieldSmart, FieldSmartStore} from './forms';
+import {InputSmart, InputSmartStore, InputTag, RadiosStore} from '../../react-framework/exports';
+import {FormSmart, FormSmartStore, FieldSmart, FieldSmartStore, CheckBox, CheckBoxStore, Radio, RadioStore} from './forms';
 import * as flux from '../../react-framework/flux';
 import {BindToState} from '../../react-framework/flux';
 
@@ -40,14 +40,14 @@ var inpTemplate: flux.TTemplate = (self: InputSmartStore) =>
 
 var fieldTemplate: flux.TTemplate = (self: InputSmartStore) =>
   [<label key={0}>{self.$title}</label>,
-    <InputTag placeholder={self.$title} key={1}/>,
-    <Label $small $colRed $basic style={{ visibility: self.error || self.validating ? 'visible' : 'hidden', border: '0px', }} key={2}>
-      <span style={{ display: self.error ? null : 'none' }} key={0}>{self.error} in {self.$title}</span>
-      <Icon $disabled $Color={color.no} style={{ display: self.validating ? null : 'none' }} $Icon={icon.circleNotched} $loading key={2}/>
-    </Label>,
+   <InputTag placeholder={self.$title} key={1}/>,
+   <Label $small $colRed $basic style={{ visibility: self.error || self.validating ? 'visible' : 'hidden', border: '0px', }} key={2}>
+     <span style={{ display: self.error ? null : 'none' }} key={0}>{self.error} in {self.$title}</span>
+     <Icon $disabled $Color={color.no} style={{ display: self.validating ? null : 'none' }} $Icon={icon.circleNotched} $loading key={2}/>
+   </Label>]
 
     /*<div className='ui red' style={{ visibility: self.error ? 'visible' : 'hidden'}}>{self.error} in {self.$title}</div>,
-    /*<Label $tiny $pointingAbove $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>*/]
+    /*<Label $tiny $pointingAbove $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px' }}>{self.error} in {self.$title}</Label>*/
 
 enum TAction { click, click2 };
 
@@ -61,17 +61,19 @@ export class FormTestStore extends flux.Store {
     this.form2 = new FormSmartStore(this, 'form2');
     this.name2 = new FieldSmartStore(this.form2, 'name');
     this.name2.$validatorAsync = (val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000);
+    this.radios = new RadiosStore(this, 'radios');
   }
   render(): JSX.Element {
     return <Container>
       <h1>Input Validation</h1>
       <FormSmart id='form1' ref={f => this.form = f.state}>
-        <InputSmart $title='Name' $defaultValue='3' initState={this.name}
+        <CheckBox $title='Check Box' $validator={ui.requiredBoolValidator()}/><br/>
+        <InputSmart $title='Name' $defaultValue='3' store={this.name}
           $validator = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
           $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
           $template = {inpTemplate}
           />
-        <InputSmart $title='Password' initState={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
+        <InputSmart $title='Password' store={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
       </FormSmart>
       <hr/>
       <BindToState $stores={[this.password, this.name]} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
@@ -79,11 +81,15 @@ export class FormTestStore extends flux.Store {
       <a href='#' onClick={ev => this.clickAction(ev, TAction.click, 'click') }>OK</a>
       <hr/>
       <h1>Form, Fields</h1>
-      <FormSmart $equalWidth initState={this.form2}>
-        <Fields>
+      <FormSmart store={this.form2}>
+        <Fields $inline>
+          <Field><Radio $group={this.radios} id='r1' $title='r1 title' $checked/></Field>
+          <Field><Radio $group={this.radios} id='r2' $title='r2 title'/></Field>
+        </Fields>
+        <Fields $equalWidth>
           <FieldSmart $title='First Name' id='firstName' $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
           <FieldSmart $title='Last Name' id='lastName' $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
-          <FieldSmart $title='Name' $defaultValue='3' initState={this.name2} $template = {fieldTemplate} />
+          <FieldSmart $title='Name' $defaultValue='3' store={this.name2} $template = {fieldTemplate} />
         </Fields>
       </FormSmart>
       <hr/>
@@ -96,6 +102,7 @@ export class FormTestStore extends flux.Store {
   password: InputSmartStore;
   form: FormSmartStore;
   form2: FormSmartStore;
+  radios:RadiosStore;
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {

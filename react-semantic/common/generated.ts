@@ -20,6 +20,7 @@ import {icon, flag, flagShort} from './largeEnums';
   Flag,
   Form, outerTagForm, stateForm, sizeForm,
   Header, sizeHeader, outerTagHeader, subHeader,
+  CheckBox, type,
   Icon, flipped, rotated, circularIcon, bordered,
   Icons,
   Image, outerTagImage,
@@ -66,6 +67,7 @@ export {
   Flag, FlagProps,
   Form, FormProps, outerTagForm, stateForm, sizeForm,
   Header, HeaderProps, sizeHeader, outerTagHeader, subHeader,
+  CheckBox, CheckBoxProps, type,
   Icon, IconProps, flipped, rotated, circularIcon, bordered,
   Icons, IconsProps,
   ImageProps, outerTagImage,
@@ -96,10 +98,10 @@ export {
 } from './generated';
 */
 
-export interface IPropsIconProp { }
+export interface IPropsIconProp {}
 
 export enum color { no, $colRed, $colOrange, $colYellow, $colOlive, $colGreen, $colTeal, $colBlue, $colViolet, $colPurple, $colPink, $colBrown, $colGrey, $colBlack, }
-registerEnum(color, '$Color', { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black' });
+registerEnum(color, '$Color', { $colRed: 'red', $colOrange: 'orange', $colYellow: 'yellow', $colOlive: 'olive', $colGreen: 'green', $colTeal: 'teal', $colBlue: 'blue', $colViolet: 'violet', $colPurple: 'purple', $colPink: 'pink', $colBrown: 'brown', $colGrey: 'grey', $colBlack: 'black'});
 export interface IPropsColorProp { $colRed?: boolean; $colOrange?: boolean; $colYellow?: boolean; $colOlive?: boolean; $colGreen?: boolean; $colTeal?: boolean; $colBlue?: boolean; $colViolet?: boolean; $colPurple?: boolean; $colPink?: boolean; $colBrown?: boolean; $colGrey?: boolean; $colBlack?: boolean; }
 
 export enum size { no, $s3, $mini, $s2, $tiny, $s1, $small, $1, $large, $2, $big, $3, $huge, $4, $massive, }
@@ -107,11 +109,11 @@ registerEnum(size, '$Size', { $s3: 'mini', $s2: 'tiny', $s1: 'small', $1: 'large
 export interface IPropsSizeProp { $s3?: boolean; $mini?: boolean; $s2?: boolean; $tiny?: boolean; $s1?: boolean; $small?: boolean; $1?: boolean; $large?: boolean; $2?: boolean; $big?: boolean; $3?: boolean; $huge?: boolean; $4?: boolean; $massive?: boolean; }
 
 export enum floated { no, $floatedLeft, $floatedRight, }
-registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight: 'rightFloated' });
+registerEnum(floated, '$Floated', { $floatedLeft: 'leftFloated', $floatedRight:'rightFloated'});
 export interface IPropsFloatedProp { $floatedLeft?: boolean; $floatedRight?: boolean; }
 
 export enum aligned { no, $alignedLeft, $alignedCenter, $alignedRight, $alignedTop, $alignedBottom, $alignedMiddle, }
-registerEnum(aligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
+registerEnum(aligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned', $alignedTop:'topAligned', $alignedBottom:'bottomAligned', $alignedMiddle:'middleAligned'} );
 export interface IPropsAlignedProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; $alignedTop?: boolean; $alignedBottom?: boolean; $alignedMiddle?: boolean; }
 
 export enum column { no, $twoColumn, $threeColumn, $fourColumn, $fiveColumn, $sixColumn, $sevenColumn, $eightColumn, $nineColumn, $tenColumn, $elevenColumn, $twelveColumn, $thirteenColumn, $fourteenColumn, $fifteenColumn, $sixteenColumn, }
@@ -123,19 +125,19 @@ registerEnum(deviceOnlyGrid, '$DeviceOnlyGrid');
 export interface IPropsDeviceOnlyGridProp { $mobileOnly?: boolean; $tabletOnly?: boolean; $computerOnly?: boolean; $largeScreenOnly?: boolean; $widescreenOnly?: boolean; }
 
 export enum relaxed { no, $relaxed, $relaxedVery, }
-registerEnum(relaxed, '$Relaxed', { $relaxedVery: 'veryRelaxed' });
+registerEnum(relaxed, '$Relaxed', {$relaxedVery: 'veryRelaxed'});
 export interface IPropsRelaxedProp { $relaxed?: boolean; $relaxedVery?: boolean; }
 
 export enum textAligned { no, $alignedLeft, $alignedCenter, $alignedRight, }
-registerEnum(textAligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight: '$rightAligned', });
+registerEnum(textAligned, '$Aligned', { $alignedLeft: 'leftAligned', $alignedCenter: 'centerAligned', $alignedRight:'$rightAligned', } );
 export interface IPropsTextAlignedProp { $alignedLeft?: boolean; $alignedCenter?: boolean; $alignedRight?: boolean; }
 
 export enum verticalAligned { no, $alignedTop = 4, $alignedBottom = 5, $alignedMiddle = 6, }
-registerEnum(verticalAligned, '$Aligned', { $alignedTop: 'topAligned', $alignedBottom: 'bottomAligned', $alignedMiddle: 'middleAligned' });
+registerEnum(verticalAligned, '$Aligned', { $alignedTop:'topAligned', $alignedBottom:'bottomAligned', $alignedMiddle:'middleAligned' } );
 export interface IPropsVerticalAlignedProp { $alignedTop?: boolean; $alignedBottom?: boolean; $alignedMiddle?: boolean; }
 
 export enum attached { no, $attachedTop, $attachedBottom, $attachedBoth, }
-registerEnum(attached, '$Attached', { $attachedBoth: 'attached' });
+registerEnum(attached, '$Attached', { $attachedBoth: 'attached'} );
 export interface IPropsAttachedProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedBoth?: boolean; }
 
 export enum wide { no, $twoWide, $threeWide, $fourWide, $fiveWide, $sixWide, $sevenWide, $eightWide, $nineWide, $tenWide, $elevenWide, $twelveWide, $thirteenWide, $fourteenWide, $fifteenWide, $sixteenWide, }
@@ -149,7 +151,7 @@ export interface IPropsWideProp { $twoWide?: boolean; $threeWide?: boolean; $fou
 export enum attachedButton { no, $attachedTop, $attachedBottom, $attachedLeft, $attachedRight, }
 registerEnum(attachedButton, '$Attached');
 export interface IPropsAttachedButtonProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedLeft?: boolean; $attachedRight?: boolean; }
-
+    
 export interface ButtonProps extends IProps, IPropsAttachedButtonProp, IPropsSizeProp, IPropsColorProp, IPropsFloatedProp {
   $Attached?: attachedButton;
   $Size?: size;
@@ -205,7 +207,7 @@ export interface animateTo {
   animate?: animate;
   to: React.ReactNode;
 }
-
+    
 export interface ButtonAnimatedProps extends ButtonProps {
 
   $animateTo: animateTo;
@@ -214,8 +216,7 @@ export interface ButtonAnimatedProps extends ButtonProps {
 export var buttonAnimatedPropsDescr = createDescr<ButtonAnimatedProps>(val => {
   return {
 
-    $animateTo: null,
-  };
+    $animateTo: null,  };
 }, buttonPropsDescr);
 
 //**************************************************************
@@ -246,7 +247,7 @@ export var buttonLabeledPropsDescr = createDescr<ButtonLabeledProps>(val => {
   return {
     $pointing: new boolConverter(val.$pointing),
     $left: new boolConverter(val.$left)
-    , $label: null
+    ,$label: null
   };
 }, buttonPropsDescr);
 
@@ -257,7 +258,7 @@ export var buttonLabeledPropsDescr = createDescr<ButtonLabeledProps>(val => {
 export enum eqWidth { no, $two, $three, $four, $five, $six, $seven, $eight, $nine, $ten, $eleven, $twelve, }
 registerEnum(eqWidth, '$EqWidth');
 export interface IPropsEqWidthProp { $two?: boolean; $three?: boolean; $four?: boolean; $five?: boolean; $six?: boolean; $seven?: boolean; $eight?: boolean; $nine?: boolean; $ten?: boolean; $eleven?: boolean; $twelve?: boolean; }
-
+    
 export interface ButtonsProps extends IProps, IPropsEqWidthProp, IPropsSizeProp, IPropsColorProp {
   $EqWidth?: eqWidth;
   $Size?: size;
@@ -287,7 +288,7 @@ export var buttonsPropsDescr = createDescr<ButtonsProps>(val => {
 export enum social { no, $facebook, $twitter, $googlePlus, $vk, $linkedin, $instagram, $youtube, }
 registerEnum(social, '$Social');
 export interface IPropsSocialProp { $facebook?: boolean; $twitter?: boolean; $googlePlus?: boolean; $vk?: boolean; $linkedin?: boolean; $instagram?: boolean; $youtube?: boolean; }
-
+    
 export interface ButtonSocialProps extends ButtonProps, IPropsSocialProp {
   $Social?: social;
 }
@@ -331,7 +332,7 @@ export const Container: StatelessComponent<ContainerProps> = pr => {
 export enum divider { no, $horizontal, $vertical, }
 registerEnum(divider, '$Divider');
 export interface IPropsDividerProp { $horizontal?: boolean; $vertical?: boolean; }
-
+    
 export interface DividerProps extends IProps, IPropsDividerProp {
   $Divider?: divider;
   $clearing?: boolean;
@@ -394,7 +395,7 @@ export const Field: StatelessComponent<FieldProps> = pr => {
 export enum eqWidthFields { no, $two, $three, $four, $five, $six, $seven, $eight, $nine, $ten, }
 registerEnum(eqWidthFields, '$EqWidth');
 export interface IPropsEqWidthFieldsProp { $two?: boolean; $three?: boolean; $four?: boolean; $five?: boolean; $six?: boolean; $seven?: boolean; $eight?: boolean; $nine?: boolean; $ten?: boolean; }
-
+    
 export interface FieldsProps extends IProps, IPropsEqWidthFieldsProp {
   $EqWidth?: eqWidthFields;
   $inline?: boolean;
@@ -430,9 +431,8 @@ export interface FlagProps extends IProps, IPropsColorProp {
 export var flagPropsDescr = createDescr<FlagProps>(val => {
   return {
     $Color: new enumConverter<color>(color, val.$Color)
-    , $Flag: new enumConverter<flag>(flag, val.$Flag),
-    $FlagShort: new enumConverter<flagShort>(flagShort, val.$FlagShort),
-  };
+    ,$Flag: new enumConverter<flag>(flag, val.$Flag),
+    $FlagShort: new enumConverter<flagShort>(flagShort, val.$FlagShort),  };
 });
 
 export const Flag: StatelessComponent<FlagProps> = pr => {
@@ -457,7 +457,7 @@ export interface IPropsStateFormProp { $success?: boolean; $error?: boolean; $wa
 export enum sizeForm { no, $small = 6, $large = 8, $huge = 12, }
 registerEnum(sizeForm, '$Size');
 export interface IPropsSizeFormProp { $small?: boolean; $large?: boolean; $huge?: boolean; }
-
+    
 export interface FormProps extends IProps, IPropsOuterTagFormProp, IPropsStateFormProp, IPropsSizeFormProp {
   $OuterTag?: outerTagForm;
   $State?: stateForm;
@@ -502,7 +502,7 @@ export interface IPropsOuterTagHeaderProp { $h1?: boolean; $h2?: boolean; $h3?: 
 export enum subHeader { no, $sub, $subUppercase, }
 registerEnum(subHeader, '$SubHeader');
 export interface IPropsSubHeaderProp { $sub?: boolean; $subUppercase?: boolean; }
-
+    
 export interface HeaderProps extends IProps, IPropsSizeHeaderProp, IPropsOuterTagHeaderProp, IPropsAttachedProp, IPropsFloatedProp, IPropsTextAlignedProp, IPropsColorProp, IPropsSubHeaderProp {
   $Size?: sizeHeader;
   $OuterTag?: outerTagHeader;
@@ -540,7 +540,42 @@ export var headerPropsDescr = createDescr<HeaderProps>(val => {
 export const Header: StatelessComponent<HeaderProps> = pr => {
   let props: HeaderProps = enumValToProp(pr, headerPropsDescr);
   let rest = propsToClasses([(props.$SubHeader == subHeader.$sub ? 'sub header' : (props.$SubHeader == subHeader.$subUppercase) ? 'ui sub header' : 'ui header')], projection(props, headerPropsDescr));
-  return React.createElement(props.$OuterTag ? outerTagHeader[props.$OuterTag].replace('$', '') : 'div', rest, pr.children);
+  return React.createElement(props.$OuterTag ? outerTagHeader[props.$OuterTag].replace('$','') : 'div', rest, pr.children);
+}
+
+
+//**************************************************************
+//*   CHECKBOX
+//**************************************************************
+
+export enum type { no, $slider, $toggle, }
+registerEnum(type, '$Type');
+export interface IPropsTypeProp { $slider?: boolean; $toggle?: boolean; }
+    
+export interface CheckBoxProps extends IProps, IPropsTypeProp {
+  $Type?: type;
+  $readOnly?: boolean;
+  $checked?: boolean;
+  $disabled?: boolean;
+  $fitted?: boolean;
+  $radio?: boolean;
+}
+
+export var checkBoxPropsDescr = createDescr<CheckBoxProps>(val => {
+  return {
+    $Type: new enumConverter<type>(type, val.$Type),
+    $readOnly: new boolConverter(val.$readOnly, false, 'read-only'),
+    $checked: new boolConverter(val.$checked),
+    $disabled: new boolConverter(val.$disabled),
+    $fitted: new boolConverter(val.$fitted),
+    $radio: new boolConverter(val.$radio)
+  };
+});
+
+export const CheckBox: StatelessComponent<CheckBoxProps> = pr => {
+  let props: CheckBoxProps = enumValToProp(pr, checkBoxPropsDescr);
+  let rest = propsToClasses(['ui checkbox'], projection(props, checkBoxPropsDescr));
+  return React.createElement('div', rest, pr.children);
 }
 
 
@@ -563,7 +598,7 @@ export interface IPropsCircularIconProp { $circularStandard?: boolean; $circular
 export enum bordered { no, $borderedStandard, $borderedInverted, }
 registerEnum(bordered, '$Bordered', { $borderedStandard: 'bordered' });
 export interface IPropsBorderedProp { $borderedStandard?: boolean; $borderedInverted?: boolean; }
-
+    
 export interface IconProps extends IProps, IPropsFlippedProp, IPropsRotatedProp, IPropsCircularIconProp, IPropsBorderedProp, IPropsIconProp, IPropsSizeProp, IPropsColorProp {
   $Flipped?: flipped;
   $Rotated?: rotated;
@@ -632,7 +667,7 @@ export const Icons: StatelessComponent<IconsProps> = pr => {
 export enum outerTagImage { no, $a = htmlTags.a, }
 registerEnum(outerTagImage, '$OuterTag');
 export interface IPropsOuterTagImageProp { $a?: boolean; }
-
+    
 export interface ImageProps extends IProps, IPropsSizeProp, IPropsFloatedProp, IPropsVerticalAlignedProp, IPropsOuterTagImageProp {
   $Size?: size;
   $Floated?: floated;
@@ -696,13 +731,13 @@ registerEnum(iconInput, '$IconInput', { $iconRight: 'icon', $iconLeft: 'left ico
 export interface IPropsIconInputProp { $iconRight?: boolean; $iconLeft?: boolean; }
 
 export enum action { no, $actionRight, $actionLeft, }
-registerEnum(action, '$Action', { $actionRight: 'action', $actionLeft: 'leftAction' });
+registerEnum(action, '$Action', { $actionRight: 'action', $actionLeft:'leftAction' });
 export interface IPropsActionProp { $actionRight?: boolean; $actionLeft?: boolean; }
 
 export enum labeledInput { no, $labeledLeft, $labeledRight, $labeledRightCorner, $labeledLeftCorner, }
-registerEnum(labeledInput, '$Labeled', { $labeledLeft: 'labeled', $labeledRight: 'rightLabeled', $labeledRightCorner: 'cornerLabeled', $labeledLeftCorner: 'leftCornerLabeled' });
+registerEnum(labeledInput, '$Labeled',  { $labeledLeft: 'labeled', $labeledRight:'rightLabeled', $labeledRightCorner: 'cornerLabeled', $labeledLeftCorner:'leftCornerLabeled' });
 export interface IPropsLabeledInputProp { $labeledLeft?: boolean; $labeledRight?: boolean; $labeledRightCorner?: boolean; $labeledLeftCorner?: boolean; }
-
+    
 export interface InputProps extends IProps, IPropsIconInputProp, IPropsActionProp, IPropsSizeProp, IPropsLabeledInputProp {
   $IconInput?: iconInput;
   $Action?: action;
@@ -753,7 +788,7 @@ registerEnum(corner, '$Corner');
 export interface IPropsCornerProp { $cornerLeft?: boolean; $cornerRight?: boolean; }
 
 export enum attachedLabel { no, $attachedTop, $attachedBottom, $attachedTopRight, $attachedTopLeft, $attachedBottomRight, $attachedBottomLeft, }
-registerEnum(attachedLabel, '$Attached', { $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached' });
+registerEnum(attachedLabel, '$Attached', { $attachedBottom: 'bottomAttached', $attachedTop: 'topAttached', $attachedTopRight: 'topRightAttached', $attachedTopLeft: 'topLeftAttached', $attachedBottomRight: 'bottomRightAttached', $attachedBottomLeft: 'bottomLeftAttached'});
 export interface IPropsAttachedLabelProp { $attachedTop?: boolean; $attachedBottom?: boolean; $attachedTopRight?: boolean; $attachedTopLeft?: boolean; $attachedBottomRight?: boolean; $attachedBottomLeft?: boolean; }
 
 export enum circularLabel { no, $circularStandard, $circularEmpty, }
@@ -763,7 +798,7 @@ export interface IPropsCircularLabelProp { $circularStandard?: boolean; $circula
 export enum ribbon { no, $ribbonLeft, $ribbonRight, }
 registerEnum(ribbon, '$Ribbon');
 export interface IPropsRibbonProp { $ribbonLeft?: boolean; $ribbonRight?: boolean; }
-
+    
 export interface LabelProps extends IProps, IPropsPointingProp, IPropsCornerProp, IPropsAttachedLabelProp, IPropsCircularLabelProp, IPropsRibbonProp, IPropsSizeProp, IPropsColorProp {
   $Pointing?: pointing;
   $Corner?: corner;
@@ -867,7 +902,7 @@ export interface IPropsStateMessageProp { $success?: boolean; $error?: boolean; 
 export enum sizeMessage { no, $small = 6, $large = 8, $huge = 12, $massive = 14, }
 registerEnum(sizeMessage, '$Size');
 export interface IPropsSizeMessageProp { $small?: boolean; $large?: boolean; $huge?: boolean; $massive?: boolean; }
-
+    
 export interface MessageProps extends IProps, IPropsAttachedProp, IPropsStateMessageProp, IPropsColorProp, IPropsSizeMessageProp {
   $Attached?: attached;
   $State?: stateMessage;
@@ -932,17 +967,17 @@ export var revealPropsDescr = createDescr<RevealProps>(val => {
 //**************************************************************
 
 export enum raised { no, $raisedStandard, $raisedStacked, $raisedPiled, $raisedStackedTall, }
-registerEnum(raised, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedStackedTall: 'stackedTall', $raisedPiled: 'piled' });
+registerEnum(raised, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedStackedTall: 'stackedTall', $raisedPiled: 'piled' } );
 export interface IPropsRaisedProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; $raisedStackedTall?: boolean; }
 
 export enum padded { no, $paddedStandard, $paddedVery, }
-registerEnum(padded, '$Padded', { $paddedVery: 'veryPadded' });
+registerEnum(padded, '$Padded', { $paddedVery: 'veryPadded'} );
 export interface IPropsPaddedProp { $paddedStandard?: boolean; $paddedVery?: boolean; }
 
 export enum emphasis { no, $secondary, $tertiary, }
-registerEnum(emphasis, '$Emphasis');
+registerEnum(emphasis, '$Emphasis' );
 export interface IPropsEmphasisProp { $secondary?: boolean; $tertiary?: boolean; }
-
+    
 export interface SegmentProps extends IProps, IPropsRaisedProp, IPropsAttachedProp, IPropsPaddedProp, IPropsEmphasisProp, IPropsAlignedProp, IPropsColorProp, IPropsFloatedProp {
   $Raised?: raised;
   $Attached?: attached;
@@ -1000,7 +1035,7 @@ export const Segment: StatelessComponent<SegmentProps> = pr => {
 export enum raisedSegments { no, $raisedStandard, $raisedStacked, $raisedPiled, }
 registerEnum(raisedSegments, '$Raised', { $raisedStandard: 'raised', $raisedStacked: 'stacked', $raisedPiled: 'piled' });
 export interface IPropsRaisedSegmentsProp { $raisedStandard?: boolean; $raisedStacked?: boolean; $raisedPiled?: boolean; }
-
+    
 export interface SegmentsProps extends IProps, IPropsRaisedSegmentsProp {
   $Raised?: raisedSegments;
   $compact?: boolean;
@@ -1149,7 +1184,7 @@ export interface IPropsWideLargeScreenProp { $twoWideLargeScreen?: boolean; $thr
 export enum wideWidescreen { no, $twoWideWidescreen, $threeWideWidescreen, $fourWideWidescreen, $fiveWideWidescreen, $sixWideWidescreen, $sevenWideWidescreen, $eightWideWidescreen, $nineWideWidescreen, $tenWideWidescreen, $elevenWideWidescreen, $twelveWideWidescreen, $thirteenWideWidescreen, $fourteenWideWidescreen, $fifteenWideWidescreen, $sixteenWideWideScreen, }
 registerEnum(wideWidescreen, '$WideWidescreen');
 export interface IPropsWideWidescreenProp { $twoWideWidescreen?: boolean; $threeWideWidescreen?: boolean; $fourWideWidescreen?: boolean; $fiveWideWidescreen?: boolean; $sixWideWidescreen?: boolean; $sevenWideWidescreen?: boolean; $eightWideWidescreen?: boolean; $nineWideWidescreen?: boolean; $tenWideWidescreen?: boolean; $elevenWideWidescreen?: boolean; $twelveWideWidescreen?: boolean; $thirteenWideWidescreen?: boolean; $fourteenWideWidescreen?: boolean; $fifteenWideWidescreen?: boolean; $sixteenWideWideScreen?: boolean; }
-
+    
 export interface ColumnProps extends IProps, IPropsWideMobileProp, IPropsWideTabletProp, IPropsWideComputerProp, IPropsWideLargeScreenProp, IPropsWideWidescreenProp, IPropsFloatedProp, IPropsAlignedProp, IPropsColorProp, IPropsWideProp, IPropsDeviceOnlyGridProp {
   $WideMobile?: wideMobile;
   $WideTablet?: wideTablet;
@@ -1192,17 +1227,17 @@ export const Column: StatelessComponent<ColumnProps> = pr => {
 //**************************************************************
 
 export enum divided { no, $dividedHorizontally, $dividedVertically, }
-registerEnum(divided, '$Divided', { $dividedHorizontally: 'divided', $dividedVertically: 'verticallyDivided' });
+registerEnum(divided, '$Divided', {$dividedHorizontally:'divided', $dividedVertically:'verticallyDivided'});
 export interface IPropsDividedProp { $dividedHorizontally?: boolean; $dividedVertically?: boolean; }
 
 export enum celled { no, $celled, $celledInternally, }
-registerEnum(celled, '$Celled', { $celledInternally: 'internallyCelled' });
+registerEnum(celled, '$Celled', {$celledInternally:'internallyCelled'});
 export interface IPropsCelledProp { $celled?: boolean; $celledInternally?: boolean; }
 
 export enum paddedGrid { no, $padded, $paddedHorizontally, $paddedVertically, }
-registerEnum(paddedGrid, '$PaddedGrid', { $paddedHorizontally: '$horizontallyPadded', $paddedVertically: 'verticallyPadded' });
+registerEnum(paddedGrid, '$PaddedGrid', {$paddedHorizontally:'$horizontallyPadded', $paddedVertically:'verticallyPadded'});
 export interface IPropsPaddedGridProp { $padded?: boolean; $paddedHorizontally?: boolean; $paddedVertically?: boolean; }
-
+    
 export interface GridProps extends IProps, IPropsDividedProp, IPropsCelledProp, IPropsPaddedGridProp, IPropsColumnProp, IPropsAlignedProp, IPropsRelaxedProp {
   $Divided?: divided;
   $Celled?: celled;

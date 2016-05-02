@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 
 //export {TSyncValidator, TSyncCompleted, IInputLowProps, IFormProps, TInputLowTemplate} from './forms';
-export type TSyncValidator = (val: string) => string;
+export type TSyncValidator<V> = (val: V) => string;
 export type TSyncCompleted = (err: string) => void;
 
 export type convertResult = string | {};

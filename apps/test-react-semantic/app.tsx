@@ -81,7 +81,7 @@ export class AppRootStore extends flux.Store {
       </div>
       <CodeGenerator2/>
       <CodeGenerator/>
-      <FormSmartTest $parent={this}/>
+      <FormSmartTest/>
       <MessageTest/>
       <FormsTest/>
       <InputTest/>

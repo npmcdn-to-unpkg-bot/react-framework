@@ -14,7 +14,7 @@ export class ELoginNeeded extends Error {
 export interface ITypedObj { _type: string; }
 
 //types for validators
-export type TSyncValidator = (val: string) => string;
+export type TSyncValidator<V> = (val: V) => string;
 export type TSyncCompleted = (err: string) => void;
 
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
@@ -78,7 +78,7 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 export class Component<T extends Store, P extends IPropsEx> extends React.Component<IProps<T> & P, any> { //generic React component
   constructor(props: IProps<T> & P, ctx: IComponentContext) {
     super(props, ctx);
-    this.state = props.initState;
+    this.state = props.store;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
     else if (this.props.id && this.state.id && this.props.id!=this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${this.props.id}"`);
@@ -98,11 +98,10 @@ export type TComponent = Component<Store, IPropsEx>;
 export type TComponentClass = React.ComponentClass<TProps>;
 
 //****************** STORE
-export type IChildStores = { [path: string]: Store; };
-//export interface IStore { $parent: Store; instanceId?: string; childStores: IChildStores; /*sem se nabinduji Stores z child component, ktere nemaji delegovan Store od parenta*/ }
-export interface IPropsEx { /*$parent?: Store;*/ id?: string; $template?: TTemplate; }
+export type IChildStores = { [idInParent: string]: Store; };
+export interface IPropsEx { id?: string; $template?: TTemplate; }
 export interface IProps<T extends Store> {
-  initState?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
+  store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem stateless komponenty
 }
 export type TProps = IProps<Store> & IPropsEx;
 export type TTemplate = (self: Store) => React.ReactNode;
@@ -278,7 +277,7 @@ export class RouteHookStore extends Store { //Route Hook component
   }
   $routePar: TRouteActionPar;
   render(): JSX.Element {
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { initState: this.hookedStore, key: store.getUnique() }) : <div>Loading...</div>;
+    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { store: this.hookedStore, key: store.getUnique() }) : <div>Loading...</div>;
   }
   hookedStore: Store;
 }
@@ -427,7 +426,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
   }
 
   render(): JSX.Element { 
-    return React.createElement(RouteHook, { initState: this.routeHookDefault }); }
+    return React.createElement(RouteHook, { store: this.routeHookDefault }); }
 
   findStore(path: string): Store { let res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
 

@@ -69,17 +69,17 @@ export var source: genSource = {
   codeData: [
     {
       name: 'checkBox',
-
-      boolProps: [{ name: 'compact' }, ],
+      autoClass: `'ui checkbox'`,
+      autoTag: `'div'`,
+      boolProps: [{ name: 'readOnly', alias:'read-only' }, {name:'checked'}, {name:'disabled'}, {name:'fitted'}, {name:'radio'} ],
       enumProps: [
-        { name: 'color', isSystem: true },
+        { name: 'type', values:['no','slider','toggle'] },
       ],
     },
     {
       name: 'message',
       autoClass: `'ui message'`,
       autoTag: `'div'`,
-
       boolProps: [{ name: 'icon' }, { name: 'hidden' }, { name: 'visible' }, { name: 'floating' }, { name: 'compact' }, ],
       enumProps: [
         { name: 'attached', isSystem: true },
@@ -92,7 +92,6 @@ export var source: genSource = {
       name: 'form',
       autoClass: `'ui form'`,
       autoTag: `'div'`,
-      
       boolProps: [{ name: 'loading' }, { name: 'success' }, { name: 'equalWidth' }, {name:'inverted'}],
       enumProps: [
         { name: 'outerTagForm', aliasPropName: 'OuterTag', values: ['no', 'form=htmlTags.form'] },

@@ -113,9 +113,9 @@ export class AppRootStore extends flux.Store {
       <hr/>
       <Child title='Not routed child'/>
       <hr/>
-      <RouteHook initState={this.routeHookDefault}/>
+      <RouteHook store={this.routeHookDefault}/>
       <hr/>
-      <RouteHook initState={this.otherHook}/>
+      <RouteHook store={this.otherHook}/>
       <hr/>
       {/*
       */}
