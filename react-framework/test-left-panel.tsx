@@ -13,8 +13,7 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-//export interface IStoreApp extends flux.IStore { }
-export interface IPropsExApp extends flux.IPropsEx { }
+export interface IPropsExApp { }
 
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
@@ -41,7 +40,7 @@ export class AppRootStore extends flux.Store {
       <a href='#' onClick={this.dump.bind(this) }>Dump</a>
       {shoDumpEl}
       <hr/>
-      {this.items.map(item => <TestItem store={item} key={item.id}/>) }
+      {this.items.map(item => <TestItem $store={item} key={item.id}/>) }
     </div>;
   }
 }
@@ -49,7 +48,7 @@ export class AppRootStore extends flux.Store {
 //****************** TestItem component
 export enum TItemState { no, playing, recording }
 
-export class TestItem extends flux.Component<TestItemStore, flux.IPropsEx> { }
+export class TestItem extends flux.Component<TestItemStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId })
 export class TestItemStore extends flux.Store {

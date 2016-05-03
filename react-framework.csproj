@@ -43,6 +43,7 @@
     <Content Include="react-semantic\package.json" />
     <Content Include="react-semantic\elements\flag.json" />
     <None Include="trash\json.json" />
+    <Content Include="trash\dimmer.html" />
     <Content Include="trash\index.html" />
     <Content Include="utils\position.js" />
     <Content Include="utils\typescript-polyfils.js" />
@@ -50,8 +51,15 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="apps\mdl-d-ts\mdl-d-ts.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\app6.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\app5.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\app4.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\app3.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\app2.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\app1.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\app.tsx" />
     <TypeScriptCompile Include="apps\test-react-semantic\app.tsx" />
+    <TypeScriptCompile Include="react-framework\behaviors\positions.ts" />
     <TypeScriptCompile Include="react-framework\behaviors\input.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\check-box.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />

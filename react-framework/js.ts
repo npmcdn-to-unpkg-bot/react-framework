@@ -2,4 +2,4 @@
 export {ITest, Tests} from './action-recorder';
 export {StoreApp, TStoreAppClass, RouteHookStore, TComponent, IProps, Component, RouteHook, StoreDef, TAction, ITypedObj, navigate,
 IActionPar, Store, TRouteActionPar, TExceptionCallback, TCreateStoreCallback, ELoginNeeded, IRouteActionPar, TStoreClass, 
-IPropsEx, Exception, ENotImplemented, TCallback, noop, BindToState, TTemplate} from './flux';
+Exception, ENotImplemented, TCallback, noop, BindToState, TTemplate} from './flux';

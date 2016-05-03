@@ -33,7 +33,7 @@ import * as ui from '../../react-semantic/common/exports';
 import {FormSmartTest} from '../../react-semantic/behaviors/forms-test';
 
 
-var moduleId = 'testReactSemantic'
+var moduleId = 'UITest'
 
 //****************** Main Entry Point
 export function init() {
@@ -49,7 +49,7 @@ export class AppStore extends flux.StoreApp {
 
 //****************** AppRoot component
 //export interface IStoreApp extends flux.IStore { }
-export interface IPropsExApp extends flux.IPropsEx { }
+export interface IPropsExApp { }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 enum TActions { };//, refreshState };

@@ -29,7 +29,7 @@ export abstract class InputLowStore extends forms.FieldLowStore<TValue> {
   }
 
   //string value
-  $defaultValue: TValue;
+  //$defaultValue: TValue;
   assignTo(val: TValue): TValue { return val ? val : ''; }
   modified(val1: TValue, val2: TValue):boolean {return val1!=val2;}
 }

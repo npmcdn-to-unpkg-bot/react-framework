@@ -64,7 +64,7 @@ export function startPlaying(saveId: string, progress: (pos: number, len: number
   let str = getRecording(saveId); if (!str) { completed(new flux.Exception(`Recording not found: ${saveId}`)); return; }
   let data: IData = JSON.parse(str);
   let playList = data.playList;
-  if (!playList || playList.length <= 0) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
+  if (!playList) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
   let len = playList.length; let pos = 1;
   flux.StoreApp.bootApp(data.store, err => {
     if (err) { completed(err); return; }
@@ -75,6 +75,8 @@ export function startPlaying(saveId: string, progress: (pos: number, len: number
 export function appStateToJSON(st: flux.StoreApp, indent?: number): string {
   st.saveRoute = st.actRoutes();
   return JSON.stringify(st, (key, val) => {
+    //console.log('>>>* ' + key);
+    //if (key == 'store') { debugger; }
     if (key && key.startsWith('$')) return undefined;
     return val;
   }, indent)

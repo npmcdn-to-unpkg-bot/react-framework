@@ -68,6 +68,23 @@ export var source: genSource = {
   ],
   codeData: [
     {
+      name: 'modal',
+      autoClass: `'ui modal'`,
+      autoTag: `'div'`,
+      boolProps: [{ name: 'active' }, { name: 'scrolling' }, { name: 'long' }, { name: 'basic' }, ],
+      enumProps: [
+        { name: 'sizeModal', aliasPropName:'Size', values: ['no', 'small=6', 'large=8', 'fullscreen=20'] },
+      ],
+    },
+    {
+      name: 'dimmer',
+      autoClass: `'ui dimmer'`,
+      autoTag: `'div'`,
+      boolProps: [{ name: 'active' }, { name: 'page' }, { name: 'disabled' }, { name: 'inverted' }, { name:'modals'} ],
+      enumProps: [
+      ],
+    },
+    {
       name: 'checkBox',
       autoClass: `'ui checkbox'`,
       autoTag: `'div'`,

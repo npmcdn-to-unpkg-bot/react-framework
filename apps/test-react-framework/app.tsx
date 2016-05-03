@@ -7,7 +7,7 @@ import {RouteHook} from '../../react-framework/exports';
 import {Badge, Button, FABButton } from 'react-mdl';
 
 
-var moduleId = 'testReactFramework';
+var moduleId = 'RFTest';
 
 //****************** Main Entry Point
 export function init() {
@@ -32,7 +32,7 @@ export class AppStore extends flux.StoreApp {
 
 //****************** Login page
 //export interface IStoreLogin extends flux.IStore { returnUrl: string }
-export interface IPropsExLogin extends flux.IPropsEx { returnUrl?: string }
+export interface IPropsExLogin { returnUrl?: string }
 
 export class Login extends flux.Component<LoginStore, IPropsExLogin> { }
 
@@ -49,9 +49,8 @@ export class LoginStore extends flux.Store {
         break;
     }
   }
-  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
-    var p = par as ILoginRouteActionPar;
-    this.returnUrl = p.returnUrl;
+  initFromRoutePar(routePar: ILoginRouteActionPar, completed: flux.TCreateStoreCallback) {
+    this.returnUrl = routePar.returnUrl;
     completed(this);
   }
   returnUrl: string;
@@ -64,7 +63,7 @@ export class LoginStore extends flux.Store {
 
 //****************** AppRoot component
 //export interface IStoreApp extends flux.IStore { title: string }
-export interface IPropsExApp extends flux.IPropsEx { title?: string }
+export interface IPropsExApp { title?: string }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 enum TActions { appClick, childClick, navigate, login };//, refreshState };
@@ -103,7 +102,7 @@ export class AppRootStore extends flux.Store {
         super.doDispatchAction(id, par, completed)
     }
   }
-  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
+  initFromRoutePar(routePar: flux.IActionPar, completed: flux.TCreateStoreCallback) {
     setTimeout(() => completed(this), 200);
   }
   render(): JSX.Element {
@@ -113,9 +112,9 @@ export class AppRootStore extends flux.Store {
       <hr/>
       <Child title='Not routed child'/>
       <hr/>
-      <RouteHook store={this.routeHookDefault}/>
+      <RouteHook $store={this.routeHookDefault}/>
       <hr/>
-      <RouteHook store={this.otherHook}/>
+      <RouteHook $store={this.otherHook}/>
       <hr/>
       {/*
       */}
@@ -125,7 +124,7 @@ export class AppRootStore extends flux.Store {
 
 //****************** Child component
 //export interface IStoreChild extends flux.IStore { title: string }
-export interface IPropsExChild extends flux.IPropsEx { title?: string }
+export interface IPropsExChild { title?: string }
 
 export class Child extends flux.Component<ChildStore, IPropsExChild> { }
 
@@ -149,8 +148,8 @@ export class ChildStore extends flux.Store {
         super.doDispatchAction(id, par, completed)
     }
   }
-  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
-    setTimeout(() => { Object.assign(this, par); completed(this); }, 200);
+  initFromRoutePar(routePar: flux.IActionPar, completed: flux.TCreateStoreCallback) {
+    setTimeout(() => { Object.assign(this, routePar); completed(this); }, 200);
   }
   render(): JSX.Element {
     return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;

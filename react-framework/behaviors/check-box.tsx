@@ -21,7 +21,6 @@ export abstract class CheckBoxLow<T extends CheckBoxLowStore, P> extends forms.F
 //****** RadioButtons
 export class RadioLowStore extends flux.Store {
   //props
-  $group: RadiosStore;
   $checked:boolean;
   $title:string;
   //inherited
@@ -45,15 +44,14 @@ export class RadioLowStore extends flux.Store {
   }
 }
 
-export interface RadioProps extends flux.IPropsEx {
-  $group: RadiosStore;
+export interface RadioProps {
+  $parent: RadiosStore;
   $checked?:boolean;
   $title?:string;
 }
 export abstract class RadioLow<T> extends flux.Component<RadioLowStore, RadioProps & T> { 
   constructor(props: flux.IProps<RadioLowStore> & RadioProps & T, ctx: flux.IComponentContext) {
-    if (!props.$group) throw new flux.Exception('!this.props.$group');
-    ctx.$parent = props.$group;
+    ctx.$parent = props.$parent;
     super(props, ctx);
   }
   getChildContext(): forms.IFieldContext { return { MyInput: this.state, $parent: this.state }; }
@@ -69,6 +67,10 @@ export class RadiosStore extends forms.FieldLowStore<any> {
       var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch===radio || !ch.checked) continue;
       ch.modify(st => st.checked = !st.checked);
     }
+  }
+  selected():RadioLowStore {
+    for(var p in this.childStores) { var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch.checked) return ch; }
+    return null;
   }
 }
 

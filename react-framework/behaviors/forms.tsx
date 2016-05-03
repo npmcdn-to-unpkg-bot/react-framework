@@ -19,7 +19,7 @@ FieldLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.P
 
 type TFieldComponent = FieldLow<any, FieldLowStore<any>, {}>;
 
-export interface FieldLowProps<V> extends flux.IPropsEx {
+export interface FieldLowProps<V> {
   $title?: string;
   $defaultValue?: V;
   $validatorAsync?: (val: V, completed: flux.TSyncCompleted) => void;
@@ -27,12 +27,13 @@ export interface FieldLowProps<V> extends flux.IPropsEx {
 }
 
 //************** FieldLowStore
-export abstract class FieldLowStore<V> extends flux.Store implements FieldLowProps<V> {
+export abstract class FieldLowStore<V> extends flux.Store {
   //props
-  $title: string;
-  $validatorAsync: (val: V, completed: flux.TSyncCompleted) => void;
-  $validator: flux.TSyncValidator<V> | Array<flux.TSyncValidator<V>>;
+  //$title: string;
+  //$validatorAsync: (val: V, completed: flux.TSyncCompleted) => void;
+  //$validator: flux.TSyncValidator<V> | Array<flux.TSyncValidator<V>>;
   //inherited
+  $props: flux.TProps<this, FieldLowProps<V>>;
   $context: IFormContext;
   $myForm: FormLowStore;
   //state
@@ -42,13 +43,13 @@ export abstract class FieldLowStore<V> extends flux.Store implements FieldLowPro
   validating: boolean;
 
   //abstract value
-  $defaultValue: V;
+  //$defaultValue: V;
   assignTo(val: V): V {return val;}
   modified(val1: V, val2: V):boolean {return val1===val2;}
 
   componentCreated(comp: TFieldComponent) {
     super.componentCreated(comp);
-    this.value = this.assignTo(this.$defaultValue);
+    this.value = this.assignTo(this.$props.$defaultValue);
     if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
   }
   componentWillUnmount(comp: TFieldComponent): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
@@ -60,7 +61,7 @@ export abstract class FieldLowStore<V> extends flux.Store implements FieldLowPro
   reset() {
     this.asyncCancel();
     delete this.$asyncLastResult;
-    this.modify(st => st.value = this.assignTo(this.$defaultValue));
+    this.modify(st => st.value = this.assignTo(this.$props.$defaultValue));
   }
   doDispatchAction(id: number, par: FieldActionPar<V>, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -75,7 +76,7 @@ export abstract class FieldLowStore<V> extends flux.Store implements FieldLowPro
 
   modifyInputTagProps(props: React.HTMLAttributes) { }
 
-  protected hasValidator(): boolean { return !!this.$validator || !!this.$validatorAsync; }
+  protected hasValidator(): boolean { return !!this.$props.$validator || !!this.$props.$validatorAsync; }
 
   protected blur() {
     console.log('blur');
@@ -101,7 +102,7 @@ export abstract class FieldLowStore<V> extends flux.Store implements FieldLowPro
       self.asyncCancel();
       self.modify(st => { st.validating = true; st.error = null; });
       let obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
-        self.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
+        self.$props.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
         return () => { };
       });
       self.$asyncConnectable = obs.publish();
@@ -117,14 +118,14 @@ export abstract class FieldLowStore<V> extends flux.Store implements FieldLowPro
     if (!this.hasValidator()) { refreshComponent(null); return; }
 
     //******* sync validation
-    if (this.$validator) {
+    if (this.$props.$validator) {
       if (!self.blured) { refreshComponent(null); return; }
       let error = null;
-      var vals = Array.isArray(this.$validator) ? this.$validator as Array<flux.TSyncValidator<V>> : [this.$validator as flux.TSyncValidator<V>];
+      var vals = Array.isArray(this.$props.$validator) ? this.$props.$validator as Array<flux.TSyncValidator<V>> : [this.$props.$validator as flux.TSyncValidator<V>];
       if (vals.find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
     }
 
-    if (!this.$validatorAsync) { refreshComponent(null); return; }
+    if (!this.$props.$validatorAsync) { refreshComponent(null); return; }
 
     //******* async validation
     //** at handleChange
@@ -174,7 +175,7 @@ export class InputTag extends React.Component<React.HTMLAttributes, {}>  {
 }
 
 //************** FormLow
-export abstract class FormLow<T extends FormLowStore, P extends flux.IPropsEx> extends flux.Component<T, flux.IPropsEx & P> {
+export abstract class FormLow<T extends FormLowStore, P> extends flux.Component<T, P> {
   getChildContext(): IFormContext { return { MyForm: this.state, $parent:this.state }; }
 }
 FormLow['childContextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };

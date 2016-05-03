@@ -12,7 +12,7 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-export interface IPropsExApp extends flux.IPropsEx { mode?: AppRootMode; dumpKey?: string; }
+export interface IPropsExApp { mode?: AppRootMode; dumpKey?: string; }
 export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 
 export enum AppRootMode { export, import, dump }
@@ -22,8 +22,8 @@ export interface IAppRootRouteActionPar { mode: AppRootMode; dumpKey: string; }
 export class AppRootStore extends flux.Store {
   dumpKey: string;
   mode: AppRootMode;
-  initStore(par: flux.IActionPar, completed: flux.TCreateStoreCallback) {
-    Object.assign(this, par as IAppRootRouteActionPar); completed(this);
+  initFromRoutePar(routePar: IAppRootRouteActionPar, completed: flux.TCreateStoreCallback) {
+    Object.assign(this, routePar); completed(this);
   }
   import(ev: React.MouseEvent) {
     ev.preventDefault();

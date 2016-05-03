@@ -14,7 +14,7 @@ export class FormSmart extends forms.FormLow<FormSmartStore, ui.FormProps> {}
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FormSmart })
 export class FormSmartStore extends forms.FormLowStore {
-  render(): JSX.Element { return React.createElement(ui.Form, this as any, this.children); }
+  render(): JSX.Element { return React.createElement(ui.Form, this as any, this.$props.children); }
 }
 
 export class FieldSmart extends input.InputLow<FieldSmartStore, ui.FieldProps> { }
@@ -24,7 +24,7 @@ export class FieldSmartStore extends input.InputLowStore {
   render(): JSX.Element {
     var props: ui.FieldProps = Object.assign({}, this); 
     props.$error = !!this.error; props['key'] = this.getIdInParent();
-    return React.createElement(ui.Field, props, this.$template ? this.$template(this) : null);
+    return React.createElement(ui.Field, props, this.$props.$template ? this.$props.$template(this) : null);
   }
 }
 
@@ -38,7 +38,7 @@ export class CheckBoxStore extends chb.CheckBoxLowStore {
     this.semanticHack();
     var props = Object.assign({}, this); 
     props.onClick = ev => this.handleChange(!this.value);
-    return React.createElement(ui.CheckBox, props, this.$template ? this.$template(this) : [<forms.InputTag ref = {inp => this.inp = inp}/>, <label>{this.$title}</label>]);
+    return React.createElement(ui.CheckBox, props, this.$props.$template ? this.$props.$template(this) : [<forms.InputTag ref = {inp => this.inp = inp}/>, <label>{this.$props.$title}</label>]);
   }
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
@@ -58,7 +58,7 @@ export class RadioStore extends chb.RadioLowStore {
     var props: ui.CheckBoxProps = Object.assign({}, this); 
     props.onClick = this.onClick.bind(this);
     props.$radio = true;
-    return React.createElement(ui.CheckBox, props, this.$template ? this.$template(this) : [<forms.InputTag/>, <label>{this.$title}</label>]);
+    return React.createElement(ui.CheckBox, props, this.$props.$template ? this.$props.$template(this) : [<forms.InputTag/>, <label>{this.$title}</label>]);
   }
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
