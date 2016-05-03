@@ -19,6 +19,6 @@ export class AppStore extends flux.StoreApp {
 export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store {
+export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element { return <h1>Hallo world 1</h1>; }
 }

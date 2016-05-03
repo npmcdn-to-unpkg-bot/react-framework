@@ -103,7 +103,7 @@ export interface IData {
   playList?: Array<flux.TAction>;
 }
 
-function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flux.Store {
+function literalsToStores(parentStore: flux.TStore, literal: flux.ITypedObj): flux.TStore {
   if (!literal || !literal._type) throw new flux.Exception(JSON.stringify(literal));
   let st = flux.Store.createInJSON(parentStore, literal._type);
   Object.assign(st, literal);
@@ -111,7 +111,7 @@ function literalsToStores(parentStore: flux.Store, literal: flux.ITypedObj): flu
   return st;
 }
 
-function traverseToRepl(parentStore: flux.Store, obj: Object) {
+function traverseToRepl(parentStore: flux.TStore, obj: Object) {
   for (let p in obj) {
     if (p.startsWith('$')) continue;
     let res = obj[p]; if (!res) continue;

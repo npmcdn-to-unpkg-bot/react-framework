@@ -12,14 +12,14 @@ export class AppStore extends flux.StoreApp {
 }
 
 //****************** AppRoot component
-export interface IPropsExApp { mode?: AppRootMode; dumpKey?: string; }
-export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
-
 export enum AppRootMode { export, import, dump }
 export interface IAppRootRouteActionPar { mode: AppRootMode; dumpKey: string; }
 
+//export interface IPropsExApp { mode?: AppRootMode; dumpKey?: string; }
+export class AppRoot extends flux.Component<AppRootStore, {}> { }
+
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store {
+export class AppRootStore extends flux.Store<{}> {
   dumpKey: string;
   mode: AppRootMode;
   initFromRoutePar(routePar: IAppRootRouteActionPar, completed: flux.TCreateStoreCallback) {

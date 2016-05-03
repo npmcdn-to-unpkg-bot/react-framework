@@ -58,7 +58,7 @@ export class RadioStore extends chb.RadioLowStore {
     var props: ui.CheckBoxProps = Object.assign({}, this); 
     props.onClick = this.onClick.bind(this);
     props.$radio = true;
-    return React.createElement(ui.CheckBox, props, this.$props.$template ? this.$props.$template(this) : [<forms.InputTag/>, <label>{this.$title}</label>]);
+    return React.createElement(ui.CheckBox, props, this.$props.$template ? this.$props.$template(this) : [<forms.InputTag/>, <label>{this.$props.$title}</label>]);
   }
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);

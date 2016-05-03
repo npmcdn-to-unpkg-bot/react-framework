@@ -24,7 +24,7 @@ export enum AppRootAction { click }
 export interface IAppRootRoutePar extends flux.IActionPar { title: string; } //route action par
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store {
+export class AppRootStore extends flux.Store<{}> {
   title: string;
   initFromRoutePar(routePar: IAppRootRoutePar, completed: flux.TCreateStoreCallback) { //asynchronni inicializace store po jeho vytvoreni
     setTimeout(() => { this.title = routePar.title; completed(this); }, 1000);

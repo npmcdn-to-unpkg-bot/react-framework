@@ -27,13 +27,12 @@ export interface FieldLowProps<V> {
 }
 
 //************** FieldLowStore
-export abstract class FieldLowStore<V> extends flux.Store {
+export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
   //props
   //$title: string;
   //$validatorAsync: (val: V, completed: flux.TSyncCompleted) => void;
   //$validator: flux.TSyncValidator<V> | Array<flux.TSyncValidator<V>>;
   //inherited
-  $props: flux.TProps<this, FieldLowProps<V>>;
   $context: IFormContext;
   $myForm: FormLowStore;
   //state
@@ -182,7 +181,7 @@ FormLow['childContextTypes'] = { MyForm: React.PropTypes.any, $parent: React.Pro
 export interface IFormContext extends flux.IComponentContext { MyForm: FormLowStore; }
 
 
-export abstract class FormLowStore extends flux.Store  {
+export abstract class FormLowStore extends flux.Store<{}>  {
  register(input: TFieldLowStore, isRegister: boolean) {
     if (isRegister) {
       input.$myForm = this;

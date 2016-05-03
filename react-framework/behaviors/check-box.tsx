@@ -19,10 +19,16 @@ export abstract class CheckBoxLowStore extends forms.FieldLowStore<boolean> {
 export abstract class CheckBoxLow<T extends CheckBoxLowStore, P> extends forms.FieldLow<boolean, T, CheckBoxLowProps & P> { }
 
 //****** RadioButtons
-export class RadioLowStore extends flux.Store {
+export interface RadioProps {
+  $parent: RadiosStore;
+  $checked?: boolean;
+  $title?: string;
+}
+
+export class RadioLowStore extends flux.Store<RadioProps> {
   //props
-  $checked:boolean;
-  $title:string;
+  //$checked:boolean;
+  //$title:string;
   //inherited
   $parent:RadiosStore;
   //state
@@ -30,7 +36,7 @@ export class RadioLowStore extends flux.Store {
 
   componentCreated(comp: RadioLow<any>) {
     super.componentCreated(comp);
-    this.checked = this.$checked;
+    this.checked = this.$props.$checked;
   }
 
   onClick(ev: React.FormEvent) {
@@ -44,11 +50,6 @@ export class RadioLowStore extends flux.Store {
   }
 }
 
-export interface RadioProps {
-  $parent: RadiosStore;
-  $checked?:boolean;
-  $title?:string;
-}
 export abstract class RadioLow<T> extends flux.Component<RadioLowStore, RadioProps & T> { 
   constructor(props: flux.IProps<RadioLowStore> & RadioProps & T, ctx: flux.IComponentContext) {
     ctx.$parent = props.$parent;

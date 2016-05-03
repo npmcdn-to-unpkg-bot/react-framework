@@ -6,7 +6,7 @@ import {ActionRecorder} from './action-recorder';
 
 var moduleId = 'store';
 export type TExceptionCallback = (exp: Error) => void;
-export type TCreateStoreCallback = (res: Error | Store) => void;
+export type TCreateStoreCallback = (res: Error | TStore) => void;
 export class ELoginNeeded extends Error {
   constructor() { super(); this.returnUrl = store.actRoutes(); }
   returnUrl: TRouteActionPar;
@@ -75,7 +75,7 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 }
 
 //******************  REACT COMPONENTS
-export class Component<T extends Store, P> extends React.Component<IProps<T> & P, any> { //generic React component
+export class Component<T extends TStore, P> extends React.Component<IProps<T> & P, any> { //generic React component
   constructor(props: TProps<T,P>, ctx: IComponentContext) {
     super(props, ctx);
     this.state = props.$store;
@@ -96,52 +96,52 @@ export class Component<T extends Store, P> extends React.Component<IProps<T> & P
 }
 Component['childContextTypes'] = { $parent: React.PropTypes.any };
 Component['contextTypes'] = { $parent: React.PropTypes.any };
-export interface IComponentContext { $parent: Store; }
+export interface IComponentContext { $parent: TStore; }
 
-export type TComponent = Component<Store, {}>;
-export type TComponentClass = React.ComponentClass<TProps<Store, {}>>;
+export type TComponent = Component<TStore, {}>;
+export type TComponentClass = React.ComponentClass<TProps<TStore, {}>>;
 
 //****************** STORE
-export type IChildStores = { [idInParent: string]: Store; };
+export type IChildStores = { [idInParent: string]: TStore; };
 //export interface IPropsEx {  }
-export interface IProps<T extends Store> {
+export interface IProps<T extends TStore> {
   $store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem komponenty
   id?: string;
   $template?: TTemplate<T>;
 }
-export type TProps<T extends Store, P> = IProps<T> & P & { children?: React.ReactNode };
-export type TTemplate<T extends Store> = (self: T) => React.ReactNode;
-
+export type TProps<T extends TStore, P> = IProps<T> & P & { children?: React.ReactNode };
+export type TTemplate<T extends TStore> = (self: T) => React.ReactNode;
+export type TStore = Store<{}>;
 
 //IPropsEx x Store relationship:
 //Every component props (eg. title:string) has to be defined in Store:
 //IF we needs: interface IExampleProps extends IPropsEx { title?:string; }
 //THEN we have to have: class ExampleStore extends Store { title:string; }
 //Props are assigned to Store in component constructor (Object.assign(this.state, props); delete this.state['$store'];
-export abstract class Store implements ITypedObj {
+export abstract class Store<T> implements ITypedObj {
 
   //$template: TTemplate<this>;
   $subscribers: Array<string> = []; //components path's, using this store as a status
   $context: any;
-  $props: TProps<this, {}>;
+  $props: TProps<this, T>;
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
   //children: React.ReactNode;
 
-  constructor(public $parent: Store, public id?: string) {
+  constructor(public $parent: TStore, public id?: string) {
     this._type = this.getMeta().classId;
     let idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
-  static createInHook<T extends Store>(parent: Store, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar): T {
+  static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar): T {
     let cls = Store.getStoreClass(storeId);
     if (store.loginNeeded(cls)) { completed(new ELoginNeeded()); return null; }
     let res = new cls(parent, instanceId);
     res.initFromRoutePar(routePar, completed);
     return res as T;
   }
-  static createInRender<T extends Store>(parent: Store, storeId: string | TStoreClass, instanceId?: string): T {
+  static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClass, instanceId?: string): T {
     //let parent = props.$parent; if (!parent) throw new flux.Exception(`"${flux.getClassName(this.constructor)}" component: missing $parent property`);
     let cls = Store.getStoreClass(storeId);
     let idInParent = Store.getClassIdInParent(cls, instanceId);
@@ -154,7 +154,7 @@ export abstract class Store implements ITypedObj {
     return res as T;
 
   }
-  static createInJSON(parent: Store, _type: string): Store {
+  static createInJSON(parent: TStore, _type: string): TStore {
     let meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
     return new meta.storeClass(parent);
   }
@@ -245,16 +245,14 @@ export abstract class Store implements ITypedObj {
   }
 }
 
-export type TStoreClass = new ($parent: Store, id?: string) => Store;
-export type TDispatchCallback = (store: Store) => void;
+export type TStoreClass = new ($parent: TStore, id?: string) => TStore;
+export type TDispatchCallback = (store: TStore) => void;
 
 //****************** ROUTER HOOK STORE
-export interface IPropsExRouteHook { }
-
-export class RouteHook extends Component<RouteHookStore, IPropsExRouteHook> { }
+export class RouteHook extends Component<RouteHookStore, {}> { }
 
 @StoreDef({ moduleId: moduleId, componentClass: RouteHook })
-export class RouteHookStore extends Store { //Route Hook component
+export class RouteHookStore extends Store<{}> { //Route Hook component
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
@@ -263,7 +261,7 @@ export class RouteHookStore extends Store { //Route Hook component
       completed(null);
     } else {
       var self = this;
-      Store.createInHook<Store>(this, par.storeId, res => {
+      Store.createInHook<TStore>(this, par.storeId, res => {
         if (res instanceof Store) {
           self.hookedStore = res;
           //process child routes
@@ -294,7 +292,7 @@ export class RouteHookStore extends Store { //Route Hook component
   render(): JSX.Element {
     return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: store.getUnique() }) : <div>Loading...</div>;
   }
-  hookedStore: Store;
+  hookedStore: TStore;
 }
 
 export interface IRouteActionPar<T extends IActionPar> extends IActionPar {
@@ -316,7 +314,7 @@ export var store: StoreApp;
 export type TStoreAppClass = new () => StoreApp;
 
 @StoreDef({ moduleId: moduleId })
-export abstract class StoreApp extends Store { //global Application store (root for other stores)
+export abstract class StoreApp extends Store<{}> { //global Application store (root for other stores)
   constructor() {
     super(null);
     //configure App
@@ -417,7 +415,7 @@ export abstract class StoreApp extends Store { //global Application store (root 
   getUnique(): number { return this.unique++; }
   findComponent(path: string): TComponent { let comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }
 
-  doSubscribe(st: Store, comp: TComponent, isSubscribe: boolean, includingComponent:boolean) { //prihlas x odhlas se k notifikaci o zmene stavu. Volano v TComponent konstructoru x TComponent.unmount.
+  doSubscribe(st: TStore, comp: TComponent, isSubscribe: boolean, includingComponent:boolean) { //prihlas x odhlas se k notifikaci o zmene stavu. Volano v TComponent konstructoru x TComponent.unmount.
     if (isSubscribe) { //konstructor
       //komponenta
       if (includingComponent) {
@@ -446,12 +444,12 @@ export abstract class StoreApp extends Store { //global Application store (root 
     return React.createElement(RouteHook, { $store: this.routeHookDefault });
   }
 
-  findStore(path: string): Store { let res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
+  findStore(path: string): TStore { let res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
 
   private $components: { [path: string]: TComponent; } = {}; //all existing app component
 
-  private static _findStore(path: string, obj): Store {
-    if (obj instanceof Store && (obj as Store).path == path) return obj as Store;
+  private static _findStore(path: string, obj): TStore {
+    if (obj instanceof Store && (obj as TStore).path == path) return obj as TStore;
     if (Array.isArray(obj)) {
       let res = null;
       (obj as Array<any>).find(o => !!(res = StoreApp._findStore(path, o)));
@@ -469,22 +467,22 @@ export abstract class StoreApp extends Store { //global Application store (root 
 }
 
 //******************  bind to state
-interface BindToStateProps { $stores: Array<flux.Store> | flux.Store; }
+interface BindToStateProps { $stores: Array<flux.TStore> | flux.TStore; }
 
 export class BindToState extends flux.Component<BindToStateStore, BindToStateProps> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: BindToState })
-export class BindToStateStore extends flux.Store {
-  $stores: Array<flux.Store> | flux.Store;
+export class BindToStateStore extends Store<BindToStateProps> {
+  //$stores: Array<flux.TStore> | flux.TStore;
   componentCreated(comp: flux.TComponent) {
     super.componentCreated(comp);
-    if (this.$stores) this.stores().forEach(st => st.subscribe(comp));
+    if (this.$props.$stores) this.stores().forEach(st => st.subscribe(comp));
   }
   componentWillUnmount(comp: flux.TComponent) {
     super.componentWillUnmount(comp);
-    if (this.$stores) this.stores().forEach(st => st.unSubscribe(comp));
+    if (this.$props.$stores) this.stores().forEach(st => st.unSubscribe(comp));
   }
-  private stores(): Array<flux.Store> { return Array.isArray(this.$stores) ? this.$stores as Array<flux.Store> : [this.$stores as flux.Store]; }
+  private stores(): Array<flux.TStore> { return Array.isArray(this.$props.$stores) ? this.$props.$stores as Array<flux.TStore> : [this.$props.$stores as flux.TStore]; }
 }
 
 //***************** POPSTATE EVENT

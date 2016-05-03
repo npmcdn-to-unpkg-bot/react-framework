@@ -39,7 +39,7 @@ export class Login extends flux.Component<LoginStore, IPropsExLogin> { }
 export interface ILoginRouteActionPar extends IPropsExLogin { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Login, loginNeeded: false })
-export class LoginStore extends flux.Store {
+export class LoginStore extends flux.Store<IPropsExLogin> {
 
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -69,20 +69,20 @@ export class AppRoot extends flux.Component<AppRootStore, IPropsExApp> { }
 enum TActions { appClick, childClick, navigate, login };//, refreshState };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store {
-  constructor($parent: flux.Store) {
+export class AppRootStore extends flux.Store<IPropsExApp> {
+  constructor($parent: flux.TStore) {
     super($parent);
     this.routeHookDefault = new flux.RouteHookStore(this, '1');
     this.otherHook = new flux.RouteHookStore(this, '2');
   }
 
-  title: string = 'Hello world'
+  //title: string = 'Hello world'
   routeHookDefault: flux.RouteHookStore;
   otherHook: flux.RouteHookStore;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.appClick:
-        setTimeout(() => { this.modify(st => st.title += 'x'); completed(null); }, 200);
+        setTimeout(() => { this.modify(st => st.$props.title += 'x'); completed(null); }, 200);
         break;
       //case TActions.refreshState:
       //  var stateStr = flux.appStateToJSON(flux.store, 2);
@@ -107,7 +107,7 @@ export class AppRootStore extends flux.Store {
   }
   render(): JSX.Element {
     return <div>
-      <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
+      <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.$props.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       <hr/>
       <Child title='Not routed child'/>
@@ -131,8 +131,8 @@ export class Child extends flux.Component<ChildStore, IPropsExChild> { }
 export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child, loginNeeded: true })
-export class ChildStore extends flux.Store {
-  title: string;
+export class ChildStore extends flux.Store<IPropsExChild> {
+  //title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.childClick:
@@ -140,7 +140,7 @@ export class ChildStore extends flux.Store {
           (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(st => st.par.title += 'x', completed);
           //flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
         else {
-          this.modify(st => st.title += 'x');
+          this.modify(st => st.$props.title += 'x');
           completed(null);
         }
         break;
@@ -152,7 +152,7 @@ export class ChildStore extends flux.Store {
     setTimeout(() => { Object.assign(this, routePar); completed(this); }, 200);
   }
   render(): JSX.Element {
-    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;
+    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.$props.title}</h3>;
   }
 }
 

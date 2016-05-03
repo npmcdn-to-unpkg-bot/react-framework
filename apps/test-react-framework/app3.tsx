@@ -24,7 +24,7 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 export interface IAppRoutePar extends flux.IActionPar { title: string; } //route action par
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store {
+export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element { return <h1>{this.title}</h1>; }
   title: string;
   //asynchronni inicializace Store

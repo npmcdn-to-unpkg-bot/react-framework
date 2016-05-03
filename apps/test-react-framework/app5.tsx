@@ -19,7 +19,7 @@ export class AppStore extends flux.StoreApp {
 export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
-export class AppRootStore extends flux.Store {
+export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element {
     return <div>
       <Comp $title='Sync' id='sync'/>
@@ -37,15 +37,13 @@ export class Comp extends flux.Component<CompStore, ICompPar> { }
 export enum CompAction { click }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Comp })
-export class CompStore extends flux.Store {
-  $title: string;
-  $async: boolean; 
+export class CompStore extends flux.Store<ICompPar> {
   subTitle: string = '';
-  render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, CompAction.click, 'click') }>Title/subTitle: {this.$title}/{this.subTitle}</h1>; }
+  render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, CompAction.click, 'click') }>Title/subTitle: {this.$props.$title}/{this.subTitle}</h1>; }
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case CompAction.click:
-        if (this.$async) { //Async action
+        if (this.$props.$async) { //Async action
           setTimeout(() => {
             this.modify(st => st.subTitle += 'x');
             completed(null);

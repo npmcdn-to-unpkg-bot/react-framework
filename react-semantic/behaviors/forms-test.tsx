@@ -52,8 +52,8 @@ var fieldTemplate: flux.TTemplate<InputSmartStore> = self =>
 enum TAction { click, click2 };
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FormSmartTest })
-export class FormTestStore extends flux.Store {
-  constructor($parent: flux.Store, instanceId?: string) {
+export class FormTestStore extends flux.Store<{}> {
+  constructor($parent: flux.TStore, instanceId?: string) {
     super($parent, instanceId);
     this.name = new InputSmartStore(this, 'name');
     this.password = new InputSmartStore(this, 'password');
