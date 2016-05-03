@@ -30,7 +30,7 @@ export class AppRootStore extends flux.Store<{}> {
     this.modify(st => st.items.forEach(it => it.selected = false));
     var all = this.items.filter(it => it.hasRecording());
     let obss = rx.Observable.from(all.map(inp => rx.Observable.create((obs: rx.Subscriber<any>) => {
-      inp.doPlay(() => { obs.next(); obs.complete(); });
+      inp.doPlay(() => { obs.next(); setTimeout(() => obs.complete(), 500); });
       return () => { };
     }))).concatAll() as rx.Observable<any>;
     obss.subscribe(null, null, null);
@@ -94,7 +94,8 @@ export class TestItemStore extends flux.Store<{}> {
       (pos, len) => this.modify(st => st.playProgress = `${pos} / ${len}`),
       err => {
         this.modify(st => st.playProgress += ' - ' + (err ? `*** ERROR: ${err.message}` : 'DONE'));
-        if (completed) setTimeout(() => completed(), 800);
+        //if (completed) setTimeout(() => completed(), 800);
+        if (completed) completed();
       }
     );
   }

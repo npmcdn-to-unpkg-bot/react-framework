@@ -1,11 +1,8 @@
 ﻿import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
-import * as tests from '../test-config';
 
 import {RouteHook} from '../../react-framework/exports';
-import {Badge, Button, FABButton } from 'react-mdl';
-
 
 var moduleId = 'RFTest';
 
