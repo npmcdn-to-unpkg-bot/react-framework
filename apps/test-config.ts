@@ -16,8 +16,8 @@ export function init() {
     rf4: { descr: 'RF 4', storeAppClass: rf4.AppStore },
     rf5: { descr: 'RF 5', storeAppClass: rf5.AppStore },
     rf6: { descr: 'RF 6', storeAppClass: rf6.AppStore },
-    test1: { descr: 'Test React framework', storeAppClass: testRF.AppStore },
-    test2: { descr: 'Test React Semantic', storeAppClass: semantic.AppStore },
+    //test1: { descr: 'Test React framework', storeAppClass: testRF.AppStore },
+    //test2: { descr: 'Test React Semantic', storeAppClass: semantic.AppStore },
     //test2: { descr: 'Test React framework 2', storeAppClass: testRF.AppStore, resetServer: compl => setTimeout(() => compl(), 1000) }
   };
 }

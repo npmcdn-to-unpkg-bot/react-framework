@@ -25,6 +25,16 @@ export class AppRootStore extends flux.Store<{}> {
   exportImport(ev: React.MouseEvent, isExport: boolean) { ev.preventDefault(); rightClient().service(isExport ? right.AppRootMode.export : right.AppRootMode.import); }
   export(ev: React.MouseEvent) { this.exportImport(ev, true); }
   import(ev: React.MouseEvent) { this.exportImport(ev, false); }
+  playAll(ev: React.MouseEvent) {
+    ev.preventDefault();
+    this.modify(st => st.items.forEach(it => it.selected = false));
+    var all = this.items.filter(it => it.hasRecording());
+    let obss = rx.Observable.from(all.map(inp => rx.Observable.create((obs: rx.Subscriber<any>) => {
+      inp.doPlay(() => { obs.next(); obs.complete(); });
+      return () => { };
+    }))).concatAll() as rx.Observable<any>;
+    obss.subscribe(null, null, null);
+  }
   dump(ev: React.MouseEvent) { ev.preventDefault(); this.modify(st => st.showDump = true); }
   items: Array<TestItemStore>;
   render(): JSX.Element {
@@ -35,7 +45,8 @@ export class AppRootStore extends flux.Store<{}> {
     return <div>
       <a href='#' onClick={this.export.bind(this) }>Export All</a> |
       <a href='#' onClick={this.import.bind(this) }>Import All</a> |
-      <a href='#' onClick={this.dump.bind(this) }>Dump</a>
+      <a href='#' onClick={this.dump.bind(this) }>Dump</a> |
+      <a href='#' onClick={this.playAll.bind(this) }>Play All</a>
       {shoDumpEl}
       <hr/>
       {this.items.map(item => <TestItem $store={item} key={item.id}/>) }
@@ -75,10 +86,16 @@ export class TestItemStore extends flux.Store<{}> {
   run(ev?: React.MouseEvent) { if (ev) ev.preventDefault(); rightClient().init(this.key); }
   startPlaying(ev: React.MouseEvent) {
     ev.preventDefault();
-    this.modify(st => { st.state = TItemState.playing; st.playProgress = '-'; });
+    this.doPlay();
+  }
+  doPlay(completed?: () => void) {
+    this.modify(st => { st.selected = true; st.state = TItemState.playing; st.playProgress = '-'; });
     rightClient().startPlaying(this.key,
       (pos, len) => this.modify(st => st.playProgress = `${pos} / ${len}`),
-      err => this.modify(st => st.playProgress += ' - ' + (err ? `*** ERROR: ${err.message}` : 'DONE'))
+      err => {
+        this.modify(st => st.playProgress += ' - ' + (err ? `*** ERROR: ${err.message}` : 'DONE'));
+        if (completed) setTimeout(() => completed(), 800);
+      }
     );
   }
   startRecording(ev: React.MouseEvent) {
