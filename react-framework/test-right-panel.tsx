@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
 
 //******************* GUI for Dump
-var moduleId = 'testingRightPanel';
+var moduleId = 'testing-right-panel';
 
 export function init() { }
 

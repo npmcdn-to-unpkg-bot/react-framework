@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 
-var moduleId = 'RFTest3';
+var moduleId = 'RF02';
 
 //****************** Main Entry Point
 export function init() {
@@ -12,10 +12,8 @@ export function init() {
 //****************** App Store
 @flux.StoreDef({ moduleId: moduleId })
 export class AppStore extends flux.StoreApp {
-  //default URL je diky getIsHashRouter ???.html#testReactFramework.AppRootStore;title=Hello_World_Title
-  //mozno zmenit napr. na #testReactFramework.AppRootStore;title=xxxx
-  getStartRoute(): flux.TRouteActionPar { return flux.createRoute<IAppRoutePar>(AppRootStore, { title: 'Hallo_World_Title_3' }); }
-  protected getIsHashRouter(): boolean { return true; }
+  //default URL je ???.html/testReactFramework.AppRootStore;title=Hello_World_Title
+  getStartRoute(): flux.TRouteActionPar { return flux.createRoute<IAppRoutePar>(AppRootStore, { title: 'Hallo_World_Title_2' }); }
 }
 
 //****************** AppRoot component
@@ -27,9 +25,6 @@ export interface IAppRoutePar extends flux.IActionPar { title: string; } //route
 export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element { return <h1>{this.title}</h1>; }
   title: string;
-  //asynchronni inicializace Store
-  initFromRoutePar(routePar: IAppRoutePar, completed: flux.TCreateStoreCallback) {
-    this.title = routePar.title;
-    setTimeout(() => completed(this), 1000);
-  } 
+  //finish store creation from route parameters. Not called in playing bootApp for action playing.
+  initFromRoutePar(routePar: IAppRoutePar, completed: flux.TCreateStoreCallback) { this.title = routePar.title; completed(this); } //inicializace store po jeho vytvoreni. Muze byt asynchronni
 }

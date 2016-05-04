@@ -5,7 +5,7 @@ import * as ReactDOM from 'react-dom';
 import * as flux from '../flux';
 import * as forms from './forms';
 
-const moduleId = 'forms';
+const moduleId = 'behaviors';
 
 //************** INPUT
 type TValue = string;
@@ -13,15 +13,6 @@ type TValue = string;
 interface InputLowProps extends forms.FieldLowProps<TValue> {}
 
 export abstract class InputLowStore extends forms.FieldLowStore<TValue> {
-  //static renderInputTag = (pr: InputLowProps, context: forms.IFieldContext) => {
-  //  let props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
-  //  if (!context || !context.MyInput) return React.createElement('input', props);
-  //  let store = context.MyInput as InputLowStore;
-  //  props.value = store.value;
-  //  props.onChange = ev => store.handleChange((event.target as any).value); if (store.hasValidator()) props.onBlur = store.blur.bind(store);
-  //  return React.createElement('input', props);
-  //}
-
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
     props.value = this.value;
@@ -29,7 +20,6 @@ export abstract class InputLowStore extends forms.FieldLowStore<TValue> {
   }
 
   //string value
-  //$defaultValue: TValue;
   assignTo(val: TValue): TValue { return val ? val : ''; }
   modified(val1: TValue, val2: TValue):boolean {return val1!=val2;}
 }

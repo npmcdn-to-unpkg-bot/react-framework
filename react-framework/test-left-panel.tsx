@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
 import * as right from './test-right-panel';
 
-var moduleId = 'testingLeftPanel';
+var moduleId = 'testing-left-panel';
 export function init() { flux.StoreApp.bootApp(AppStore); }
 
 @flux.StoreDef({ moduleId: moduleId })

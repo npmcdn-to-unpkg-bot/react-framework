@@ -4,7 +4,7 @@ import * as flux from '../../react-framework/exports';
 
 import {RouteHook} from '../../react-framework/exports';
 
-var moduleId = 'RFTest7';
+var moduleId = 'RF07';
 
 //****************** Main Entry Point
 export function init() {
@@ -19,14 +19,13 @@ export class AppStore extends flux.StoreApp {
       flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'Child1' }),
       { otherHook: flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'Child2' }) });
   }
-  getIsHashRouter(): boolean { return true; }
+  getIsHashRouter(): boolean { return true; } //hash URL format
 }
 
-//****************** AppRoot component
-export interface IPropsExApp { title?: string }
-export class AppRoot extends flux.Component<AppRootStore, {}> { }
+enum TActions { appClick, childClick, navigate };
 
-enum TActions { appClick, childClick, navigate, login };
+//****************** AppRoot component
+export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
@@ -34,10 +33,12 @@ export class AppRootStore extends flux.Store<{}> {
     super($parent);
     this.routeHookDefault = new flux.RouteHookStore(this, '1');
     this.otherHook = new flux.RouteHookStore(this, '2');
+    this.child1 = new ChildStore(this);
   }
 
   routeHookDefault: flux.RouteHookStore;
   otherHook: flux.RouteHookStore;
+  child1: ChildStore;
   title = 'App title';
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -64,7 +65,8 @@ export class AppRootStore extends flux.Store<{}> {
       <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       <hr/>
-      <Child $title='Not routed child'/>
+      <Child $title='Not routed child 1' $store={this.child1} id='child1'/>
+      <Child $title='Not routed child 2' id='child2'/>
       <hr/>
       <RouteHook $store={this.routeHookDefault}/>
       <hr/>
@@ -79,12 +81,18 @@ export class AppRootStore extends flux.Store<{}> {
 //****************** Child component
 export interface IPropsChild { $title?: string }
 
-export class Child extends flux.Component<ChildStore, IPropsChild> { }
+export class Child extends flux.Component<ChildStore, IPropsChild> {
+  //constructor(props, ctx) {
+  //  debugger;
+  //  super(props, ctx);
+  //}
+}
 
 export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child })
 export class ChildStore extends flux.Store<IPropsChild> implements IChildRouteActionPar {
+
   title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -100,12 +108,12 @@ export class ChildStore extends flux.Store<IPropsChild> implements IChildRouteAc
         super.doDispatchAction(id, par, completed)
     }
   }
+  //init from router parametter, could be async
   initFromRoutePar(routePar: IChildRouteActionPar, completed: flux.TCreateStoreCallback) {
     setTimeout(() => { Object.assign(this, routePar); completed(this); }, 200);
   }
-  componentCreated(comp: Child) {
-    super.componentCreated(comp);
-    if (this.$props.$title) this.title = this.$props.$title;
+  initStateFromProps(props) {
+    this.title = props.$title;
   }
   render(): JSX.Element {
     return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;

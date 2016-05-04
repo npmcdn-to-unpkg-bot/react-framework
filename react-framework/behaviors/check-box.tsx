@@ -5,7 +5,7 @@ import * as ReactDOM from 'react-dom';
 import * as flux from '../flux';
 import * as forms from './forms';
 
-const moduleId = 'forms';
+const moduleId = 'behaviors';
 
 //****** CheckBoxLow
 export interface CheckBoxLowProps extends forms.FieldLowProps<boolean> { }

@@ -55,9 +55,20 @@ export function getAllRecordings(): string {
   }
   return JSON.stringify(res, null, 2);
 }
+export function deleteAllRecordings() {
+  var toRemove:Array<string> = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i); let saveId = objKey(key); if (!saveId) continue;
+    toRemove.push(key);
+  }
+  toRemove.forEach(k => localStorage.removeItem(k));
+}
 export function saveAllRecordings(obj: {}) {
+  deleteAllRecordings();
   for (let p in obj) doSaveRecording(p, obj[p]);
 }
+
+//var playing = false;
 
 //***** playing
 export function startPlaying(saveId: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) {
@@ -66,6 +77,7 @@ export function startPlaying(saveId: string, progress: (pos: number, len: number
   let playList = data.playList;
   if (!playList) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
   let len = playList.length; let pos = 1;
+  //playing = true; var compl = err => { playing = false; completed(err); }
   flux.StoreApp.bootApp(data.store, err => {
     if (err) { completed(err); return; }
     flux.store.$recorder.playListCancel = flux.playActions(playList).subscribe(() => progress(pos++, len), err => completed(err), () => completed(null));
@@ -82,7 +94,7 @@ export function appStateToJSON(st: flux.StoreApp, indent?: number): string {
   }, indent)
 }
 
-export function literalToAppState(literal: flux.ITypedObj): flux.StoreApp {
+export function literalToAppState(literal: flux.IStoreLiteral): flux.StoreApp {
   return literalsToStores(null, literal) as flux.StoreApp;
 }
 
@@ -99,13 +111,13 @@ function doSaveRecording(saveId: string, obj: {}) {
 }
 
 export interface IData {
-  store?: flux.ITypedObj;
+  store?: flux.IStoreLiteral;
   playList?: Array<flux.TAction>;
 }
 
-function literalsToStores(parentStore: flux.TStore, literal: flux.ITypedObj): flux.TStore {
+function literalsToStores(parentStore: flux.TStore, literal: flux.IStoreLiteral): flux.TStore {
   if (!literal || !literal._type) throw new flux.Exception(JSON.stringify(literal));
-  let st = flux.Store.createInJSON(parentStore, literal._type);
+  let st = flux.Store.createInJSON(parentStore, literal._type, literal.id);
   Object.assign(st, literal);
   traverseToRepl(st, st);
   return st;

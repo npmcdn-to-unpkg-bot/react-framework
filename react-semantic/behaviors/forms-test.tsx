@@ -26,7 +26,7 @@ import {BindToState} from '../../react-framework/flux';
 
 import * as ui from '../common/exports';
 
-const moduleId = 'formsTest';
+const moduleId = 'semantic-test';
 
 export class FormSmartTest extends flux.Component<FormTestStore, {}> { }
 

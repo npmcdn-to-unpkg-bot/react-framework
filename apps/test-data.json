@@ -2,7 +2,7 @@
   "rf01": {
     "playList": [],
     "store": {
-      "_type": "RFTest1.AppStore",
+      "_type": "RF01.AppStore",
       "path": "App",
       "unique": 1,
       "routeHookDefault": {
@@ -10,7 +10,7 @@
         "path": "App/RouteHook",
         "hookedStore": {
           "id": null,
-          "_type": "RFTest1.AppRootStore",
+          "_type": "RF01.AppRootStore",
           "path": "App/RouteHook/AppRoot"
         }
       },
@@ -19,14 +19,14 @@
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest1.AppRootStore"
+        "storeId": "RF01.AppRootStore"
       }
     }
   },
   "rf02": {
     "playList": [],
     "store": {
-      "_type": "RFTest2.AppStore",
+      "_type": "RF02.AppStore",
       "path": "App",
       "unique": 1,
       "routeHookDefault": {
@@ -34,7 +34,7 @@
         "path": "App/RouteHook",
         "hookedStore": {
           "id": null,
-          "_type": "RFTest2.AppRootStore",
+          "_type": "RF02.AppRootStore",
           "path": "App/RouteHook/AppRoot",
           "title": "Hallo_World_Title_2"
         }
@@ -44,7 +44,7 @@
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest2.AppRootStore",
+        "storeId": "RF02.AppRootStore",
         "par": {
           "title": "Hallo_World_Title_2"
         }
@@ -54,19 +54,25 @@
   "rf03": {
     "playList": [],
     "store": {
-      "_type": "RFTest3.AppStore",
+      "_type": "RF03.AppStore",
       "path": "App",
-      "unique": 0,
+      "unique": 1,
       "routeHookDefault": {
         "_type": "store.RouteHookStore",
-        "path": "App/RouteHook"
+        "path": "App/RouteHook",
+        "hookedStore": {
+          "id": null,
+          "_type": "RF03.AppRootStore",
+          "path": "App/RouteHook/AppRoot",
+          "title": "Hallo_World_Title_3"
+        }
       },
       "routeHookModal": {
         "_type": "store.RouteHookStore",
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest3.AppRootStore",
+        "storeId": "RF03.AppRootStore",
         "par": {
           "title": "Hallo_World_Title_3"
         }
@@ -76,7 +82,7 @@
   "rf04": {
     "playList": [],
     "store": {
-      "_type": "RFTest4.AppStore",
+      "_type": "RF04.AppStore",
       "path": "App",
       "unique": 1,
       "routeHookDefault": {
@@ -84,22 +90,22 @@
         "path": "App/RouteHook",
         "hookedStore": {
           "id": null,
-          "_type": "RFTest4.AppRootStore",
+          "_type": "RF04.AppRootStore",
           "path": "App/RouteHook/AppRoot",
           "comp2": {
             "id": "comp3",
-            "_type": "RFTest4.CompStore",
+            "_type": "RF04.CompStore",
             "path": "App/RouteHook/AppRoot/Comp"
           },
           "childStores": {
             "comp1": {
               "id": "comp1",
-              "_type": "RFTest4.CompStore",
+              "_type": "RF04.CompStore",
               "path": "App/RouteHook/AppRoot/comp1"
             },
             "comp2": {
               "id": "comp2",
-              "_type": "RFTest4.CompStore",
+              "_type": "RF04.CompStore",
               "path": "App/RouteHook/AppRoot/comp2"
             }
           }
@@ -110,7 +116,7 @@
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest4.AppRootStore"
+        "storeId": "RF04.AppRootStore"
       }
     }
   },
@@ -119,36 +125,36 @@
       {
         "dispPath": "App/RouteHook/AppRoot/sync",
         "actionId": 0,
-        "descr": "RFTest5.CompStore: click"
+        "descr": "RF05.CompStore: click"
       },
       {
         "dispPath": "App/RouteHook/AppRoot/sync",
         "actionId": 0,
-        "descr": "RFTest5.CompStore: click"
+        "descr": "RF05.CompStore: click"
       },
       {
         "dispPath": "App/RouteHook/AppRoot/async",
         "actionId": 0,
-        "descr": "RFTest5.CompStore: click"
+        "descr": "RF05.CompStore: click"
       },
       {
         "dispPath": "App/RouteHook/AppRoot/async",
         "actionId": 0,
-        "descr": "RFTest5.CompStore: click"
+        "descr": "RF05.CompStore: click"
       },
       {
         "dispPath": "App/RouteHook/AppRoot/sync",
         "actionId": 0,
-        "descr": "RFTest5.CompStore: click"
+        "descr": "RF05.CompStore: click"
       },
       {
         "dispPath": "App/RouteHook/AppRoot/async",
         "actionId": 0,
-        "descr": "RFTest5.CompStore: click"
+        "descr": "RF05.CompStore: click"
       }
     ],
     "store": {
-      "_type": "RFTest5.AppStore",
+      "_type": "RF05.AppStore",
       "path": "App",
       "unique": 1,
       "routeHookDefault": {
@@ -156,18 +162,18 @@
         "path": "App/RouteHook",
         "hookedStore": {
           "id": null,
-          "_type": "RFTest5.AppRootStore",
+          "_type": "RF05.AppRootStore",
           "path": "App/RouteHook/AppRoot",
           "childStores": {
             "sync": {
               "id": "sync",
-              "_type": "RFTest5.CompStore",
+              "_type": "RF05.CompStore",
               "path": "App/RouteHook/AppRoot/sync",
               "subTitle": ""
             },
             "async": {
               "id": "async",
-              "_type": "RFTest5.CompStore",
+              "_type": "RF05.CompStore",
               "path": "App/RouteHook/AppRoot/async",
               "subTitle": ""
             }
@@ -179,7 +185,7 @@
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest5.AppRootStore"
+        "storeId": "RF05.AppRootStore"
       }
     }
   },
@@ -188,21 +194,16 @@
       {
         "dispPath": "App/RouteHook/AppRoot",
         "actionId": 0,
-        "descr": "RFTest6.AppRootStore: click"
+        "descr": "RF06.AppRootStore: click"
       },
       {
         "dispPath": "App/RouteHook/AppRoot",
         "actionId": 0,
-        "descr": "RFTest6.AppRootStore: click"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot",
-        "actionId": 0,
-        "descr": "RFTest6.AppRootStore: click"
+        "descr": "RF06.AppRootStore: click"
       }
     ],
     "store": {
-      "_type": "RFTest6.AppStore",
+      "_type": "RF06.AppStore",
       "path": "App",
       "unique": 7,
       "routeHookDefault": {
@@ -210,7 +211,7 @@
         "path": "App/RouteHook",
         "hookedStore": {
           "id": null,
-          "_type": "RFTest6.AppRootStore",
+          "_type": "RF06.AppRootStore",
           "path": "App/RouteHook/AppRoot",
           "title": "init_xxx"
         }
@@ -220,7 +221,7 @@
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest6.AppRootStore",
+        "storeId": "RF06.AppRootStore",
         "par": {
           "title": "init_xxx"
         }
@@ -230,96 +231,71 @@
   "rf07": {
     "playList": [
       {
+        "dispPath": "App/RouteHook/AppRoot/2/Child",
+        "actionId": 1,
+        "descr": "RF07.ChildStore: childClick"
+      },
+      {
+        "dispPath": "App/RouteHook/AppRoot/1/Child",
+        "actionId": 1,
+        "descr": "RF07.ChildStore: childClick"
+      },
+      {
+        "dispPath": "App/RouteHook/AppRoot/Child",
+        "actionId": 1,
+        "descr": "RF07.ChildStore: childClick"
+      },
+      {
         "dispPath": "App/RouteHook/AppRoot",
         "actionId": 0,
-        "descr": "RFTest7.AppRootStore: appCLick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/2/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/1/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/2/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/1/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
+        "descr": "RF07.AppRootStore: appCLick"
       },
       {
         "dispPath": "App/RouteHook/AppRoot",
         "actionId": 2,
-        "descr": "RFTest7.AppRootStore: navigate"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/2/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/1/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
-      },
-      {
-        "dispPath": "App/RouteHook/AppRoot/Child",
-        "actionId": 1,
-        "descr": "RFTest7.ChildStore: childClick"
+        "descr": "RF07.AppRootStore: navigate"
       },
       {
         "dispPath": "App/RouteHook/AppRoot",
         "actionId": 0,
-        "descr": "RFTest7.AppRootStore: appCLick"
+        "descr": "RF07.AppRootStore: appCLick"
+      },
+      {
+        "dispPath": "App/RouteHook/AppRoot/Child",
+        "actionId": 1,
+        "descr": "RF07.ChildStore: childClick"
+      },
+      {
+        "dispPath": "App/RouteHook/AppRoot/1/Child",
+        "actionId": 1,
+        "descr": "RF07.ChildStore: childClick"
+      },
+      {
+        "dispPath": "App/RouteHook/AppRoot/2/Child",
+        "actionId": 1,
+        "descr": "RF07.ChildStore: childClick"
       }
     ],
     "store": {
-      "_type": "RFTest7.AppStore",
+      "_type": "RF07.AppStore",
       "path": "App",
-      "unique": 3,
+      "unique": 9,
       "routeHookDefault": {
         "_type": "store.RouteHookStore",
         "path": "App/RouteHook",
         "hookedStore": {
-          "_type": "RFTest7.AppRootStore",
+          "_type": "RF07.AppRootStore",
           "path": "App/RouteHook/AppRoot",
-          "title": "App title",
+          "title": "App titlex",
           "routeHookDefault": {
             "id": "1",
             "_type": "store.RouteHookStore",
             "path": "App/RouteHook/AppRoot/1",
             "hookedStore": {
               "id": null,
-              "_type": "RFTest7.ChildStore",
+              "_type": "RF07.ChildStore",
               "path": "App/RouteHook/AppRoot/1/Child",
-              "title": "Child1"
+              "title": "Child1x"
             }
           },
           "otherHook": {
@@ -328,16 +304,16 @@
             "path": "App/RouteHook/AppRoot/2",
             "hookedStore": {
               "id": null,
-              "_type": "RFTest7.ChildStore",
+              "_type": "RF07.ChildStore",
               "path": "App/RouteHook/AppRoot/2/Child",
-              "title": "Child2"
+              "title": "Child2x"
             }
           },
           "childStores": {
             "Child": {
-              "_type": "RFTest7.ChildStore",
+              "_type": "RF07.ChildStore",
               "path": "App/RouteHook/AppRoot/Child",
-              "title": "Not routed child"
+              "title": "Not routed childx"
             }
           }
         }
@@ -347,18 +323,18 @@
         "path": "App/RouteHook"
       },
       "saveRoute": {
-        "storeId": "RFTest7.AppRootStore",
+        "storeId": "RF07.AppRootStore",
         "par": null,
         "routeHookDefault": {
-          "storeId": "RFTest7.ChildStore",
+          "storeId": "RF07.ChildStore",
           "par": {
-            "title": "Child1"
+            "title": "Child1x"
           }
         },
         "otherHook": {
-          "storeId": "RFTest7.ChildStore",
+          "storeId": "RF07.ChildStore",
           "par": {
-            "title": "Child2"
+            "title": "Child2x"
           },
           "hookId": "otherHook"
         }

@@ -129,15 +129,14 @@ export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child, loginNeeded: true })
 export class ChildStore extends flux.Store<IPropsExChild> {
-  //title: string;
+  title: string;
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.childClick:
-        if (this.$parent instanceof flux.RouteHookStore)
-          (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(st => st.par.title += 'x', completed);
-          //flux.subNavigate<IChildRouteActionPar>(this.$parent, st => st.par.title += 'x', completed);
-        else {
-          this.modify(st => st.$props.title += 'x');
+        if (this.$parent instanceof flux.RouteHookStore) {
+          this.subNavigate<IChildRouteActionPar>(st => st.title += 'x', completed);
+        } else {
+          this.modify(st => st.title += 'x');
           completed(null);
         }
         break;

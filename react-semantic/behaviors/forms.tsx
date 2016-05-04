@@ -8,7 +8,7 @@ import * as input from '../../react-framework/behaviors/input';
 import * as chb from '../../react-framework/behaviors/check-box';
 import * as flux from '../../react-framework/flux';
 
-const moduleId = 'forms-ui';
+const moduleId = 'semantic';
 
 export class FormSmart extends forms.FormLow<FormSmartStore, ui.FormProps> {}
 

@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 
-var moduleId = 'RFTest1';
+var moduleId = 'RF01';
 
 //****************** Main Entry Point
 export function init() {

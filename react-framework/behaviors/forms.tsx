@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 
 import * as flux from '../flux';
 
-const moduleId = 'forms';
+const moduleId = 'behaviors';
 
 //************** FIELD
 

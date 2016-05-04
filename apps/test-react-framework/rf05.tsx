@@ -2,7 +2,7 @@
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 
-var moduleId = 'RFTest4';
+var moduleId = 'RF05';
 
 //****************** Main Entry Point
 export function init() {
@@ -20,15 +20,10 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  constructor($parent: flux.TStore, id?: string) {
-    super($parent, id);
-    this.comp2 = new CompStore(this);
-  }
   render(): JSX.Element {
     return <div>
-      <Comp $title='Comp 1 title' id='comp1'/>
-      <Comp $title='Comp 2 title' id='comp2'/>
-      <Comp $title='Comp 3 title' $store={this.comp2} id='comp3'/>
+      <Comp $title='Sync' id='sync'/>
+      <Comp $title='Aync' $async={true} id='async'/>
     </div>
   }
   comp2: CompStore;
@@ -36,13 +31,31 @@ export class AppRootStore extends flux.Store<{}> {
 }
 
 //****************** Comp component
-export interface ICompPar { $title?: string; }
+export interface ICompPar { $title?: string; $async?: boolean; }
 
 export class Comp extends flux.Component<CompStore, ICompPar> { }
+export enum CompAction { click }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Comp })
 export class CompStore extends flux.Store<ICompPar> {
-  render(): JSX.Element {
-    return <h1>Title: {this.$props.$title}</h1>;
+  subTitle: string = '';
+  render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, CompAction.click, 'click') }>Title/subTitle: {this.$props.$title}/{this.subTitle}</h1>; }
+  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+    switch (id) {
+      case CompAction.click:
+        if (this.$props.$async) { //Async action
+          setTimeout(() => {
+            this.modify(st => st.subTitle += 'x');
+            completed(null);
+          }, 500)
+        } else { //Sync action
+          this.modify(st => st.subTitle += 'x');
+          completed(null);
+        }
+        break;
+      default:
+        super.doDispatchAction(id, par, completed);
+        break;
+    }
   }
 }
