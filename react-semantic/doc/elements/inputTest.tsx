@@ -3,13 +3,15 @@
 
 import {
   Icon, icon, flipped, rotated, circularIcon, bordered,
-  Input, InputTag, iconInput, action,
+  Input, iconInput, action,
   Label, pointing, corner, attachedLabel, circularLabel, ribbon,
   Button, attachedButton,
   ButtonLabeled, ButtonIcon, ButtonAnimated, ButtonSocial, Buttons, social, eqWidth,
   Segment, raised, padded, emphasis,
   Divider, divider,
 } from '../../common/exports';
+
+import {InputTag} from '../../../react-framework/behaviors/index';
 
 import * as ui from '../../common/exports';
 

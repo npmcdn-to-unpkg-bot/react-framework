@@ -10,13 +10,13 @@ import {
   Column, wideMobile, wideTablet, wideComputer, wideLargeScreen, wideWidescreen,
   Header, sizeHeader, outerTagHeader, subHeader,
   Row,
-  InputTag,
   Form, outerTagForm, stateForm, sizeForm,
   Field,
   Fields, eqWidthFields,
   Message, stateMessage, sizeMessage,
 } from '../../common/exports';
 import * as ui from '../../common/exports';
+import {InputTag} from '../../../react-framework/behaviors/index';
 
 export const FormsTest: ui.StatelessComponent<ui.IProps> = props => {
   return <Container>

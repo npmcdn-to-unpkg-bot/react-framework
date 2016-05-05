@@ -16,7 +16,7 @@ export abstract class InputLowStore extends forms.FieldLowStore<TValue> {
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
     props.value = this.value;
-    props.onChange = ev => this.handleChange((event.target as any).value); if (this.hasValidator()) props.onBlur = this.blur.bind(this);
+    props.onChange = ev => this.handleChange((ev.target as any).value); if (this.hasValidator()) props.onBlur = this.blur.bind(this);
   }
 
   //string value

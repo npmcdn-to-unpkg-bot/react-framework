@@ -236,7 +236,6 @@ export abstract class Store<T> implements IStoreLiteral {
   //************** Component management
   render(comp: TComponent): JSX.Element {
     var templ = this.$props.$template || defaultTemplates[this.getMeta().classId];
-    debugger;
     if (templ) {
       var res = templ(this);
       if (Array.isArray(res)) return <div>{res}</div>; else return res as JSX.Element;

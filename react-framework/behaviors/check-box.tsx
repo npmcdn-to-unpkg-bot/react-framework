@@ -75,31 +75,4 @@ export class RadiosStore extends forms.FieldLowStore<any> {
   }
 }
 
-//class CheckBox extends React.Component<any, any> {
-//  constructor(props) {
-//    super(props);
-//  }
-//  render(): JSX.Element {
-//    if (this.inp) this.inp['indeterminate'] = this.state === undefined;
-//    return <div className={classNames('ui checkbox', { 'indeterminate': this.state === undefined, 'checked': this.state === true }) } onClick={this.handleChange.bind(this) }>
-//      <input ref={inp => this.inp = inp} type="checkbox" checked={this.state} className='hidden' name='name'/>
-//      <label>r1</label>
-//    </div>;
-//  }
-//  setValue(val?:boolean) {
-//    if (val==undefined) delete this.state; else this.state = val;
-//    this.forceUpdate();
-//  }
-//  private handleChange(ev: React.FormEvent) {
-//    this.setValue(!this.state);
-//    //var ch = this.inp['checked'];
-//    //this.state.value = !this.state.value; this.forceUpdate();
-//    //setTimeout(() => this.setState({ value: !this.state.value }), 1);
-//    event.preventDefault();
-//  }
-//  componentDidMount() {
-//    this.inp['indeterminate'] = this.state === undefined;
-//  }
-//  private inp:HTMLInputElement;
-//  state:boolean;
-//}
+

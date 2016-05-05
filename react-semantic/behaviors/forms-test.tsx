@@ -66,7 +66,7 @@ export class FormTestStore extends flux.Store<{}> {
   render(): JSX.Element {
     return <Container>
       <h1>Input Validation</h1>
-      <FormSmart id='form1' ref={f => this.form = f.state}>
+      <FormSmart id='form1' ref={f => this.form = f ? f.state : null}>
         <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator()}/><br/>
         <InputSmart $title='Name' $defaultValue='3' $store={this.name}
           $validator = {[flux.requiredValidator(), flux.rangeValidator(3, 10)]}

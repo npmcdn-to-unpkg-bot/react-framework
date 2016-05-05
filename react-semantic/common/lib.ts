@@ -19,10 +19,10 @@ export class htmlTags {
   static form = 9;
 }
 
-export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (pr, context) => {
-  let props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
-  return React.createElement('input', props);
-}
+//export const InputTag: React.StatelessComponent<React.HTMLAttributes> = (pr, context) => {
+//  let props: React.HTMLAttributes = Object.assign({}, pr); if (!props.type) props.type = 'text';
+//  return React.createElement('input', props);
+//}
 
 //-----------------------
 export interface StatelessComponent<T> extends React.StatelessComponent<React.Props<any> & T> { }

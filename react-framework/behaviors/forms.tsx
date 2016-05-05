@@ -61,7 +61,10 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
   reset() {
     this.asyncCancel();
     delete this.$asyncLastResult;
-    this.modify(st => st.value = this.assignTo(this.$props.$defaultValue));
+    this.modify(st => {
+      st.value = this.assignTo(this.$props.$defaultValue);
+      delete st.error;
+    });
   }
   doDispatchAction(id: number, par: FieldActionPar<V>, completed: flux.TExceptionCallback) {
     switch (id) {
@@ -83,7 +86,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
     this.action<FieldActionPar<V>>(TFieldActions.setState, 'setState', { value: this.value });
   }
 
-  protected handleChange(value:V) {
+  protected handleChange(value: V) {
     this.asyncCancel();
     this.setAndValidate(true, value);
   }
@@ -163,7 +166,7 @@ type TFieldLowStore = FieldLowStore<any>
 
 //************** InputTag
 export class InputTag extends React.Component<React.HTMLAttributes, {}>  { 
-  render():JSX.Element {
+  render(): JSX.Element {
     let props: React.HTMLAttributes = {}; 
     if (this.context && this.context.MyInput) this.context.MyInput.modifyInputTagProps(props);
     Object.assign(props, this.props); 

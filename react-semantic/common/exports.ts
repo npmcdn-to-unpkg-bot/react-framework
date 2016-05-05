@@ -1,6 +1,6 @@
 ﻿export {
 StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, 
-enumValToProp, enumStrings, enumNumbers, InputTag,
+enumValToProp, enumStrings, enumNumbers,
 IProps, htmlTags,
 } from './lib';
 
