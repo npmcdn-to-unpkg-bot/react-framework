@@ -1,16 +1,13 @@
 ﻿export {
 StatelessComponent, enumToClass, boolConverter, enumConverter, createDescr, propsToClasses, projection, 
 enumValToProp, enumStrings, enumNumbers, InputTag,
-IProps, htmlTags, TSyncCompleted, 
+IProps, htmlTags,
 } from './lib';
 
 export { icon, flag, flagShort, flagMap } from './largeEnums';
 export {
 source, genData, genComponentType, genComponent, genBoolProp, genEnumProp,
 } from './sourceForGenerated';
-
-export {rangeValidator, requiredValidator, requiredBoolValidator } from './validators';
-//export {InputTag, InputSmart} from './forms';
 
 export {
 animate, animateTo, color, size, floated, aligned, column, deviceOnlyGrid, relaxed, textAligned, verticalAligned, attached, wide,

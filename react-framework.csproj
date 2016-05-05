@@ -62,12 +62,14 @@
     <TypeScriptCompile Include="apps\test-react-framework\rf01.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\app.tsx" />
     <TypeScriptCompile Include="apps\test-react-semantic\app.tsx" />
+    <TypeScriptCompile Include="react-framework\behaviors\index.ts" />
     <TypeScriptCompile Include="react-framework\behaviors\modals.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\positions.ts" />
     <TypeScriptCompile Include="react-framework\behaviors\input.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\check-box.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
+    <TypeScriptCompile Include="react-semantic\behaviors\templates.tsx" />
     <TypeScriptCompile Include="react-semantic\behaviors\forms-test.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\forms.tsx" />
     <TypeScriptCompile Include="react-framework\js.ts" />
@@ -76,7 +78,7 @@
     <TypeScriptCompile Include="react-framework\test-right-panel.tsx" />
     <TypeScriptCompile Include="react-framework\test-left-panel.tsx" />
     <TypeScriptCompile Include="react-semantic\behaviors\forms.tsx" />
-    <TypeScriptCompile Include="react-semantic\common\validators.tsx" />
+    <TypeScriptCompile Include="react-framework\behaviors\validators.tsx" />
     <TypeScriptCompile Include="react-semantic\common\sourceForGenerated.ts" />
     <TypeScriptCompile Include="react-semantic\common\generated.ts" />
     <TypeScriptCompile Include="react-semantic\common\largeEnums.ts" />

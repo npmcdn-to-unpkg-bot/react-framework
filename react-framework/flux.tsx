@@ -143,6 +143,8 @@ export interface IComponentContext { $parent: TStore; }
 export type TComponent = Component<TStore, {}>;
 export type TComponentClass = React.ComponentClass<TProps<TStore, {}>>;
 
+export var defaultTemplates: { [storeId: string]: TTemplate<TStore>; } = {};
+
 //****************** STORE
 export type IChildStores = { [idInParent: string]: TStore; };
 //export interface IPropsEx {  }
@@ -233,8 +235,10 @@ export abstract class Store<T> implements IStoreLiteral {
 
   //************** Component management
   render(comp: TComponent): JSX.Element {
-    if (this.$props.$template) {
-      var res = this.$props.$template(this);
+    var templ = this.$props.$template || defaultTemplates[this.getMeta().classId];
+    debugger;
+    if (templ) {
+      var res = templ(this);
       if (Array.isArray(res)) return <div>{res}</div>; else return res as JSX.Element;
     }
     let childCount = this.$props.children ? React.Children.count(this.$props.children) : 0;
@@ -270,7 +274,7 @@ export abstract class Store<T> implements IStoreLiteral {
     //hook.routeBind(completed);
   }
 
-    //status from props initialization
+  //"status from component props" initialization
   initStateFromProps(props: T) { }
 
   //************** Action Binding

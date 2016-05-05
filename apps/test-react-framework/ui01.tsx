@@ -2,8 +2,11 @@
 import * as ReactDOM from 'react-dom';
 import * as flux from '../../react-framework/exports';
 import {InputSmart, InputSmartStore, InputTag, RadiosStore} from '../../react-framework/exports';
+import * as uiForms from '../../react-semantic/behaviors/forms';
 
 var moduleId = 'UI01';
+
+uiForms.initDefaultTemplates();
 
 //****************** Main Entry Point
 export function init() {
@@ -21,5 +24,5 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  render(): JSX.Element { return <InputSmart $defaultValue='default value'/>; }
+  render(): JSX.Element { return <InputSmart $defaultValue='default value' $validator={flux.requiredValidator()}/>; }
 }

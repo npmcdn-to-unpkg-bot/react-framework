@@ -1,4 +1,4 @@
-﻿import {TSyncValidator} from './lib';
+﻿import {TSyncValidator} from '../exports';
 
 //https://github.com/christianalfoni/formsy-react/blob/master/src/validationRules.js
 var validationInt = /^(?:[-+]?(?:0|[1-9]\d*))$/;

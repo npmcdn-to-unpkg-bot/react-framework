@@ -27,7 +27,7 @@ export abstract class InputLowStore extends forms.FieldLowStore<TValue> {
 
 export abstract class InputLow<T extends InputLowStore, P> extends forms.FieldLow<TValue, T, InputLowProps & P> { }
 InputLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.PropTypes.any };
-//InputLow['contextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
+
 
 //************** InputSmart
 export class InputSmart extends InputLow<InputSmartStore, {}> { } 

@@ -18,10 +18,10 @@ import {
   //InputSmart
 } from '../common/exports';
 
-import {InputSmart, InputSmartStore, InputTag, RadiosStore} from '../../react-framework/exports';
+import {InputSmart, InputSmartStore, InputTag, RadiosStore, BindToState} from '../../react-framework/exports';
 import {FormSmart, FormSmartStore, FieldSmart, FieldSmartStore, CheckBox, CheckBoxStore, Radio, RadioStore} from './forms';
-import * as flux from '../../react-framework/flux';
-import {BindToState} from '../../react-framework/flux';
+import * as flux from '../../react-framework/exports';
+//import {BindToState} from '../../react-framework/flux';
 
 
 import * as ui from '../common/exports';
@@ -67,13 +67,13 @@ export class FormTestStore extends flux.Store<{}> {
     return <Container>
       <h1>Input Validation</h1>
       <FormSmart id='form1' ref={f => this.form = f.state}>
-        <CheckBox $title='Check Box' $validator={ui.requiredBoolValidator()}/><br/>
+        <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator()}/><br/>
         <InputSmart $title='Name' $defaultValue='3' $store={this.name}
-          $validator = {[ui.requiredValidator(), ui.rangeValidator(3, 10)]}
+          $validator = {[flux.requiredValidator(), flux.rangeValidator(3, 10)]}
           $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
           $template = {inpTemplate}
           />
-        <InputSmart $title='Password' $store={this.password} $validator = {ui.requiredValidator() } $template = {inpTemplate} />
+        <InputSmart $title='Password' $store={this.password} $validator = {flux.requiredValidator() } $template = {inpTemplate} />
       </FormSmart>
       <hr/>
       <BindToState $stores={[this.password, this.name]} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
@@ -83,13 +83,13 @@ export class FormTestStore extends flux.Store<{}> {
       <h1>Form, Fields</h1>
       <FormSmart $store={this.form2}>
         <Fields $inline>
-          <CheckBox $title='Check Box' $validator={ui.requiredBoolValidator()} style={{marginRight:'10px'}}/>
+          <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator()} style={{marginRight:'10px'}}/>
           <Field><Radio $parent={this.radios} id='r1' $title='r1 title' $checked/></Field>
           <Field><Radio $parent={this.radios} id='r2' $title='r2 title'/></Field>
         </Fields>
         <Fields $equalWidth>
-          <FieldSmart $title='First Name' id='firstName' $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
-          <FieldSmart $title='Last Name' id='lastName' $required $validator = {ui.requiredValidator() } $template = {fieldTemplate}/>
+          <FieldSmart $title='First Name' id='firstName' $required $validator = {flux.requiredValidator() } $template = {fieldTemplate}/>
+          <FieldSmart $title='Last Name' id='lastName' $required $validator = {flux.requiredValidator() } $template = {fieldTemplate}/>
           <FieldSmart $title='Name' $defaultValue='3' $store={this.name2} $template = {fieldTemplate} />
         </Fields>
       </FormSmart>

@@ -3,10 +3,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import * as ui from '../common/exports';
-import * as forms from '../../react-framework/behaviors/forms';
-import * as input from '../../react-framework/behaviors/input';
-import * as chb from '../../react-framework/behaviors/check-box';
+import * as forms from '../../react-framework/behaviors/index';
+//import * as input from '../../react-framework/behaviors/input';
+//import * as chb from '../../react-framework/behaviors/check-box';
 import * as flux from '../../react-framework/flux';
+
+export { InputSmart, InputSmartStore} from '../../react-framework/behaviors/index';
+export { initDefaultTemplates } from './templates';
 
 const moduleId = 'semantic';
 
@@ -17,10 +20,10 @@ export class FormSmartStore extends forms.FormLowStore {
   render(): JSX.Element { return React.createElement(ui.Form, this as any, this.$props.children); }
 }
 
-export class FieldSmart extends input.InputLow<FieldSmartStore, ui.FieldProps> { }
+export class FieldSmart extends forms.InputLow<FieldSmartStore, ui.FieldProps> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FieldSmart })
-export class FieldSmartStore extends input.InputLowStore {
+export class FieldSmartStore extends forms.InputLowStore {
   render(): JSX.Element {
     var props: ui.FieldProps = Object.assign({}, this); 
     props.$error = !!this.error; props['key'] = this.getIdInParent();
@@ -28,12 +31,14 @@ export class FieldSmartStore extends input.InputLowStore {
   }
 }
 
-export class CheckBox extends chb.CheckBoxLow<CheckBoxStore, ui.CheckBoxProps> { 
+
+
+export class CheckBox extends forms.CheckBoxLow<CheckBoxStore, ui.CheckBoxProps> {
   componentDidMount() { this.state.semanticHack(); }
 }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: CheckBox })
-export class CheckBoxStore extends chb.CheckBoxLowStore {
+export class CheckBoxStore extends forms.CheckBoxLowStore {
   render(): JSX.Element {
     this.semanticHack();
     var props = Object.assign({}, this); 
@@ -50,10 +55,10 @@ export class CheckBoxStore extends chb.CheckBoxLowStore {
   }
 }
 
-export class Radio extends chb.RadioLow<ui.CheckBoxProps> { }
+export class Radio extends forms.RadioLow<ui.CheckBoxProps> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Radio })
-export class RadioStore extends chb.RadioLowStore {
+export class RadioStore extends forms.RadioLowStore {
   render(): JSX.Element {
     var props: ui.CheckBoxProps = Object.assign({}, this); 
     props.onClick = this.onClick.bind(this);
@@ -65,5 +70,4 @@ export class RadioStore extends chb.RadioLowStore {
     props.className = 'hidden';
   }
 }
-
 

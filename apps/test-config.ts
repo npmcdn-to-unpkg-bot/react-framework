@@ -8,6 +8,7 @@ import * as rf05 from './test-react-framework/rf05';
 import * as rf06 from './test-react-framework/rf06';
 import * as rf061 from './test-react-framework/rf061';
 import * as rf07 from './test-react-framework/rf07';
+import * as ui01 from './test-react-framework/ui01';
 import * as semantic from './test-react-semantic/app';
 
 export function init() {
@@ -20,6 +21,7 @@ export function init() {
     rf06: { descr: 'Routing: subNavigate', storeAppClass: rf06.AppStore },
     rf061: { descr: 'Parent-child properties', storeAppClass: rf061.AppStore },
     rf07: { descr: 'Combined routing', storeAppClass: rf07.AppStore },
+    ui01: { descr: 'InputSmart', storeAppClass: ui01.AppStore },
     //test1: { descr: 'Test React framework', storeAppClass: testRF.AppStore },
     //test2: { descr: 'Test React Semantic', storeAppClass: semantic.AppStore },
     //test2: { descr: 'Test React framework 2', storeAppClass: testRF.AppStore, resetServer: compl => setTimeout(() => compl(), 1000) }

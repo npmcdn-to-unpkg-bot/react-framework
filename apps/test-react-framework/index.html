@@ -2,24 +2,26 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.css">
+
   <title>TypeScript HTML App</title>
   <script type="text/javascript" src="../../utils/typescript-polyfils.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.0/es6-shim.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.24/system-polyfills.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.24/system.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.js"></script>
 </head>
 <body style="margin:10px; overflow-x:hidden;">
   <div id="app"></div>
 
   <script>
     System.defaultJSExtensions = true;
-    System.paths['classnames'] = '../../react-mdl/classname.js';
     System.paths['rxjs/Rx'] = 'https://npmcdn.com/rxjs@5.0.0-beta.5/bundles/Rx.js';
     System.paths['react'] =     'https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.js';
     System.paths['react-dom'] =     'https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js';
   </script>
   <script>
-    System.import('app6.js').then(function(m) { m.init(); }, function(m) { debugger; });
+    System.import('ui01.js').then(function(m) { m.init(); }, function(m) { debugger; });
   </script>
 </body>
 </html>
