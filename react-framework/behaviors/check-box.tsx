@@ -82,7 +82,6 @@ export class RadiosStore extends forms.FieldLowStore<any> {
     for (var p in this.childStores) {
       var ch: RadioLowStore = this.childStores[p] as RadioLowStore;
       ch.modify(st => st.value = ch.$props.$defaultValue);
-      //ch.value = ch.$props.$defaultValue;
     }
     super.reset();
   }

@@ -68,7 +68,7 @@ export class AppRootStore extends flux.Store<{}> {
   radios: RadiosStore;
   checkBox: CheckBoxStore;
 
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.validate: this.form.validate(res => completed(null)); break;
       case TActions.reset: this.form.reset(); completed(null); break;

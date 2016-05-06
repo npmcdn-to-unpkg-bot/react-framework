@@ -4,8 +4,6 @@ import * as ReactDOM from 'react-dom';
 
 import * as ui from '../common/exports';
 import * as forms from '../../react-framework/behaviors/index';
-//import * as input from '../../react-framework/behaviors/input';
-//import * as chb from '../../react-framework/behaviors/check-box';
 import * as flux from '../../react-framework/flux';
 
 export { InputSmart, InputSmartStore} from '../../react-framework/behaviors/index';
@@ -13,6 +11,7 @@ export { initDefaultTemplates } from './templates';
 
 const moduleId = 'semantic';
 
+//***** FormSmart
 export class FormSmart extends forms.FormLow<FormSmartStore, ui.FormProps> {}
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FormSmart })
@@ -31,8 +30,7 @@ export class FieldSmartStore extends forms.InputLowStore {
   }
 }
 
-
-
+//***** CheckBox
 export class CheckBox extends forms.CheckBoxLow<CheckBoxStore, ui.CheckBoxProps> {
   componentDidMount() { this.state.semanticHack(); }
 }
@@ -53,6 +51,7 @@ export class CheckBoxStore extends forms.CheckBoxLowStore {
   }
 }
 
+//***** Radio
 export class Radio extends forms.RadioLow<ui.CheckBoxProps> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Radio })
@@ -68,3 +67,13 @@ export class RadioStore extends forms.RadioLowStore {
   }
 }
 
+//***** Dimmer
+export class Dimmer extends forms.Dimmer<DimmerStore, ui.DimmerProps> { }
+
+@flux.StoreDef({ moduleId: moduleId, componentClass: Dimmer })
+export class DimmerStore extends forms.DimmerStore<ui.DimmerProps> {
+  render(): JSX.Element {
+    var props: ui.DimmerProps = Object.assign({}, this);
+    return React.createElement(ui.Dimmer, props, this.renderTemplate());
+  }
+}

@@ -266,20 +266,15 @@ export abstract class Store<T> implements IStoreLiteral {
     this.trace('destroy');
   }
 
-  subNavigate<T extends flux.IActionPar>(modifyRoutePar: (st: T) => void, completed?: flux.TExceptionCallback) {
-    if (!(this.$parent instanceof RouteHookStore)) throw new Exception(`Parent of ${this.path} is not RouteHookStore`);
-    var hook = this.$parent as RouteHookStore;
-    //hook.modify(hook => modify(hook.$routePar.par as T));
-    modifyRoutePar(hook.$routePar.par as T);
-
-    hook.bindRouteToHookStore(false, hook.$routePar, err => {
+  subNavigate<T extends flux.IActionPar>(storeId:string, par: T, completed?: flux.TExceptionCallback) {
+    if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
+    var hook = this as any as RouteHookStore;
+    hook.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => {
       if (err) { store.navigateError(err, completed); return; }
       hook.modify();
       store.pushState();
       if (completed) completed(null);
     });
-
-    //hook.routeBind(completed);
   }
 
   //"status from component props" initialization
@@ -345,8 +340,8 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
     }
   }
 
-  //subNavigate<T extends flux.IActionPar>(modify: (st: flux.IRouteActionPar<T>) => void, completed?: flux.TExceptionCallback) {
-  //  modify(this.$routePar as flux.IRouteActionPar<T>);
+  //subNavigate<T extends flux.IActionPar>(modifyRoutePar: (st: flux.IRouteActionPar<T>) => void, completed?: flux.TExceptionCallback) {
+  //  modifyRoutePar(this.$routePar as flux.IRouteActionPar<T>);
   //  this.routeBind(completed);
   //}
 
