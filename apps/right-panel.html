@@ -22,7 +22,6 @@
   </script>
   <script>
     System.import('test-config.js').then(function(m) {
-      debugger;
       m.init();
       System.import('test-right-panel').then(function(m) { m.init(); }, function(m) { debugger; });
     });

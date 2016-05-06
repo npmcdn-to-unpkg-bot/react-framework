@@ -13,6 +13,10 @@ type TValue = string;
 interface InputLowProps extends forms.FieldLowProps<TValue> {}
 
 export abstract class InputLowStore extends forms.FieldLowStore<TValue> {
+  componentCreated(comp: InputLow<InputLowStore, {}>) {
+    super.componentCreated(comp);
+    this.$actionInBlur = true;
+  }
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
     props.value = this.value;

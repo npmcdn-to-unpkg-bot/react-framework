@@ -10,44 +10,51 @@ const moduleId = 'behaviors';
 //****** CheckBoxLow
 export interface CheckBoxLowProps extends forms.FieldLowProps<boolean> { }
 export abstract class CheckBoxLowStore extends forms.FieldLowStore<boolean> {
+  componentCreated(comp: CheckBoxLow<CheckBoxLowStore, {}>) {
+    super.componentCreated(comp);
+    this.$actionInHandleChange = true;
+  }
+
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
-    props.checked = this.value;
     props.type = 'checkbox';
+    props.checked = this.value;
+    props.onClick = ev => this.handleChange(!this.value);
   }
 }
 export abstract class CheckBoxLow<T extends CheckBoxLowStore, P> extends forms.FieldLow<boolean, T, CheckBoxLowProps & P> { }
 
 //****** RadioButtons
+enum TAction { radioClick }
+
 export interface RadioProps {
   $parent: RadiosStore;
-  $checked?: boolean;
+  $defaultValue?: boolean;
   $title?: string;
 }
 
 export class RadioLowStore extends flux.Store<RadioProps> {
-  //props
-  //$checked:boolean;
-  //$title:string;
-  //inherited
   $parent:RadiosStore;
-  //state
-  checked:boolean;
+  value:boolean;
 
   componentCreated(comp: RadioLow<any>) {
     super.componentCreated(comp);
-    this.checked = this.$props.$checked;
+    this.value = this.$props.$defaultValue;
   }
 
-  onClick(ev: React.FormEvent) {
-    ev.preventDefault();
-    this.$parent.onRadioClick(this);
-  }
   modifyInputTagProps(props: React.HTMLAttributes) {
-    props.checked = this.checked;
     props.type = 'radio';
+    props.checked = this.value;
+    props.onClick = ev => this.action(TAction.radioClick, 'radioClick');
     props.name = this.$parent.getIdInParent();
   }
+  doDispatchAction(id: number, par, completed: flux.TExceptionCallback) {
+    switch (id) {
+      case TAction.radioClick: this.$parent.onRadioClick(this); completed(null); break;
+      default: super.doDispatchAction(id, par, completed); break;
+    }
+  }
+
 }
 
 export abstract class RadioLow<T> extends flux.Component<RadioLowStore, RadioProps & T> { 
@@ -60,17 +67,27 @@ export abstract class RadioLow<T> extends flux.Component<RadioLowStore, RadioPro
 RadioLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.PropTypes.any };
 
 
+@flux.StoreDef({ moduleId: moduleId })
 export class RadiosStore extends forms.FieldLowStore<any> {
+ 
   onRadioClick(radio: RadioLowStore) {
-    if (radio.checked) return;
-    radio.modify(st => st.checked = !st.checked);
+    if (radio.value) return;
+    radio.modify(st => st.value = true);
     for (var p in this.childStores) {
-      var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch===radio || !ch.checked) continue;
-      ch.modify(st => st.checked = !st.checked);
+      var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch===radio || !ch.value) continue;
+      ch.modify(st => st.value = false);
     }
   }
+  reset() {
+    for (var p in this.childStores) {
+      var ch: RadioLowStore = this.childStores[p] as RadioLowStore;
+      ch.modify(st => st.value = ch.$props.$defaultValue);
+      //ch.value = ch.$props.$defaultValue;
+    }
+    super.reset();
+  }
   selected():RadioLowStore {
-    for(var p in this.childStores) { var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch.checked) return ch; }
+    for(var p in this.childStores) { var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch.value) return ch; }
     return null;
   }
 }

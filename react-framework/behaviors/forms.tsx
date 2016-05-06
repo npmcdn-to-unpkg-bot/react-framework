@@ -28,13 +28,10 @@ export interface FieldLowProps<V> {
 
 //************** FieldLowStore
 export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
-  //props
-  //$title: string;
-  //$validatorAsync: (val: V, completed: flux.TSyncCompleted) => void;
-  //$validator: flux.TSyncValidator<V> | Array<flux.TSyncValidator<V>>;
-  //inherited
   $context: IFormContext;
   $myForm: FormLowStore;
+  $actionInBlur: boolean;
+  $actionInHandleChange: boolean;
   //state
   value: V;
   error: string;
@@ -42,7 +39,6 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
   validating: boolean;
 
   //abstract value
-  //$defaultValue: V;
   assignTo(val: V): V {return val;}
   modified(val1: V, val2: V):boolean {return val1===val2;}
 
@@ -62,7 +58,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
     this.asyncCancel();
     delete this.$asyncLastResult;
     this.modify(st => {
-      st.value = this.assignTo(this.$props.$defaultValue);
+      if (this.$props) st.value = this.assignTo(this.$props.$defaultValue);
       delete st.error;
     });
   }
@@ -83,12 +79,13 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
 
   protected blur() {
     console.log('blur');
-    this.action<FieldActionPar<V>>(TFieldActions.setState, 'setState', { value: this.value });
+    if (this.$actionInBlur) this.action<FieldActionPar<V>>(TFieldActions.setState, 'setState', { value: this.value }); else this.setAndValidate(false, this.value);
   }
 
   protected handleChange(value: V) {
     this.asyncCancel();
-    this.setAndValidate(true, value);
+    if (this.$actionInHandleChange) this.action<FieldActionPar<V>>(TFieldActions.setState, 'setState', { value: value }); else this.setAndValidate(true, value);
+    //this.setAndValidate(true, value);
   }
 
   private setAndValidate(inHandleChange: boolean, val: V, completed?: flux.TSyncCompleted) {

@@ -17,7 +17,7 @@ export class FormSmart extends forms.FormLow<FormSmartStore, ui.FormProps> {}
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: FormSmart })
 export class FormSmartStore extends forms.FormLowStore {
-  render(): JSX.Element { return React.createElement(ui.Form, this as any, this.$props.children); }
+  render(): JSX.Element { return React.createElement(ui.Form, this as any, this.renderTemplate()); }
 }
 
 export class FieldSmart extends forms.InputLow<FieldSmartStore, ui.FieldProps> { }
@@ -27,7 +27,7 @@ export class FieldSmartStore extends forms.InputLowStore {
   render(): JSX.Element {
     var props: ui.FieldProps = Object.assign({}, this); 
     props.$error = !!this.error; props['key'] = this.getIdInParent();
-    return React.createElement(ui.Field, props, this.$props.$template ? this.$props.$template(this) : null);
+    return React.createElement(ui.Field, props, this.renderTemplate());
   }
 }
 
@@ -41,17 +41,15 @@ export class CheckBox extends forms.CheckBoxLow<CheckBoxStore, ui.CheckBoxProps>
 export class CheckBoxStore extends forms.CheckBoxLowStore {
   render(): JSX.Element {
     this.semanticHack();
-    var props = Object.assign({}, this); 
-    props.onClick = ev => this.handleChange(!this.value);
-    return React.createElement(ui.CheckBox, props, this.$props.$template ? this.$props.$template(this) : [<forms.InputTag ref = {inp => this.inp = inp}/>, <label>{this.$props.$title}</label>]);
+    return React.createElement(ui.CheckBox, this as any, this.renderTemplate());
   }
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);
     props.className = 'hidden';
   }
-  private inp: forms.InputTag;
+  $inp: HTMLInputElement;
   semanticHack() { 
-    if (this.inp) ReactDOM.findDOMNode(this.inp)['indeterminate'] = this.value === undefined;  
+    if (this.$inp) this.$inp['indeterminate'] = this.value === undefined;  
   }
 }
 
@@ -61,9 +59,8 @@ export class Radio extends forms.RadioLow<ui.CheckBoxProps> { }
 export class RadioStore extends forms.RadioLowStore {
   render(): JSX.Element {
     var props: ui.CheckBoxProps = Object.assign({}, this); 
-    props.onClick = this.onClick.bind(this);
     props.$radio = true;
-    return React.createElement(ui.CheckBox, props, this.$props.$template ? this.$props.$template(this) : [<forms.InputTag/>, <label>{this.$props.$title}</label>]);
+    return React.createElement(ui.CheckBox, props, this.renderTemplate());
   }
   modifyInputTagProps(props: React.HTMLAttributes) {
     super.modifyInputTagProps(props);

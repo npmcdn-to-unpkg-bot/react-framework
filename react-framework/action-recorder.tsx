@@ -88,7 +88,7 @@ export function appStateToJSON(st: flux.StoreApp, indent?: number): string {
   st.saveRoute = st.actRoutes();
   return JSON.stringify(st, (key, val) => {
     //console.log('>>>* ' + key);
-    //if (key == 'store') { debugger; }
+    //if (key == 'state') { debugger; }
     if (key && key.startsWith('$')) return undefined;
     return val;
   }, indent)

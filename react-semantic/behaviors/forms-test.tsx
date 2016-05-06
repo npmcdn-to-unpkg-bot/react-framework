@@ -83,8 +83,8 @@ export class FormTestStore extends flux.Store<{}> {
       <h1>Form, Fields</h1>
       <FormSmart $store={this.form2}>
         <Fields $inline>
-          <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator()} style={{marginRight:'10px'}}/>
-          <Field><Radio $parent={this.radios} id='r1' $title='r1 title' $checked/></Field>
+          <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator() } style={{ marginRight: '10px' }} $defaultValue={true}/>
+          <Field><Radio $parent={this.radios} id='r1' $title='r1 title' checked/></Field>
           <Field><Radio $parent={this.radios} id='r2' $title='r2 title'/></Field>
         </Fields>
         <Fields $equalWidth>

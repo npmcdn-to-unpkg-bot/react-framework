@@ -113,7 +113,7 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 //******************  REACT COMPONENTS
 export class Component<T extends TStore, P> extends React.Component<IProps<T> & P, any> { //generic React component
   constructor(props: TProps<T, P>, ctx: IComponentContext) {
-    super(props, ctx); 
+    super(props, ctx);
     this.state = props.$store;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
@@ -198,7 +198,7 @@ export abstract class Store<T> implements IStoreLiteral {
     return res as T;
 
   }
-  static createInJSON(parent: TStore, _type: string, id:string): TStore {
+  static createInJSON(parent: TStore, _type: string, id: string): TStore {
     let meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
     var res = new meta.storeClass(parent, id); res.$initialized = true;
     return res;
@@ -233,19 +233,28 @@ export abstract class Store<T> implements IStoreLiteral {
   unSubscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
+  renderTemplate(escape?: React.ReactChild | Array<React.ReactChild>, forceElement?: boolean): React.ReactNode {
+    let expandTemplate = () => {
+      let templ = this.$props.$template || defaultTemplates[this.getMeta().classId];
+      return templ ? templ(this) : null;
+    };
+    let normalizeArray = arr => {
+      if (!arr) return null; if (!Array.isArray(arr)) return arr;
+      switch (arr.length) {
+        case 0: return null;
+        case 1: return typeof arr[0] === 'string' ? arr : arr[0];
+        default: return arr;
+      }
+    }
+
+    let res = normalizeArray(React.Children.toArray(this.$props.children)) || normalizeArray(expandTemplate()) || normalizeArray(escape) || <div>Missing children or $template component property</div>;
+    let isArr = Array.isArray(res); if (!isArr) return res;
+    return forceElement ? <div>{res}</div> : res;
+  }
+
   //************** Component management
   render(comp: TComponent): JSX.Element {
-    var templ = this.$props.$template || defaultTemplates[this.getMeta().classId];
-    if (templ) {
-      var res = templ(this);
-      if (Array.isArray(res)) return <div>{res}</div>; else return res as JSX.Element;
-    }
-    let childCount = this.$props.children ? React.Children.count(this.$props.children) : 0;
-    switch (childCount) {
-      case 0: return <div>Missing children or $template component property</div>;
-      case 1: return React.Children.only(this.$props.children);
-      default: return React.createElement('div', null, this.$props.children);
-    }
+    return this.renderTemplate(null, true) as JSX.Element;
   }
   componentCreated(comp: TComponent) {
     this.trace('create');
@@ -280,7 +289,7 @@ export abstract class Store<T> implements IStoreLiteral {
 
   //finish store creation from route parameters. Not called in playing bootApp for action playing.
   //Could BeforeUnloadEvent async
-  initFromRoutePar(par: IActionPar, completed: TCreateStoreCallback) {  completed(this); }
+  initFromRoutePar(par: IActionPar, completed: TCreateStoreCallback) { completed(this); }
 
   doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
