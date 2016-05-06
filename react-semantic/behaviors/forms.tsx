@@ -71,9 +71,8 @@ export class RadioStore extends forms.RadioLowStore {
 export class Dimmer extends forms.Dimmer<DimmerStore, ui.DimmerProps> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Dimmer })
-export class DimmerStore extends forms.DimmerStore<ui.DimmerProps> {
+export class DimmerStore extends forms.DimmerStore<ui.DimmerProps, forms.IModalOut> {
   render(): JSX.Element {
-    var props: ui.DimmerProps = Object.assign({}, this);
-    return React.createElement(ui.Dimmer, props, this.renderTemplate());
+    return React.createElement(ui.Dimmer, this.$props, this.renderTemplate());
   }
 }

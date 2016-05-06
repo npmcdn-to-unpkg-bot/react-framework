@@ -179,13 +179,13 @@ export abstract class Store<T> implements IStoreLiteral {
     let idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
-  static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar): T {
+  static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
+    if (!storeId) { completed(null); return; }
     let cls = Store.getStoreClass(storeId);
     if (store.loginNeeded(cls)) { completed(new ELoginNeeded()); return null; }
     let res = new cls(parent, instanceId);
-    res.initFromRoutePar(routePar, completed);
     res.$initialized = true;
-    return res as T;
+    res.initFromRoutePar(routePar, completed);
   }
   static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClass, instanceId?: string): T {
     let cls = Store.getStoreClass(storeId);
@@ -318,6 +318,7 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
 
   hookedStore: TStore;
   $routePar: TRouteActionPar;
+  $ignoreLoading: boolean;
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
@@ -334,6 +335,7 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
           let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
           rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
         } else {
+          delete self.hookedStore; delete self.$routePar;
           completed(res);
         }
       }, null, par.par);
@@ -354,7 +356,7 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
   //  });
   //}
   render(): JSX.Element {
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : <div>Loading...</div>;
+    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.$ignoreLoading ? null : <div>Loading...</div>);
   }
 }
 
@@ -382,8 +384,9 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
     super(null);
     //configure App
     store = this;
-    this.routeHookDefault = new RouteHookStore(this);
-    this.routeHookModal = new RouteHookStore(this);
+    this.routeHookDefault = new RouteHookStore(this, 'hook');
+    this.routeHookModal = new RouteHookStore(this, 'modal');
+    this.routeHookModal.$ignoreLoading = true;
     this.$basicUrl = this.getBasicUrl(window.location.href);
     console.log(`> router basicUrl=${this.$basicUrl}`);
     this.$appElement = this.getAppElement();
@@ -517,7 +520,10 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   }
 
   render(): JSX.Element {
-    return React.createElement(RouteHook, { $store: this.routeHookDefault });
+    return <div>
+      <RouteHook $store={this.routeHookDefault}/>
+      <RouteHook $store={this.routeHookModal}/>
+    </div>
   }
 
   findStore(path: string): TStore { let res = StoreApp._findStore(path, this); if (!res) throw new flux.Exception(`Cannot find store ${path}`); return res; }
