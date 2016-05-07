@@ -22,14 +22,16 @@ type TDimmerStore = DimmerStore<IModalIn, IModalOut>;
 export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut> extends flux.Store<TInp> {
 
   $completed: (out: TOut) => void; //notifikace o ukonceni modal promise
-  private $inputPars: TInp;
+  private inputPars: TInp;
   private $doKeyDown;
   private $click;
 
-  cancel(res?: ModalResult) {
+  cancel(ev: flux.EventGeneric, res?: ModalResult) {
+    flux.stopPropagation(ev);
     this.closeAction({ cancel: true, result: res ? res : ModalResult.cancel } as IModalOut as TOut);
   }
-  ok(out: TOut) {
+  ok(ev: flux.EventGeneric, out: TOut) {
+    flux.stopPropagation(ev);
     if (!out) out = {} as TOut; out.cancel = false;
     this.closeAction(out);
   }
@@ -39,6 +41,7 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
       case TModalAction.close:
         flux.store.routeHookModal.subNavigate(null, null, null); //odstran z DOM
         if (this.$completed) this.$completed(out);
+        completed(null);
         break;
       default: super.doDispatchAction(id, out, completed); break;
     }
@@ -46,25 +49,25 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
 
   initFromRoutePar(par: TInp, completed: flux.TCreateStoreCallback) {
     if (par.hideOnClick === undefined) par.hideOnClick = true; if (par.hideOnEscape === undefined) par.hideOnEscape = true;
-    this.$inputPars = par;
+    this.inputPars = par;
     super.initFromRoutePar(par, completed);
   }
 
   componentCreated(comp: TDimmer) {
     super.componentCreated(comp);
-    if (this.$inputPars.hideOnEscape) document.addEventListener('keydown', this.$doKeyDown = this.doKeyDown.bind(this));
-    if (this.$inputPars.hideOnClick) document.addEventListener('click', this.$click = this.click.bind(this));
+    if (this.inputPars.hideOnEscape) document.addEventListener('keydown', this.$doKeyDown = this.doKeyDown.bind(this));
+    if (this.inputPars.hideOnClick) document.addEventListener('click', this.$click = this.click.bind(this));
   }
   componentWillUnmount(comp: TDimmer) {
     super.componentWillUnmount(comp);
-    if (this.$inputPars.hideOnEscape) document.removeEventListener('keydown', this.$doKeyDown);
-    if (this.$inputPars.hideOnClick) document.removeEventListener('click', this.$click);
+    if (this.inputPars.hideOnEscape) document.removeEventListener('keydown', this.$doKeyDown);
+    if (this.inputPars.hideOnClick) document.removeEventListener('click', this.$click);
   }
   private closeAction(par: IModalOut) {
     this.action(TModalAction.close, 'close', par);
   }
-  private doKeyDown(ev: KeyboardEvent) { if (ev.keyCode != 27) return; this.cancel(ModalResult.dimmerEscape); }
-  private click(ev: MouseEvent) { this.cancel(ModalResult.dimmerClick); }
+  private doKeyDown(ev: KeyboardEvent) { if (ev.keyCode != 27) return; this.cancel(ev, ModalResult.dimmerEscape); }
+  private click(ev: MouseEvent) { this.cancel(ev, ModalResult.dimmerClick); }
 }
 
 export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: flux.TStoreClass<TInp>, par: TInp, showCompleted: flux.TExceptionCallback): Promise<TOut> {

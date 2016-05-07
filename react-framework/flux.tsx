@@ -52,6 +52,12 @@ export type TSyncCompleted = (err: string) => void;
 
 export function getUnique(): number { return unique++; } var unique = 0;
 
+export type EventGeneric = React.SyntheticEvent | Event;
+export function stopPropagation(ev: EventGeneric) {
+  if (!ev) return;
+  var e: Event = (ev as React.SyntheticEvent).nativeEvent ? (ev as React.SyntheticEvent).nativeEvent : ev as any;
+  e.stopImmediatePropagation();
+}
 
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
 export function StoreDef(meta: IStoreMeta): ClassDecorator {
@@ -266,7 +272,7 @@ export abstract class Store<T> implements IStoreLiteral {
     this.trace('destroy');
   }
 
-  subNavigate<T extends flux.IActionPar>(storeId:string, par: T, completed?: flux.TExceptionCallback) {
+  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TExceptionCallback) {
     if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
     var hook = this as any as RouteHookStore;
     hook.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => {

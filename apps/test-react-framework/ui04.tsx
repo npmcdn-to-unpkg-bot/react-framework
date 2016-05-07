@@ -26,11 +26,20 @@ export class AppStore extends flux.StoreApp {
 }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: DimmerSmart })
-class ModalSmart extends DimmerStore<{},forms.IModalOut> {
+class ModalSmart extends DimmerStore<{}, forms.IModalOut> {
   render(): JSX.Element {
     return <Dimmer $page $active $modals>
-      <Modal>
-        <Icon $Icon={icon.close} onClick={ev => this.clickAction(ev, 1,'')}/>
+      <Modal $active $fullscreen tabIndex={1} onClick={flux.stopPropagation} onKeyDown={flux.stopPropagation}>
+        <Icon $Icon={icon.close} onClick={this.cancel.bind(this) } />
+        <div className="header">
+          Profile Picture
+        </div>
+        <div className="content">
+          Content
+        </div>
+        <div className="actions">
+          Actions
+        </div>
       </Modal>
     </Dimmer>
   }
@@ -50,7 +59,7 @@ export class AppRootStore extends flux.Store<{}> {
 
   doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case TActions.showModal: forms.dimmerShow<flux.IActionPar, forms.IModalOut>(ModalSmart as any, {}).then(out => { }); break;
+      case TActions.showModal: forms.dimmerShow<flux.IActionPar, forms.IModalOut>(ModalSmart as any, {}, completed).then(out => { }); break;
       default: super.doDispatchAction(id, par, completed); break;
     }
   }

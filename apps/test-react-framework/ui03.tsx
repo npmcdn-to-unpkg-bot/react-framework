@@ -32,7 +32,7 @@ class TestDimmer extends DimmerStore<forms.IModalIn, forms.IModalOut> {
   render(): JSX.Element {
     return <Dimmer $page $active>
       <div className='content' style={{ padding: '400px' }} >
-        <h1 onClick={ev => ev.nativeEvent.stopImmediatePropagation() } onKeyDown={ev => ev.nativeEvent.stopImmediatePropagation() } tabIndex={1}>Dimmer</h1>
+        <h1 onClick={ev => flux.stopPropagation(ev) } onKeyDown={ev => flux.stopPropagation(ev) } tabIndex={1}>Dimmer</h1>
       </div>
     </Dimmer>
   }
@@ -56,7 +56,7 @@ export class AppRootStore extends flux.Store<{}> {
 
   doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case TActions.showDimmer: forms.dimmerShow<forms.IModalIn, forms.IModalOut>(TestDimmer, { hideOnEscape: false }, completed).then(out => { }); break;
+      case TActions.showDimmer: forms.dimmerShow<forms.IModalIn, forms.IModalOut>(TestDimmer, { hideOnEscape: true }, completed).then(out => { }); break;
       default: super.doDispatchAction(id, par, completed); break;
     }
   }
