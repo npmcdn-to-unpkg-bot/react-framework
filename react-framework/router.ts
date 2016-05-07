@@ -33,7 +33,7 @@ export function decodeUrl(url?: string): flux.TRouteActionPar {
   return decodeUrlLow(url);
 }
 
-export function createRoute<T extends flux.IActionPar>(storeClass: flux.TStoreClass, par?: T, routeHookDefault?: flux.TRouteActionPar, otherHooks?: { [name: string]: flux.TRouteActionPar; }): flux.TRouteActionPar {
+export function createRoute<T extends flux.IActionPar>(storeClass: flux.TStoreClassLow, par?: T, routeHookDefault?: flux.TRouteActionPar, otherHooks?: { [name: string]: flux.TRouteActionPar; }): flux.TRouteActionPar {
   let res: flux.TRouteActionPar = { storeId: flux.Store.getClassMeta(storeClass).classId, par: par };
   if (routeHookDefault) { res.routeHookDefault = routeHookDefault; delete routeHookDefault.hookId; }
   if (otherHooks)

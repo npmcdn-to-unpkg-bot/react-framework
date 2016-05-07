@@ -12,6 +12,8 @@ import * as ui01 from './test-react-framework/ui01';
 import * as ui011 from './test-react-framework/ui011';
 import * as ui012 from './test-react-framework/ui012';
 import * as ui02 from './test-react-framework/ui02';
+import * as ui03 from './test-react-framework/ui03';
+import * as ui04 from './test-react-framework/ui04';
 import * as semantic from './test-react-semantic/app';
 
 export function init() {
@@ -28,6 +30,8 @@ export function init() {
     ui011: { descr: 'CheckBox', storeAppClass: ui011.AppStore },
     ui012: { descr: 'Radio', storeAppClass: ui012.AppStore },
     ui02: { descr: 'Form and Field', storeAppClass: ui02.AppStore },
+    ui03: { descr: 'Dimmer', storeAppClass: ui03.AppStore },
+    ui04: { descr: 'Modal dialog', storeAppClass: ui04.AppStore },
     //test1: { descr: 'Test React framework', storeAppClass: testRF.AppStore },
     //test2: { descr: 'Test React Semantic', storeAppClass: semantic.AppStore },
     //test2: { descr: 'Test React framework 2', storeAppClass: testRF.AppStore, resetServer: compl => setTimeout(() => compl(), 1000) }

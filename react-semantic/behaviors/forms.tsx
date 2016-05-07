@@ -68,10 +68,10 @@ export class RadioStore extends forms.RadioLowStore {
 }
 
 //***** Dimmer
-export class Dimmer extends forms.Dimmer<DimmerStore, ui.DimmerProps> { }
+export class DimmerSmart extends forms.Dimmer<DimmerStore<{}, forms.IModalOut>, ui.DimmerProps> { }
 
-@flux.StoreDef({ moduleId: moduleId, componentClass: Dimmer })
-export class DimmerStore extends forms.DimmerStore<ui.DimmerProps, forms.IModalOut> {
+@flux.StoreDef({ moduleId: moduleId, componentClass: DimmerSmart })
+export class DimmerStore<TInp extends forms.IModalIn, TOut extends forms.IModalOut> extends forms.DimmerStore<ui.DimmerProps & TInp, TOut> {
   render(): JSX.Element {
     return React.createElement(ui.Dimmer, this.$props, this.renderTemplate());
   }

@@ -7,11 +7,11 @@ import * as uiForms from '../../react-semantic/behaviors/forms';
 import {FormSmart, FormSmartStore, CheckBox, CheckBoxStore, FieldSmart, FieldSmartStore, Radio, DimmerSmart, DimmerStore } from '../../react-semantic/behaviors/forms';
 import {Fields, Field, Dimmer, Modal, Icon, icon } from '../../react-semantic/common/exports';
 
-var moduleId = 'UI03';
+var moduleId = 'UI04';
 
 uiForms.initDefaultTemplates();
 
-enum TActions { showDimmer }
+enum TActions { showModal }
 
 //****************** Main Entry Point
 export function init() {
@@ -25,21 +25,15 @@ export class AppStore extends flux.StoreApp {
   getIsHashRouter(): boolean { return true; }
 }
 
-
 @flux.StoreDef({ moduleId: moduleId, componentClass: DimmerSmart })
-class TestDimmer extends DimmerStore<forms.IModalIn, forms.IModalOut> {
-
+class ModalSmart extends DimmerStore<{},forms.IModalOut> {
   render(): JSX.Element {
-    return <Dimmer $page $active>
-      <div className='content' style={{ padding: '400px' }} >
-        <h1 onClick={ev => ev.nativeEvent.stopImmediatePropagation() } onKeyDown={ev => ev.nativeEvent.stopImmediatePropagation() } tabIndex={1}>Dimmer</h1>
-      </div>
+    return <Dimmer $page $active $modals>
+      <Modal>
+        <Icon $Icon={icon.close} onClick={ev => this.clickAction(ev, 1,'')}/>
+      </Modal>
     </Dimmer>
   }
-  initFromRoutePar(par, completed) {
-    super.initFromRoutePar(par, res => setTimeout(() => completed(res),500));
-  }
-  cont: Element;
 }
 
 //****************** AppRoot component
@@ -50,13 +44,13 @@ export class AppRootStore extends flux.Store<{}> {
 
   render(): JSX.Element {
     return <div>
-      <a href='#' onClick={ev => this.clickAction(ev, TActions.showDimmer, 'showDimmer') }>Show Dimmer</a>
+      <a href='#' onClick={ev => this.clickAction(ev, TActions.showModal, 'showDimmer') }>Show Dimmer</a>
     </div>;
   }
 
   doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
-      case TActions.showDimmer: forms.dimmerShow<forms.IModalIn, forms.IModalOut>(TestDimmer, { hideOnEscape: false }, completed).then(out => { }); break;
+      case TActions.showModal: forms.dimmerShow<flux.IActionPar, forms.IModalOut>(ModalSmart as any, {}).then(out => { }); break;
       default: super.doDispatchAction(id, par, completed); break;
     }
   }

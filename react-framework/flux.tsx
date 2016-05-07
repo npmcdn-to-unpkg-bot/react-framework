@@ -55,7 +55,7 @@ export function getUnique(): number { return unique++; } var unique = 0;
 
 //****************** DECORATOR FOR REGISTERING STORE CLASSES
 export function StoreDef(meta: IStoreMeta): ClassDecorator {
-  return (storeClass: TStoreClass) => {
+  return (storeClass: TStoreClassLow) => {
     //create store meta info
     meta.className = flux.getClassName(storeClass);
     meta.classId = `${meta.moduleId}.${meta.className}`; //meta.moduleId + '.' + meta.className;
@@ -77,10 +77,10 @@ export interface IStoreMeta {
   //classId(): string {return `${this.moduleId}.${this.className}`; }
   //pro komponenty, co se binduji do route hook
   componentClass?: TComponentClass; //class nabindovana do route hook
-  storeClass?: TStoreClass; //
+  storeClass?: TStoreClassLow; //
   loginNeeded?: boolean; //true x false. Iff undefined => bere se StoreApp.defaultLoginNeeded.
 }
-function componentToStore(componentClass: TComponentClass): TStoreClass {
+function componentToStore(componentClass: TComponentClass): TStoreClassLow {
   let res = storeMetas.find(m => m.componentClass == componentClass);
   if (!res || !res.storeClass) throw new flux.Exception(`Missing StoreDef componentClass info: ${flux.getClassName(componentClass)}`);
   return res.storeClass;
@@ -179,7 +179,7 @@ export abstract class Store<T> implements IStoreLiteral {
     let idInParent = this.getIdInParent();
     this.path = ($parent ? $parent.path + '/' : '') + idInParent;
   }
-  static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClass, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
+  static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
     if (!storeId) { completed(null); return; }
     let cls = Store.getStoreClass(storeId);
     if (store.loginNeeded(cls)) { completed(new ELoginNeeded()); return null; }
@@ -187,7 +187,7 @@ export abstract class Store<T> implements IStoreLiteral {
     res.$initialized = true;
     res.initFromRoutePar(routePar, completed);
   }
-  static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClass, instanceId?: string): T {
+  static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, instanceId?: string): T {
     let cls = Store.getStoreClass(storeId);
     let idInParent = Store.getClassIdInParent(cls, instanceId);
     let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
@@ -204,19 +204,19 @@ export abstract class Store<T> implements IStoreLiteral {
     return res;
   }
 
-  getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClass); } //store meta info
-  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClass, this.id); } //jednoznacna identifikace v parent child seznamu
-  static getClassMeta(storeClass: TStoreClass): IStoreMeta { //store meta info
+  getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClassLow); } //store meta info
+  getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClassLow, this.id); } //jednoznacna identifikace v parent child seznamu
+  static getClassMeta(storeClass: TStoreClassLow): IStoreMeta { //store meta info
     let res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
-  static getStoreClass(storeId: string | TStoreClass): TStoreClass {
+  static getStoreClass(storeId: string | TStoreClassLow): TStoreClassLow {
     if (typeof storeId === 'string') {
       let meta = storeMetasDir[storeId]; if (!meta) throw new flux.Exception(`Store ${storeId} not registered`);
       return meta.storeClass;
     } else
       return storeId;
   }
-  static getClassIdInParent(storeClass: TStoreClass, instanceId: string): string {
+  static getClassIdInParent(storeClass: TStoreClassLow, instanceId: string): string {
     //return Store.getClassMeta(storeClass).className.replace('Store','') + (instanceId ? '_' + instanceId : '');
     return instanceId ? instanceId : Store.getClassMeta(storeClass).className.replace('Store', '');
     //return Store.getClassMeta(storeClass).classId + (instanceId ? '.' + instanceId : ''); 
@@ -307,7 +307,8 @@ export abstract class Store<T> implements IStoreLiteral {
   }
 }
 
-export type TStoreClass = new ($parent: TStore, id?: string) => TStore;
+export type TStoreClass<T> = new ($parent: TStore, id?: string) => Store<T>;
+export type TStoreClassLow = TStoreClass<{}>;
 export type TDispatchCallback = (store: TStore) => void;
 
 //****************** ROUTER HOOK STORE
@@ -317,8 +318,8 @@ export class RouteHook extends Component<RouteHookStore, {}> { }
 export class RouteHookStore extends Store<{}> { //Route Hook component
 
   hookedStore: TStore;
+  ignoreLoading: boolean; //dont show "Loading..." markup during router binding
   $routePar: TRouteActionPar;
-  $ignoreLoading: boolean;
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
     this.$routePar = par;
@@ -356,7 +357,7 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
   //  });
   //}
   render(): JSX.Element {
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.$ignoreLoading ? null : <div>Loading...</div>);
+    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.ignoreLoading ? null : <div>Loading...</div>);
   }
 }
 
@@ -386,7 +387,7 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
     store = this;
     this.routeHookDefault = new RouteHookStore(this, 'hook');
     this.routeHookModal = new RouteHookStore(this, 'modal');
-    this.routeHookModal.$ignoreLoading = true;
+    this.routeHookModal.ignoreLoading = true;
     this.$basicUrl = this.getBasicUrl(window.location.href);
     console.log(`> router basicUrl=${this.$basicUrl}`);
     this.$appElement = this.getAppElement();
@@ -480,7 +481,7 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
       flux.navigate(logUrl, completed);
     }
   }
-  loginNeeded(storeClass: TStoreClass): boolean {
+  loginNeeded(storeClass: TStoreClassLow): boolean {
     let ln = Store.getClassMeta(storeClass).loginNeeded; //priznak u komponenty...
     if (ln === undefined) ln = this.$defaultLoginNeeded; //...neni nastaven, pouzij defaultLoginNeeded
     if (!ln) return false; //vrat "neni potreba login"
