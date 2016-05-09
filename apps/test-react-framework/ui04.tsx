@@ -28,6 +28,8 @@ export class AppStore extends flux.StoreApp {
 @flux.StoreDef({ moduleId: moduleId, componentClass: DimmerSmart })
 class ModalSmart extends DimmerStore<{}, forms.IModalOut> {
   render(): JSX.Element {
+    //<React.addons.CSSTransitionGroup transitionAppear={true} transitionEnter={false} transitionLeave={false} transitionName="example" transitionAppearTimeout={5000} transitionEnterTimeout={500} transitionLeaveTimeout={500} component='Dimmer' className='ui dimmer page active modals'>
+    //</React.addons.CSSTransitionGroup>
     return <Dimmer $page $active $modals>
       <Modal $active $fullscreen tabIndex={1} onClick={flux.stopPropagation} onKeyDown={flux.stopPropagation}>
         <Icon $Icon={icon.close} onClick={this.cancel.bind(this) } />

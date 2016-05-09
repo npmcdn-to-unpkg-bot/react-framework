@@ -10,8 +10,8 @@ const moduleId = 'behaviors';
 //****** CheckBoxLow
 export interface CheckBoxLowProps extends forms.FieldLowProps<boolean> { }
 export abstract class CheckBoxLowStore extends forms.FieldLowStore<boolean> {
-  componentCreated(comp: CheckBoxLow<CheckBoxLowStore, {}>) {
-    super.componentCreated(comp);
+  componentCreated() {
+    super.componentCreated();
     this.$actionInHandleChange = true;
   }
 
@@ -37,8 +37,8 @@ export class RadioLowStore extends flux.Store<RadioProps> {
   $parent:RadiosStore;
   value:boolean;
 
-  componentCreated(comp: RadioLow<any>) {
-    super.componentCreated(comp);
+  componentCreated() {
+    super.componentCreated();
     this.value = this.$props.$defaultValue;
   }
 

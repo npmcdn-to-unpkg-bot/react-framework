@@ -54,6 +54,7 @@
     <TypeScriptCompile Include="apps\test-react-framework\rf061.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui012.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui011.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\anim01.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui04.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui03.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui02.tsx" />
@@ -72,6 +73,7 @@
     <TypeScriptCompile Include="react-framework\behaviors\positions.ts" />
     <TypeScriptCompile Include="react-framework\behaviors\input.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\check-box.tsx" />
+    <TypeScriptCompile Include="react-framework\behaviors\animation.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
     <TypeScriptCompile Include="react-semantic\behaviors\templates.tsx" />
@@ -115,12 +117,15 @@
     <TypeScriptCompile Include="trash\flux2.tsx" />
     <TypeScriptCompile Include="trash\flux.tsx" />
     <TypeScriptCompile Include="react-framework\flux.tsx" />
+    <TypeScriptCompile Include="Typings\velocity.d.ts" />
     <TypeScriptCompile Include="Typings\classname.d.ts" />
     <TypeScriptCompile Include="Typings\es6-shim.d.ts" />
+    <TypeScriptCompile Include="Typings\react\react-addons-css-transition-group.d.ts" />
+    <TypeScriptCompile Include="Typings\react\react-addons-transition-group.d.ts" />
     <TypeScriptCompile Include="Typings\react-MDL.d.ts" />
-    <TypeScriptCompile Include="Typings\react-dom.d.ts" />
-    <TypeScriptCompile Include="Typings\react-global.d.ts" />
-    <TypeScriptCompile Include="Typings\react.d.ts" />
+    <TypeScriptCompile Include="Typings\react\react-dom.d.ts" />
+    <TypeScriptCompile Include="Typings\react\react-global.d.ts" />
+    <TypeScriptCompile Include="Typings\react\react.d.ts" />
     <TypeScriptCompile Include="Typings\rxjs.d.ts" />
   </ItemGroup>
   <ItemGroup>

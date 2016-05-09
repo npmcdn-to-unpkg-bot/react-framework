@@ -129,16 +129,18 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
       this.state.initStateFromProps(props);
       this.state.$initialized = true;
     }
-    this.state.$props = this.props; this.state.$context = this.context;
-    this.state.componentCreated(this); //notificiation
+    this.state.itsMe(this);
+    this.state.componentCreated(); //notificiation
   }
   state: T;
-  context: IComponentContext;
-  componentWillUnmount() { this.state.componentWillUnmount(this); }
+  //props: TProps<T, P>;
+  //context: IComponentContext;
+  componentWillUnmount() { this.state.componentWillUnmount(); }
+  componentDidMount() { this.state.componentDidMount(); }
   render(): JSX.Element {
     this.state.trace('render');
-    this.state.$props = this.props; this.state.$context = this.context;
-    return this.state.render(this);
+    this.state.itsMe(this);
+    return this.state.render();
   }
   getChildContext(): IComponentContext { return { $parent: this.state }; }
 }
@@ -170,9 +172,8 @@ export type TStore = Store<{}>;
 //Props are assigned to Store in component constructor (Object.assign(this.state, props); delete this.state['$store'];
 export abstract class Store<T> implements IStoreLiteral {
 
-  //$template: TTemplate<this>;
+  $comp: Component<Store<T>, {}>; //self component, could be omited
   $subscribers: Array<string> = []; //components path's, using this store as a status
-  $context: any;
   $props: TProps<this, T>;
   $initialized = false; //store already initialized from component properties
   _type: string; //kvuli JSON deserializaci
@@ -259,18 +260,23 @@ export abstract class Store<T> implements IStoreLiteral {
   }
 
   //************** Component management
-  render(comp: TComponent): JSX.Element {
+  itsMe(comp: Component<this, {}>) {
+    this.$props = comp.props as TProps<this, T>; this.$comp = comp;
+  }
+
+  render(): JSX.Element {
     return this.renderTemplate(null, true) as JSX.Element;
   }
-  componentCreated(comp: TComponent) {
+  componentCreated() {
     this.trace('create');
-    this.subscribe(comp, true);
+    this.subscribe(this.$comp, true);
   }
-  componentWillUnmount(comp: TComponent) {
+  componentWillUnmount() {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
-    this.unSubscribe(comp, true);
+    this.unSubscribe(this.$comp, true);
     this.trace('destroy');
   }
+  componentDidMount() { }
 
   subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TExceptionCallback) {
     if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
@@ -283,15 +289,15 @@ export abstract class Store<T> implements IStoreLiteral {
     });
   }
 
+  //********************* INIT
   //"status from component props" initialization
   initStateFromProps(props: T) { }
 
-  //************** Action Binding
-
   //finish store creation from route parameters. Not called in playing bootApp for action playing.
-  //Could BeforeUnloadEvent async
+  //Could be async
   initFromRoutePar(par: IActionPar, completed: TCreateStoreCallback) { completed(this); }
 
+  //************** Action Binding
   doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
   bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, par: IActionPar, completed: TExceptionCallback) {
@@ -349,19 +355,6 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
     }
   }
 
-  //subNavigate<T extends flux.IActionPar>(modifyRoutePar: (st: flux.IRouteActionPar<T>) => void, completed?: flux.TExceptionCallback) {
-  //  modifyRoutePar(this.$routePar as flux.IRouteActionPar<T>);
-  //  this.routeBind(completed);
-  //}
-
-  //routeBind(completed?: TExceptionCallback) {
-  //  this.bindRouteToHookStore(false, this.$routePar, err => {
-  //    if (err) { store.navigateError(err, completed); return; }
-  //    this.modify();
-  //    store.pushState();
-  //    if (completed) completed(null);
-  //  });
-  //}
   render(): JSX.Element {
     return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.ignoreLoading ? null : <div>Loading...</div>);
   }
@@ -563,13 +556,13 @@ export class BindToState extends flux.Component<BindToStateStore, BindToStatePro
 @flux.StoreDef({ moduleId: moduleId, componentClass: BindToState })
 export class BindToStateStore extends Store<BindToStateProps> {
   //$stores: Array<flux.TStore> | flux.TStore;
-  componentCreated(comp: flux.TComponent) {
-    super.componentCreated(comp);
-    if (this.$props.$stores) this.stores().forEach(st => st.subscribe(comp));
+  componentCreated() {
+    super.componentCreated();
+    if (this.$props.$stores) this.stores().forEach(st => st.subscribe(this.$comp));
   }
-  componentWillUnmount(comp: flux.TComponent) {
-    super.componentWillUnmount(comp);
-    if (this.$props.$stores) this.stores().forEach(st => st.unSubscribe(comp));
+  componentWillUnmount() {
+    super.componentWillUnmount();
+    if (this.$props.$stores) this.stores().forEach(st => st.unSubscribe(this.$comp));
   }
   private stores(): Array<flux.TStore> { return Array.isArray(this.$props.$stores) ? this.$props.$stores as Array<flux.TStore> : [this.$props.$stores as flux.TStore]; }
 }

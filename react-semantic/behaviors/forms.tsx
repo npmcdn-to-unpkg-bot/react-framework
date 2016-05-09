@@ -31,9 +31,7 @@ export class FieldSmartStore extends forms.InputLowStore {
 }
 
 //***** CheckBox
-export class CheckBox extends forms.CheckBoxLow<CheckBoxStore, ui.CheckBoxProps> {
-  componentDidMount() { this.state.semanticHack(); }
-}
+export class CheckBox extends forms.CheckBoxLow<CheckBoxStore, ui.CheckBoxProps> {}
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: CheckBox })
 export class CheckBoxStore extends forms.CheckBoxLowStore {
@@ -45,6 +43,7 @@ export class CheckBoxStore extends forms.CheckBoxLowStore {
     super.modifyInputTagProps(props);
     props.className = 'hidden';
   }
+  componentDidMount() { super.componentDidMount(); this.semanticHack(); }
   $inp: HTMLInputElement;
   semanticHack() { 
     if (this.$inp) this.$inp['indeterminate'] = this.value === undefined;  

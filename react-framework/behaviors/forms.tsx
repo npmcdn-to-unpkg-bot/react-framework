@@ -42,11 +42,11 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
   assignTo(val: V): V {return val;}
   modified(val1: V, val2: V):boolean {return val1===val2;}
 
-  componentCreated(comp: TFieldComponent) {
-    super.componentCreated(comp);
+  componentCreated() {
+    super.componentCreated();
     if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
   }
-  componentWillUnmount(comp: TFieldComponent): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(comp); }
+  componentWillUnmount(): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(); }
 
   initStateFromProps(props: FieldLowProps<V>) { this.value = this.assignTo(props.$defaultValue); }
 

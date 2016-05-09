@@ -24,3 +24,7 @@ function getWindowSize(): { width: number; height: number; } {
 }
 
 //http://www.jakpsatweb.cz/css/position.html: position absolute - pozice vzhledem k BODY
+
+
+//http://stackoverflow.com/questions/294250/how-do-i-retrieve-an-html-elements-actual-width-and-height
+//getboundingClientRect() will return the actual width and height of elements scaled via css whereas offsetHeight and offsetWidth will not
