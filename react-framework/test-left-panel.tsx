@@ -92,8 +92,8 @@ export class TestItemStore extends flux.Store<{}> {
     this.modify(st => { st.selected = true; st.state = TItemState.playing; st.playProgress = '-'; });
     rightClient().startPlaying(this.key,
       (pos, len) => this.modify(st => st.playProgress = `${pos} / ${len}`),
-      err => {
-        this.modify(st => st.playProgress += ' - ' + (err ? `*** ERROR: ${err.message}` : 'DONE'));
+      res => {
+        this.modify(st => st.playProgress += ' - ' + (res ? `*** ERROR: ${res.message}` : 'DONE'));
         //if (completed) setTimeout(() => completed(), 800);
         if (completed) completed();
       }

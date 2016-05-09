@@ -11,35 +11,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.ui.js"></script>
-
-  <!--<style type='text/css'>
-    .example-enter {
-      opacity: 0.01;
-    }
-
-      .example-enter.example-enter-active {
-        opacity: 1;
-        transition: opacity 0.5s ease-in;
-      }
-
-    .example-leave {
-      opacity: 1;
-    }
-
-      .example-leave.example-leave-active {
-        opacity: 0.01;
-        transition: opacity 0.5s ease-out;
-      }
-
-    .example-appear {
-      opacity: 0.01;
-    }
-
-      .example-appear.example-appear-active {
-        opacity: 1;
-        transition: opacity 0.3s ease-in;
-      }
-  </style>-->
 </head>
 <body style="margin:10px; overflow-x:hidden;">
   <div id="app"></div>
@@ -51,63 +22,7 @@
     System.paths['react-dom'] =     'https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js';
   </script>
   <script>
-    System.import('anim01.js').then(function(m) { m.init(); }, function(m) { debugger; });
+    System.import('ui04.js').then(function(m) { m.init(); }, function(m) { debugger; });
   </script>
-
-  <!--<div class="ui text menu">
-    <div class="ui dropdown item" tabindex="0" onClick="">
-      More
-      <i class="dropdown icon"></i>
-      <div id="menu" class="menu transition" tabindex="-1">
-        <div class="item">Applications</div>
-        <div class="item">International Students</div>
-        <div class="item">Scholarships</div>
-      </div>
-    </div>
-  </div>-->
-
-  <!--<style type="text/css">
-    .showbox {
-      position: absolute;
-      margin: 4em 1em;
-      width: 100px;
-      height: 60px;
-      border: 2px solid green;
-      background-color: #fff;
-      line-height: 60px;
-      text-align: center;
-      left: 0px;
-      transition: 1s ease-in-out;
-      animation: xxx 1s ease-in forwards;
-    }
-
-      .showbox.slideright:hover {
-        transform: translate(-3em,0);
-        xleft: -3em;
-        xanimation: xxx 1s ease-in both;
-      }
-
-
-
-    #main {
-      xanimation: xxx 1s ease-in forwards;
-    }
-
-    @keyframes xxx {
-      from {
-        xleft: 0px;
-        xtransform: translate(0,0);
-        xopacity: 1;
-      }
-
-      to {
-        left: 3em;
-        xtransform: translate(3em,0);
-        xopacity: 1;
-      }
-    }
-  </style>
-
-  <div id="main" class="showbox slideright">box 1</div>-->
 </body>
 </html>

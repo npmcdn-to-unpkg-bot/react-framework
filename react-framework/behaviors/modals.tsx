@@ -22,9 +22,7 @@ type TDimmerStore = DimmerStore<IModalIn, IModalOut>;
 export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut> extends flux.Store<TInp> {
 
   $completed: (out: TOut) => void; //notifikace o ukonceni modal promise
-  private inputPars: TInp;
-  private $doKeyDown;
-  private $click;
+  private inputPars: TInp; //vstupni data modal dialogu
 
   cancel(ev: flux.EventGeneric, res?: ModalResult) {
     flux.stopPropagation(ev);
@@ -39,44 +37,51 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
   doDispatchAction(id: TModalAction, out: TOut, completed: flux.TExceptionCallback) {
     switch (id) {
       case TModalAction.close:
-        flux.store.routeHookModal.subNavigate(null, null, null); //odstran z DOM
-        if (this.$completed) this.$completed(out);
-        completed(null);
+        this.close(out, res => res instanceof Error ? completed(res) : completed(null));
         break;
       default: super.doDispatchAction(id, out, completed); break;
     }
   }
 
   initFromRoutePar(par: TInp, completed: flux.TCreateStoreCallback) {
-    if (par.hideOnClick === undefined) par.hideOnClick = true; if (par.hideOnEscape === undefined) par.hideOnEscape = true;
+    if (par.hideOnClick === undefined) par.hideOnClick = true; if (par.hideOnEscape === undefined) par.hideOnEscape = true; //default values
     this.inputPars = par;
     super.initFromRoutePar(par, completed);
   }
 
   componentCreated() {
     super.componentCreated();
-    if (this.inputPars.hideOnEscape) document.addEventListener('keydown', this.$doKeyDown = this.keyDownCancel.bind(this));
-    if (this.inputPars.hideOnClick) document.addEventListener('click', this.$click = this.dimmerClickCancel.bind(this));
-  }
+    if (this.inputPars.hideOnEscape) document.addEventListener('keydown', this.$keyDownCancel = this.keyDownCancel.bind(this));
+    if (this.inputPars.hideOnClick) document.addEventListener('click', this.$dimmerClickCancel = this.dimmerClickCancel.bind(this));
+  } private $keyDownCancel; private $dimmerClickCancel;
+
   componentWillUnmount() {
     super.componentWillUnmount();
-    if (this.inputPars.hideOnEscape) document.removeEventListener('keydown', this.$doKeyDown);
-    if (this.inputPars.hideOnClick) document.removeEventListener('click', this.$click);
+    if (this.inputPars.hideOnEscape) document.removeEventListener('keydown', this.$keyDownCancel);
+    if (this.inputPars.hideOnClick) document.removeEventListener('click', this.$dimmerClickCancel);
   }
   private closeAction(par: IModalOut) {
     this.action(TModalAction.close, 'close', par);
+  }
+  close(out: TOut, completed: flux.TCreateStoreCallback) {
+    flux.store.routeHookModal.subNavigate(null, null, res => { //odstran z DOM
+      if (this.$completed) this.$completed(out);
+      if (completed) completed(res);
+    });
   }
   private keyDownCancel(ev: KeyboardEvent) { if (ev.keyCode != 27) return; this.cancel(ev, ModalResult.dimmerEscape); }
   private dimmerClickCancel(ev: MouseEvent) { this.cancel(ev, ModalResult.dimmerClick); }
 }
 
-export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: flux.TStoreClass<TInp>, par: TInp, showCompleted: flux.TExceptionCallback): Promise<TOut> {
+export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: flux.TStoreClass<TInp>, par: TInp, onShowed: flux.TExceptionCallback): Promise<TOut> {
   return new Promise<TOut>((ok, err) => {
-    flux.store.routeHookModal.subNavigate(flux.Store.getClassMeta(comp as any).classId, par, res => {
-      if (res) { err(res); return; }
-      var dimm = flux.store.routeHookModal.hookedStore as TDimmerStore;
-      dimm.$completed = ok.bind(dimm);
-      if (showCompleted) showCompleted(null);
+    flux.store.routeHookModal.subNavigate(flux.Store.getClassMeta(comp as any).classId, par, (res: Error | TDimmerStore) => {
+      if (res instanceof Error)
+        err(res);
+      else {
+        res.$completed = out => ok(out as TOut);
+        if (onShowed) res.$onDidMount = st => onShowed(null);
+      }
     });
   });
 }

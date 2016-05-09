@@ -176,6 +176,7 @@ export abstract class Store<T> implements IStoreLiteral {
   $subscribers: Array<string> = []; //components path's, using this store as a status
   $props: TProps<this, T>;
   $initialized = false; //store already initialized from component properties
+  $onDidMount: (st: this) => void;
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
@@ -274,18 +275,21 @@ export abstract class Store<T> implements IStoreLiteral {
   componentWillUnmount() {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
     this.unSubscribe(this.$comp, true);
+    delete this.$onDidMount;
     this.trace('destroy');
   }
-  componentDidMount() { }
+  componentDidMount() {
+    if (this.$onDidMount) this.$onDidMount(this);
+  }
 
-  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TExceptionCallback) {
+  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
     if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
     var hook = this as any as RouteHookStore;
     hook.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => {
-      if (err) { store.navigateError(err, completed); return; }
+      if (err instanceof Error) { store.navigateError(err, completed); return; }
       hook.modify();
       store.pushState();
-      if (completed) completed(null);
+      if (completed) completed(err);
     });
   }
 
@@ -300,7 +304,7 @@ export abstract class Store<T> implements IStoreLiteral {
   //************** Action Binding
   doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
-  bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, par: IActionPar, completed: TExceptionCallback) {
+  bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, par: IActionPar, completed: TCreateStoreCallback) {
     let rPar = par as TRouteActionPar;
     let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
     let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
@@ -333,23 +337,23 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
   ignoreLoading: boolean; //dont show "Loading..." markup during router binding
   $routePar: TRouteActionPar;
 
-  bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TExceptionCallback) {
+  bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TCreateStoreCallback) {
     this.$routePar = par;
     if (isRestore) {
       flux.getChildRoutes(par).forEach(propName => this.hookedStore.bindRouteToStore(true, par[propName], flux.noop));
-      completed(null);
+      completed(this.hookedStore);
     } else {
       var self = this;
       Store.createInHook<TStore>(this, par.storeId, res => {
         if (res instanceof Store) {
           self.hookedStore = res;
           //process child routes
-          let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(null); return; } //no child routes => completed
-          let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.bindRouteToStore(false, subPar, exp => { if (exp) err(exp); else ok(); })));
-          rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
+          let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(self.hookedStore); return; } //no child routes => completed
+          let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.bindRouteToStore(false, subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
+          rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(self.hookedStore));
         } else {
           delete self.hookedStore; delete self.$routePar;
-          completed(res);
+          completed(null);
         }
       }, null, par.par);
     }
@@ -371,7 +375,7 @@ export var routeParIgnores = ['storeId', 'hookId', 'par'];
 export var routeHookDefaultName = 'routeHookDefault';
 
 export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback) {
-  store.routeBind(routes, true, completed);
+  store.routeBind(routes, true, res => res instanceof Error ? completed(res) : completed(null));
 }
 
 //****************** ROOT STORE
@@ -419,13 +423,13 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   // - in navigate(routes, true, completed)
   // - in bootApp(), not playing, just start app
   // - in windows.onPopstate event (flux.decodeFullUrl(), false)
-  routeBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean, completed?: TExceptionCallback) {
+  routeBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean, completed?: TCreateStoreCallback) {
     if (!routes) routes = this.getStartRoute(); if (!routes) { if (completed) completed(null); return; };
     this.bindRouteToStore(false, routes, err => {
-      if (err) { this.navigateError(err, completed); return; }
+      if (err instanceof Error) { this.navigateError(err, completed); return; }
       this.routeHookDefault.modify();
       if (withPustState) this.pushState();
-      if (completed) completed(null);
+      if (completed) completed(err);
     });
   }
   actRoutes(): TRouteActionPar { return this.routeHookDefault.$routePar; }
@@ -464,7 +468,7 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
       if (!startRoute) { if (compl) compl(null); return; } //this code is repeated in store.routeBind, putting here for logic clarification
 
       //route exists => bind route
-      store.routeBind(startRoute, startRoute ? true : false, compl); //bind (=> init Stores) route
+      store.routeBind(startRoute, startRoute ? true : false, !compl ? null : res => res instanceof Error ? compl(res) : compl(null)); //bind (=> init Stores) route
     }
   }
 

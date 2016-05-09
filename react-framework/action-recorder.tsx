@@ -78,8 +78,8 @@ export function startPlaying(saveId: string, progress: (pos: number, len: number
   if (!playList) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
   let len = playList.length; let pos = 1;
   //playing = true; var compl = err => { playing = false; completed(err); }
-  flux.StoreApp.bootApp(data.store, err => {
-    if (err) { completed(err); return; }
+  flux.StoreApp.bootApp(data.store, res => {
+    if (res) { completed(res); return; }
     flux.store.$recorder.playListCancel = flux.playActions(playList).subscribe(() => progress(pos++, len), err => completed(err), () => completed(null));
   });
 }
