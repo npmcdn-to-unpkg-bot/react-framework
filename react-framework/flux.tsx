@@ -124,7 +124,10 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
     this.state = props.$store;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
-    else if (props.id && this.state.id && props.id != this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}"`);
+    else {
+      if (this.state.$parent && ctx.$parent && this.state.$parent !== ctx.$parent) throw new Exception(`Parent mishmash`);
+      if (props.id && this.state.id && props.id != this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}"`);
+    }
     if (!this.state.id) this.state.id = props.id;
     if (!this.state.$initialized) {
       this.state.initStateFromProps(props);
@@ -161,7 +164,7 @@ export interface IProps<T extends TStore> {
   $store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem komponenty
   id?: string;
   $template?: TTemplate<T>;
-  $animation?: Animation;
+  $animation?: flux.IAnimation;
 }
 export type TProps<T extends TStore, P> = IProps<T> & P & { children?: React.ReactNode };
 export type TTemplate<T extends TStore> = (self: T) => React.ReactNode;
@@ -179,10 +182,12 @@ export abstract class Store<T> implements IStoreLiteral {
   $props: TProps<this, T>;
   $initialized = false; //flag: store already initialized from component properties
   $onDidMount = new rx.Subject(); //component didMount notification. Called after velocity start animation.
+  $animation: Animation;
 
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
+  animIsOut: boolean;
   //children: React.ReactNode;
 
   constructor(public $parent: TStore, public id?: string) {
@@ -266,6 +271,7 @@ export abstract class Store<T> implements IStoreLiteral {
   //************** Component management
   itsMe(comp: Component<this, {}>) {
     this.$props = comp.props as TProps<this, T>; this.$comp = comp;
+    if (this.$props.$animation) this.$animation = new flux.Animation(this, this.$props.$animation);
   }
 
   render(): JSX.Element {
@@ -275,17 +281,15 @@ export abstract class Store<T> implements IStoreLiteral {
     this.trace('create');
     this.subscribe(this.$comp, true);
   }
+  componentDidMount() {
+    if (this.$animation) this.$animation.onDidMount();
+    else this.$onDidMount.next({});
+  }
   componentWillUnmount() {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
     this.unSubscribe(this.$comp, true);
-    if (this.$props && this.$props.$animation) this.$props.$animation.dispose();
+    if (this.$animation) this.$animation.dispose();
     this.trace('destroy');
-  }
-  componentDidMount() {
-    if (this.$props && this.$props.$animation) {
-      this.$props.$animation.init(this);
-      this.$props.$animation.in(() => { if (this.$onDidMount.isUnsubscribed) return; this.$onDidMount.complete(); });
-    } else this.$onDidMount.complete();
   }
 
   subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {

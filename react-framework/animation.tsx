@@ -34,7 +34,7 @@ export enum easing {
 }
 
 export enum callout {
-  no = 100;
+  no = 100,
   bounce = 101,
   shake = 102,
   flash = 103,
@@ -128,35 +128,52 @@ export interface IAnimation {
   outEasing?: easing;
 }
 export class Animation {
-  constructor(private par: IAnimation) { }
-  init(store: flux.TStore) {
-    //debugger;
-    this.el = store && store.$comp ? ReactDOM.findDOMNode(store.$comp) as HTMLElement : null;
-  }
-  private el: HTMLElement;
-  in(completed: () => void) {
-    if (!this.el) { completed(); return; }
-    var ef = decodeEfect(this.par.in);
-    var opt: velocity.Options = { complete: () => completed() };
-    this.setPar(true, opt);
-    Velocity(this.el, 'finish');
-    Velocity(this.el, ef, opt);
-  }
-  out(completed: () => void) {
-    if (!this.el) { completed(); return; }
-    var ef = decodeOutEfect(this.par.out, this.par.in);
-    var opt: velocity.Options = { complete: () => completed() };
-    this.setPar(!efectAssigned(this.par.out), opt);
-    Velocity(this.el, 'finish');
-    Velocity(this.el, ef, opt);
+  constructor(private store: flux.TStore, private par: IAnimation) { }
+
+  onDidMount() {
+    var el = this.el(); if (!el) return;
+    if (this.store.animIsOut == undefined) this.in(() => { if (this.store.$onDidMount.isUnsubscribed) return; this.store.$onDidMount.next({}); });
+    else this.setState(this.store.animIsOut, el);
   }
   dispose() {
-    if (!this.el) return;
-    Velocity(this.el, 'stop');
+    var el = this.el(); if (!el) return;
+    delete this.store.animIsOut;
+    Velocity(el, 'stop');
+  }
+
+  in(completed: () => void) {
+    var el = this.el(); if (!el) { completed(); return; }
+    var ef = decodeEfect(this.par.in);
+    this.store.animIsOut = false;
+    var opt: velocity.Options = { complete: () => completed() };
+    this.setPar(true, opt);
+    Velocity(el, 'finish');
+    Velocity(el, ef, opt);
+  }
+  out(completed: () => void) {
+    var el = this.el(); if (!el) { completed(); return; }
+    var ef = decodeOutEfect(this.par.out, this.par.in);
+    this.store.animIsOut = true;
+    var opt: velocity.Options = { complete: () => completed() };
+    this.setPar(!efectAssigned(this.par.out), opt);
+    Velocity(el, 'finish');
+    Velocity(el, ef, opt);
+  }
+  toggle(completed: () => void) {
+    if (this.store.animIsOut) this.in(completed); else this.out(completed);
   }
   private setPar(inPar: boolean, opt: velocity.Options) {
     var pars = inPar ? { duration: this.par.inDuration, delay: this.par.inDelay, easing: this.par.inEasing } : { duration: this.par.outDuration, delay: this.par.outDelay, easing: this.par.outEasing };
     if (pars.duration) opt.duration = pars.duration; if (pars.delay) opt.delay = pars.delay; if (pars.easing) opt.easing = easing[pars.easing];
+  }
+  private el(): HTMLElement {
+    return this.store && this.store.$comp ? ReactDOM.findDOMNode(this.store.$comp) as HTMLElement : null;
+  }
+  private setState(toOut: boolean, el: HTMLElement) {
+    Velocity(el, 'stop');
+    var ef = toOut ? decodeOutEfect(this.par.out, this.par.in) : decodeEfect(this.par.in);
+    Velocity(el, ef);
+    Velocity(el, 'finish');
   }
 }
 function efectAssigned(ef: transition | callout | velocity.Properties): boolean { return typeof ef == 'number' || typeof ef == 'object'; }

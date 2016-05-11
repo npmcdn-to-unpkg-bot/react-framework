@@ -3,7 +3,7 @@ export {appStateToJSON, literalToAppState, ActionRecorder, startPlaying, saveAll
 export {StoreApp, TStoreAppClass, RouteHookStore, TComponent, TProps, Component, RouteHook, StoreDef, TAction, IStoreLiteral, playActions, navigate,
 IActionPar, TStore, Store, TRouteActionPar, TExceptionCallback, TCreateStoreCallback, store, ELoginNeeded, IRouteActionPar, TStoreClass, routeParIgnores,
 routeHookDefaultName, Exception, ENotImplemented, TCallback, getClassName, noop, getUnique, TSyncValidator, BindToState, Dummy, DummyStore, TTemplate, defaultTemplates, TStoreClassLow, stopPropagation, EventGeneric} from './flux';
-export {Animation, transition, callout, easing} from './animation';
+export {Animation, IAnimation, transition, callout, easing} from './animation';
 export {InputSmart, InputSmartStore} from './behaviors/input';
 export {InputTag} from './behaviors/forms';
 export {RadiosStore} from './behaviors/check-box';

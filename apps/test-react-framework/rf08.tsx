@@ -18,7 +18,7 @@ export class AppStore extends flux.StoreApp {
   getIsHashRouter(): boolean { return true; } //hash URL format
 }
 
-enum TActions { click };
+enum TActions { click, click2 };
 
 //****************** AppRoot component
 export class AppRoot extends flux.Component<AppRootStore, {}> { }
@@ -28,39 +28,54 @@ export class AppRootStore extends flux.Store<{}> {
 
   constructor(p, i) {
     super(p, i);
-    this.dummy = this.hidden ? null : new DummyStore(this);
+    this.dummy = new DummyStore(this, 'dummy'); 
+    this.dummy2 = new DummyStore(this, 'dummy2'); 
   }
 
-  hidden = false;
   render(): JSX.Element {
     return <div>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.click, 'click') }>Toggle</a>
-      {this.hidden ? null : <Dummy $store={this.dummy} $animation={new flux.Animation({ in: flux.transition.expandIn, inDuration: 1000 }) }>
+      {this.hidden ? null : <Dummy $store={this.dummy} $animation={{ in: flux.transition.expandIn, inDuration: 500}} >
         <div style={{ width: '200px', border: '1px solid black' }} >
           <h2>Title</h2>
           <p>Content</p>
         </div>
       </Dummy>}
+      <hr/>
+      <a href='#' onClick={ev => this.clickAction(ev, TActions.click2, 'click2') }>Toggle</a>
+      <Dummy $store={this.dummy2} $animation={{ in: flux.transition.expandIn, inDuration: 500 }}>
+        <div style={{ width: '200px', border: '1px solid black' }} >
+          <h2>Title</h2>
+          <p>Content</p>
+        </div>
+      </Dummy>
     </div>;
   }
   doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case TActions.click:
+        //as modal dialog: create and remove with animation efect
         if (this.hidden) {
-          this.dummy = new DummyStore(this);
-          this.dummy.$onDidMount.subscribe(null, null, () => completed(null));
+          //create Dummy component
+          this.dummy.$onDidMount.subscribe(() => completed(null)); //callback after mount and enter animation
           this.modify(st => st.hidden = false);
         } else {
-          this.dummy.$props.$animation.out(() => {
+          //animation out and remove Dummy component
+          this.dummy.$animation.out(() => {
             this.modify(st => st.hidden = true);
-            delete this.dummy;
             completed(null);
           });
         }
+        break;
+      case TActions.click2:
+        //just change target animation status
+        this.dummy2.$animation.toggle(() => completed(null));
         break;
       default: super.doDispatchAction(id, par, completed); break;
     }
   }
   dummy: DummyStore;
+  hidden: boolean;
+  dummy2: DummyStore;
 }
 
