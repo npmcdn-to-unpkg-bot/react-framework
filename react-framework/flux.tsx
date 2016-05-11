@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as flux from './exports';
 import {ActionRecorder} from './action-recorder';
+import {Animation} from './animation';
 
 /*
 **** store lifecycle
@@ -160,6 +161,7 @@ export interface IProps<T extends TStore> {
   $store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem komponenty
   id?: string;
   $template?: TTemplate<T>;
+  $animation?: Animation;
 }
 export type TProps<T extends TStore, P> = IProps<T> & P & { children?: React.ReactNode };
 export type TTemplate<T extends TStore> = (self: T) => React.ReactNode;
@@ -172,11 +174,12 @@ export type TStore = Store<{}>;
 //Props are assigned to Store in component constructor (Object.assign(this.state, props); delete this.state['$store'];
 export abstract class Store<T> implements IStoreLiteral {
 
-  $comp: Component<Store<T>, {}>; //self component, could be omited
+  $comp: Component<Store<T>, {}>; //self component, could be omited for stores without component
   $subscribers: Array<string> = []; //components path's, using this store as a status
   $props: TProps<this, T>;
-  $initialized = false; //store already initialized from component properties
-  $onDidMount: (st: this) => void;
+  $initialized = false; //flag: store already initialized from component properties
+  $onDidMount = new rx.Subject(); //component didMount notification. Called after velocity start animation.
+
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
@@ -275,11 +278,14 @@ export abstract class Store<T> implements IStoreLiteral {
   componentWillUnmount() {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
     this.unSubscribe(this.$comp, true);
-    delete this.$onDidMount;
+    if (this.$props && this.$props.$animation) this.$props.$animation.dispose();
     this.trace('destroy');
   }
   componentDidMount() {
-    if (this.$onDidMount) this.$onDidMount(this);
+    if (this.$props && this.$props.$animation) {
+      this.$props.$animation.init(this);
+      this.$props.$animation.in(() => { if (this.$onDidMount.isUnsubscribed) return; this.$onDidMount.complete(); });
+    } else this.$onDidMount.complete();
   }
 
   subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
@@ -551,6 +557,13 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   }
 
 }
+
+//******************  dummy
+interface DummyProps { [propName: string]: any; }
+export class Dummy extends flux.Component<DummyStore, DummyProps> { }
+
+@flux.StoreDef({ moduleId: moduleId, componentClass: Dummy })
+export class DummyStore extends Store<DummyProps> { }
 
 //******************  bind to state
 interface BindToStateProps { $stores: Array<flux.TStore> | flux.TStore; }

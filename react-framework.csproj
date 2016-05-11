@@ -52,6 +52,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="apps\mdl-d-ts\mdl-d-ts.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\rf061.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\rf08.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui012.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui011.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\anim01.tsx" />
@@ -73,7 +74,7 @@
     <TypeScriptCompile Include="react-framework\behaviors\positions.ts" />
     <TypeScriptCompile Include="react-framework\behaviors\input.tsx" />
     <TypeScriptCompile Include="react-framework\behaviors\check-box.tsx" />
-    <TypeScriptCompile Include="react-framework\behaviors\animation.tsx" />
+    <TypeScriptCompile Include="react-framework\animation.tsx" />
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
     <TypeScriptCompile Include="react-semantic\behaviors\templates.tsx" />

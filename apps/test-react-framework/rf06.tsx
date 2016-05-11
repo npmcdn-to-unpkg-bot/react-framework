@@ -33,7 +33,7 @@ export class AppRootStore extends flux.Store<{}> {
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
     switch (id) {
       case AppRootAction.click:
-        this.$parent.subNavigate<IAppRootRoutePar>(this.getMeta().classId, { title: this.title += 'x' }, completed);
+        this.$parent.subNavigate<IAppRootRoutePar>(this.getMeta().classId, { title: this.title += 'x' }, res => res instanceof Error ? completed(res) : completed(null));
         break;
       default:
         super.doDispatchAction(id, par, completed);

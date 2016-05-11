@@ -80,7 +80,8 @@ export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: 
         err(res);
       else {
         res.$completed = out => ok(out as TOut);
-        if (onShowed) res.$onDidMount = st => onShowed(null);
+        res.$onDidMount.subscribe(null, null, () => onShowed(null));
+        //if (onShowed) onShowed(null);
       }
     });
   });
