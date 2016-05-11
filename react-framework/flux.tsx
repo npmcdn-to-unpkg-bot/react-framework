@@ -121,6 +121,15 @@ export function playActions(actions: Array<TAction>): rx.Observable<any> {
 export class Component<T extends TStore, P> extends React.Component<IProps<T> & P, any> { //generic React component
   constructor(props: TProps<T, P>, ctx: IComponentContext) {
     super(props, ctx);
+
+    if (props.$store2) {
+      var st = props.$store2();
+      if (st) { this.state = st; return; }
+      st = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id);
+      st.itsMe(this);
+      st.componentCreated(); //notificiation
+    }
+
     this.state = props.$store;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
@@ -162,6 +171,7 @@ export type IChildStores = { [idInParent: string]: TStore; };
 //export interface IPropsEx {  }
 export interface IProps<T extends TStore> {
   $store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem komponenty
+  $store2?: (st?: T) => T;
   id?: string;
   $template?: TTemplate<T>;
   $animation?: flux.IAnimation;

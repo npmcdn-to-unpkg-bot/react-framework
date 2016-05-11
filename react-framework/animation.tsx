@@ -162,6 +162,7 @@ export class Animation {
   toggle(completed: () => void) {
     if (this.store.animIsOut) this.in(completed); else this.out(completed);
   }
+
   private setPar(inPar: boolean, opt: velocity.Options) {
     var pars = inPar ? { duration: this.par.inDuration, delay: this.par.inDelay, easing: this.par.inEasing } : { duration: this.par.outDuration, delay: this.par.outDelay, easing: this.par.outEasing };
     if (pars.duration) opt.duration = pars.duration; if (pars.delay) opt.delay = pars.delay; if (pars.easing) opt.easing = easing[pars.easing];

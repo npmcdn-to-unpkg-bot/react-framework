@@ -28,8 +28,8 @@ export class AppRootStore extends flux.Store<{}> {
 
   constructor(p, i) {
     super(p, i);
-    this.dummy = new DummyStore(this, 'dummy'); 
-    this.dummy2 = new DummyStore(this, 'dummy2'); 
+    this.dummy = new DummyStore(this, 'dummy');
+    this.dummy2 = new DummyStore(this, 'dummy2'); //this.dummy2.animIsOut = false;
   }
 
   render(): JSX.Element {
