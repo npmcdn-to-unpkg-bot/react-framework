@@ -407,14 +407,16 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
   }
 
   subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
-    //if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
-    //var hook = this as any as RouteHookStore;
-    this.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => {
-      if (err instanceof Error) { store.navigateError(err, completed); return; }
-      this.modify();
-      store.pushState();
-      if (completed) completed(err);
-    });
+    this.startRouting();
+    this.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => this.endRouting(err, true, completed));
+  }
+
+  startRouting() { }
+  endRouting(res: Error | TStore,  withPustState: boolean, completed?: flux.TCreateStoreCallback) {
+    if (res instanceof Error) { store.navigateError(res, completed); return; }
+    this.modify();
+    if (withPustState) store.pushState();
+    if (completed) completed(res);
   }
 
   render(): JSX.Element {
@@ -424,7 +426,7 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
 }
 
 export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback) {
-  store.routeBind(routes, true, res => res instanceof Error ? completed(res) : completed(null));
+  store.rootRouteBind(routes, true, res => res instanceof Error ? completed(res) : completed(null));
 }
 
 export interface IRouteActionPar<T extends IActionPar> extends IActionPar {
@@ -482,15 +484,11 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   // - in navigate(routes, true, completed)
   // - in bootApp(), not playing, just start app
   // - in windows.onPopstate event (flux.decodeFullUrl(), false)
-  routeBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean, completed?: TCreateStoreCallback) {
+  rootRouteBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean, completed?: TCreateStoreCallback) {
     if (!routes) routes = this.getStartRoute(); if (!routes) { if (completed) completed(null); return; };
-    //this.bindRouteToStore(false, routes, err => {
-    this.findRouteHook(routes.hookId).bindRouteToHookStore(false, routes, err => {
-      if (err instanceof Error) { this.navigateError(err, completed); return; }
-      this.routeHookDefault.modify();
-      if (withPustState) this.pushState();
-      if (completed) completed(err);
-    });
+    var root = this.findRouteHook(routes.hookId);
+    root.startRouting();
+    root.bindRouteToHookStore(false, routes, err => root.endRouting(err, withPustState, completed));
   }
   actRoutes(): TRouteActionPar { return this.routeHookDefault.$routePar; }
 
@@ -529,7 +527,7 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
       if (!startRoute) { if (compl) compl(null); return; } //this code is repeated in store.routeBind, putting here for logic clarification
 
       //route exists => bind route
-      store.routeBind(startRoute, startRoute ? true : false, !compl ? null : res => res instanceof Error ? compl(res) : compl(null)); //bind (=> init Stores) route
+      store.rootRouteBind(startRoute, startRoute ? true : false, !compl ? null : res => res instanceof Error ? compl(res) : compl(null)); //bind (=> init Stores) route
     }
   }
 
@@ -647,7 +645,7 @@ export class BindToStateStore extends Store<BindToStateProps> {
 window.addEventListener("popstate", ev => {
   if (!store) return;
   console.log(`> popstate: ${window.location.href}`);
-  store.routeBind(flux.decodeFullUrl(), false);
+  store.rootRouteBind(flux.decodeFullUrl(), false);
 });
 
 //***************** UTILS
