@@ -76,8 +76,7 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
 export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: flux.TStoreClass<TInp>, par: TInp, onShowed: flux.TExceptionCallback): Promise<TOut> {
   return new Promise<TOut>((ok, err) => {
     flux.store.routeHookModal.subNavigate(flux.Store.getClassMeta(comp as any).classId, par, (res: Error | TDimmerStore) => {
-      if (res instanceof Error)
-        err(res);
+      if (res instanceof Error) err(res);
       else {
         res.$completed = out => ok(out as TOut);
         res.$onDidMount.subscribe(null, null, () => onShowed(null));

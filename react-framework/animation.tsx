@@ -118,6 +118,7 @@ function decodeOutEfect(ef: transition | callout | velocity.Properties, inEf: tr
 function decodeEasing(es: easing): string { return (easing[es] as string).replace('_','-'); }
 
 export interface IAnimation {
+  animIsOutDefault: boolean; //undefined - nastavi se anim stav, bez animace, true
   in: transition | callout | velocity.Properties;
   inDuration?: number;
   inDelay?: number;
@@ -128,11 +129,11 @@ export interface IAnimation {
   outEasing?: easing;
 }
 export class Animation {
-  constructor(private store: flux.TStore, private par: IAnimation) { }
+  constructor(private store: flux.TStore, public par: IAnimation) { }
 
   onDidMount() {
     var el = this.el(); if (!el) return;
-    if (this.store.animIsOut == undefined) this.in(() => { if (this.store.$onDidMount.isUnsubscribed) return; this.store.$onDidMount.next({}); });
+    if (this.store.animIsOut == undefined) this.in(() => { if (this.store.$onDidMount.isUnsubscribed) return; this.store.$onDidMount.complete(); });
     else this.setState(this.store.animIsOut, el);
   }
   dispose() {

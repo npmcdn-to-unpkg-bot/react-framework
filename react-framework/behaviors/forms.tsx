@@ -48,7 +48,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
   }
   componentWillUnmount(): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(); }
 
-  initStateFromProps(props: FieldLowProps<V>) { this.value = this.assignTo(props.$defaultValue); }
+  initStateFromProps(props: FieldLowProps<V>) { super.initStateFromProps(props); this.value = this.assignTo(props.$defaultValue); }
 
   validate(completed?: (error: string) => void) {
     this.blured = true;

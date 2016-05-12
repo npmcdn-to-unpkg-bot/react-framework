@@ -134,7 +134,7 @@ export class ChildStore extends flux.Store<IPropsExChild> {
     switch (id) {
       case TActions.childClick:
         if (this.$parent instanceof flux.RouteHookStore) {
-          this.$parent.subNavigate<IChildRouteActionPar>(this.getMeta().classId, { title: this.title += 'x' }, res => res instanceof Error ? completed(res) : completed(null));
+          (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(this.getMeta().classId, { title: this.title += 'x' }, res => res instanceof Error ? completed(res) : completed(null));
         } else {
           this.modify(st => st.title += 'x');
           completed(null);

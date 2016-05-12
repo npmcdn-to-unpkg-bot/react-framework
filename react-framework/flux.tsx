@@ -123,18 +123,22 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
     super(props, ctx);
 
     if (props.$store2) {
-      var st = props.$store2();
-      if (st) { this.state = st; return; }
-      st = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id);
-      st.itsMe(this);
-      st.componentCreated(); //notificiation
+      this.state = Store.createInRender2<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$store2);
+      //if (this.state.id != props.id || this.state.$parent != ctx.$parent) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}" or component $parent`);
+      if (!this.state.$initialized) {
+        this.state.initStateFromProps(props);
+        this.state.$initialized = true;
+      }
+      this.state.itsMe(this);
+      this.state.componentCreated(); //notificiation
+      return;
     }
 
     this.state = props.$store;
     //state to parent child states
     if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
     else {
-      if (this.state.$parent && ctx.$parent && this.state.$parent !== ctx.$parent) throw new Exception(`Parent mishmash`);
+      //if (this.state.$parent && ctx.$parent && this.state.$parent !== ctx.$parent) throw new Exception(`Parent mishmash`);
       if (props.id && this.state.id && props.id != this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}"`);
     }
     if (!this.state.id) this.state.id = props.id;
@@ -191,14 +195,13 @@ export abstract class Store<T> implements IStoreLiteral {
   $subscribers: Array<string> = []; //components path's, using this store as a status
   $props: TProps<this, T>;
   $initialized = false; //flag: store already initialized from component properties
-  $onDidMount = new rx.Subject(); //component didMount notification. Called after velocity start animation.
+  $onDidMount: rx.Subject;//component didMount notification. Called after velocity start animation.
   $animation: Animation;
 
   _type: string; //kvuli JSON deserializaci
   path: string; //unique Store identification
   childStores: IChildStores;
-  animIsOut: boolean;
-  //children: React.ReactNode;
+  animIsOut: boolean; //aktualni hodnota animace v didMount: undefined - animuje se do IN, true - nastavi se OUT, false - nastavi se IN
 
   constructor(public $parent: TStore, public id?: string) {
     this._type = this.getMeta().classId;
@@ -213,16 +216,36 @@ export abstract class Store<T> implements IStoreLiteral {
     res.$initialized = true;
     res.initFromRoutePar(routePar, completed);
   }
-  static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, instanceId?: string): T {
+  static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id?: string): T {
     let cls = Store.getStoreClass(storeId);
-    let idInParent = Store.getClassIdInParent(cls, instanceId);
+    let idInParent = Store.getClassIdInParent(cls, id);
     let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
     if (res) return res;
-    res = new cls(parent, instanceId) as T;
+    res = new cls(parent, id) as T;
     if (!parent.childStores) parent.childStores = {};
     parent.childStores[idInParent] = res;
     return res as T;
-
+  }
+  static createInRender2<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id: string, storeProc: (st?: T) => T): T {
+    let res: T;
+    //Store jiz vytvoren, v parent fieldu
+    if (storeProc) { res = storeProc(); if (res) return res; }
+    //Store jiz vytvoren, v parent childStores
+    let cls = Store.getStoreClass(storeId);
+    let idInParent = null;
+    if (!storeProc) {
+      idInParent = Store.getClassIdInParent(cls, id);
+      res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
+      if (res) return res;
+    }
+    //Store nevytvoren, vytvor:
+    res = new cls(parent, id) as T; 
+    if (storeProc) storeProc(res); //... a uloz do fieldu
+    else { //... a uloz do parent childStores
+      if (!parent.childStores) parent.childStores = {};
+      parent.childStores[idInParent] = res;
+    }
+    return res;
   }
   static createInJSON(parent: TStore, _type: string, id: string): TStore {
     let meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
@@ -292,8 +315,9 @@ export abstract class Store<T> implements IStoreLiteral {
     this.subscribe(this.$comp, true);
   }
   componentDidMount() {
+    this.$onDidMount = new rx.Subject(); 
     if (this.$animation) this.$animation.onDidMount();
-    else this.$onDidMount.next({});
+    else this.$onDidMount.complete();
   }
   componentWillUnmount() {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
@@ -302,30 +326,20 @@ export abstract class Store<T> implements IStoreLiteral {
     this.trace('destroy');
   }
 
-  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
-    if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
-    var hook = this as any as RouteHookStore;
-    hook.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => {
-      if (err instanceof Error) { store.navigateError(err, completed); return; }
-      hook.modify();
-      store.pushState();
-      if (completed) completed(err);
-    });
-  }
-
   //********************* INIT
   //"status from component props" initialization
-  initStateFromProps(props: T) { }
+  initStateFromProps(props: TProps<this, T>) { if (props.$animation) this.animIsOut = props.$animation.animIsOutDefault; }
 
   //finish store creation from route parameters. Not called in playing bootApp for action playing.
   //Could be async
-  initFromRoutePar(par: IActionPar, completed: TCreateStoreCallback) { completed(this); }
+  initFromRoutePar(par: IActionPar, completed: TCreateStoreCallback) {
+    completed(this);
+  }
 
   //************** Action Binding
   doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
-  bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, par: IActionPar, completed: TCreateStoreCallback) {
-    let rPar = par as TRouteActionPar;
+  bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, rPar: TRouteActionPar, completed: TCreateStoreCallback) {
     let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
     let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
     console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefaultName}, storeId=${rPar.storeId}`);
@@ -348,13 +362,14 @@ export type TStoreClassLow = TStoreClass<{}>;
 export type TDispatchCallback = (store: TStore) => void;
 
 //****************** ROUTER HOOK STORE
-export class RouteHook extends Component<RouteHookStore, {}> { }
+export interface IRouteHookProps { $ignoreLoading?: boolean }
+
+export class RouteHook extends Component<RouteHookStore, IRouteHookProps> { }
 
 @StoreDef({ moduleId: moduleId, componentClass: RouteHook })
-export class RouteHookStore extends Store<{}> { //Route Hook component
+export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook component
 
   hookedStore: TStore;
-  ignoreLoading: boolean; //dont show "Loading..." markup during router binding
   $routePar: TRouteActionPar;
 
   bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TCreateStoreCallback) {
@@ -379,8 +394,20 @@ export class RouteHookStore extends Store<{}> { //Route Hook component
     }
   }
 
+  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
+    //if (!(this instanceof RouteHookStore)) throw new Exception(`${this.path} is not RouteHookStore`);
+    //var hook = this as any as RouteHookStore;
+    this.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => {
+      if (err instanceof Error) { store.navigateError(err, completed); return; }
+      this.modify();
+      store.pushState();
+      if (completed) completed(err);
+    });
+  }
+
   render(): JSX.Element {
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.ignoreLoading ? null : <div>Loading...</div>);
+    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.$props.$ignoreLoading ? null : <div>Loading...</div>);
+    //return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store2: st => this.hookedStore = st ? st : this.hookedStore, key: getUnique() }) : (this.ignoreLoading ? null : <div>Loading...</div>);
   }
 }
 
@@ -408,9 +435,9 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
     super(null);
     //configure App
     store = this;
-    this.routeHookDefault = new RouteHookStore(this, 'hook');
-    this.routeHookModal = new RouteHookStore(this, 'modal');
-    this.routeHookModal.ignoreLoading = true;
+    //this.routeHookDefault = new RouteHookStore(this, 'hook');
+    //this.routeHookModal = new RouteHookStore(this, 'modal');
+    //this.routeHookModal.ignoreLoading = true;
     this.$basicUrl = this.getBasicUrl(window.location.href);
     console.log(`> router basicUrl=${this.$basicUrl}`);
     this.$appElement = this.getAppElement();
@@ -544,9 +571,13 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   }
 
   render(): JSX.Element {
+    //return <div>
+    //  <RouteHook $store={this.routeHookDefault}/>
+    //  <RouteHook $store={this.routeHookModal}/>
+    //</div>
     return <div>
-      <RouteHook $store={this.routeHookDefault}/>
-      <RouteHook $store={this.routeHookModal}/>
+      <RouteHook $store2={st => this.routeHookDefault = st ? st : this.routeHookDefault} id='hook'/>
+      <RouteHook $store2={st => this.routeHookModal = st ? st : this.routeHookModal} $ignoreLoading id='modal'/>
     </div>
   }
 
