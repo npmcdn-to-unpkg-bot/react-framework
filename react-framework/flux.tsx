@@ -239,7 +239,7 @@ export abstract class Store<T> implements IStoreLiteral {
       if (res) return res;
     }
     //Store nevytvoren, vytvor:
-    res = new cls(parent, id) as T; 
+    res = new cls(parent, id) as T;
     if (storeProc) storeProc(res); //... a uloz do fieldu
     else { //... a uloz do parent childStores
       if (!parent.childStores) parent.childStores = {};
@@ -315,7 +315,7 @@ export abstract class Store<T> implements IStoreLiteral {
     this.subscribe(this.$comp, true);
   }
   componentDidMount() {
-    this.$onDidMount = new rx.Subject(); 
+    this.$onDidMount = new rx.Subject();
     if (this.$animation) this.$animation.onDidMount();
     else this.$onDidMount.complete();
   }
@@ -345,6 +345,8 @@ export abstract class Store<T> implements IStoreLiteral {
     return hookStore;
   }
 
+  onUnbindFromRoute(completed: TExceptionCallback) { return completed(null); }
+
   //bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, rPar: TRouteActionPar, completed: TCreateStoreCallback) {
   //  let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
   //  let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
@@ -368,7 +370,8 @@ export type TStoreClassLow = TStoreClass<{}>;
 export type TDispatchCallback = (store: TStore) => void;
 
 //****************** ROUTER HOOK STORE
-export interface IRouteHookProps { $ignoreLoading?: boolean }
+export interface IRouteHookProps { $ignoreLoading?: boolean; }
+export interface IRouteHookState { topActive: boolean; }
 
 export class RouteHook extends Component<RouteHookStore, IRouteHookProps> { }
 
@@ -376,54 +379,98 @@ export class RouteHook extends Component<RouteHookStore, IRouteHookProps> { }
 export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook component
 
   hookedStore: TStore;
-  hookedStoreLoading: TStore;
+  hookedStoreOld: TStore;
+  status: IRouteHookState;
   $routePar: TRouteActionPar;
 
-  bindRouteToHookStore(isRestore: boolean, par: TRouteActionPar, completed: TCreateStoreCallback) {
+  assignRouteParForJSON(par: TRouteActionPar) { //po JSON deserializaci stavu: obnov $routePar field
     this.$routePar = par;
-    if (isRestore) {
-      flux.getChildRoutes(par).forEach(propName => {
-        var routePar: TRouteActionPar = par[propName];
-        this.hookedStore.findRouteHook(routePar.hookId).bindRouteToHookStore(isRestore, routePar, flux.noop);
-        //this.hookedStore.bindRouteToStore(true, par[propName], flux.noop);
+    flux.getChildRoutePropNames(par).forEach(propName => {
+      var routePar: TRouteActionPar = par[propName];
+      this.hookedStore.findRouteHook(routePar.hookId).assignRouteParForJSON(routePar);
+    });
+  }
+
+  unBindRouteStore(completed: TExceptionCallback) { //asynchronni route unbind
+    var self = this;
+    let childRoutes = flux.getChildRoutePropNames(this.$routePar); if (childRoutes.length <= 0) { completed(null); return; } 
+    let childRoutesPromises = childRoutes.map(p => this.$routePar[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => {
+      var childHook = self.hookedStore.findRouteHook(subPar.hookId);
+      childHook.unBindRouteStore(er => {
+        if (er) { err(er); return; }
+        childHook.onUnbindFromRoute(er => { if (er) err(er); else ok(null); });
       });
-      completed(this.hookedStore);
-    } else {
-      var self = this;
-      Store.createInHook<TStore>(this, par.storeId, res => {
-        if (res instanceof Store) {
-          self.hookedStore = res;
-          //process child routes
-          let childRoutes = flux.getChildRoutes(par); if (childRoutes.length <= 0) { completed(self.hookedStore); return; } //no child routes => completed
-          //let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.findRouteHook(subPar.ho).bindRouteToStore(false, subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
-          let childRoutesPromises = childRoutes.map(p => par[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => res.findRouteHook(subPar.hookId).bindRouteToHookStore(false, subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
-          rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(self.hookedStore));
-        } else {
-          delete self.hookedStore; delete self.$routePar;
-          completed(null);
-        }
-      }, null, par.par);
-    }
+    }));
+    rx.Observable.merge.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
+  }
+  bindRouteToHookStore(par: TRouteActionPar, completed: TCreateStoreCallback) {
+    this.$routePar = par;
+    var self = this;
+    Store.createInHook<TStore>(this, par.storeId, res => {
+      if (res instanceof Store) {
+        self.hookedStore = res;
+        //process child routes
+        let childRoutes = flux.getChildRoutePropNames(par); if (childRoutes.length <= 0) { completed(self.hookedStore); return; } //no child routes => completed
+        //let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.findRouteHook(subPar.ho).bindRouteToStore(false, subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
+        let childRoutesPromises = childRoutes.map(p => par[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => res.findRouteHook(subPar.hookId).bindRouteToHookStore(subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
+        rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(self.hookedStore));
+      } else {
+        delete self.hookedStore; delete self.$routePar;
+        completed(null);
+      }
+    }, null, par.par);
   }
 
   subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
-    this.startRouting();
-    this.bindRouteToHookStore(false, { storeId: storeId, par: par }, err => this.endRouting(err, true, completed));
+    this.routing({ storeId: storeId, par: par }, true, completed);
   }
 
-  startRouting() { }
-  endRouting(res: Error | TStore,  withPustState: boolean, completed?: flux.TCreateStoreCallback) {
-    if (res instanceof Error) { store.navigateError(res, completed); return; }
-    this.modify();
-    if (withPustState) store.pushState();
-    if (completed) completed(res);
+  routing(routes: TRouteActionPar, withPustState: boolean, completed?: flux.TCreateStoreCallback) {
+    let self = this;
+    self.unBindRouteStore(err => {
+      if (err) { completed(err); return; }
+      //debugger;
+      let modyifying = true; self.hookedStoreOld = self.hookedStore;  delete self.hookedStore;
+      self.bindRouteToHookStore(routes, res => {
+        modyifying = false;
+        delete self.hookedStoreOld;
+        if (res instanceof Error) { store.navigateError(res, completed); return; }
+        self.modify();
+        if (withPustState) store.pushState();
+        if (completed) completed(res);
+      });
+      if (modyifying) self.modify();
+    });
   }
+
 
   render(): JSX.Element {
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.$props.$ignoreLoading ? null : <div>Loading...</div>);
-    //return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store2: st => this.hookedStore = st ? st : this.hookedStore, key: getUnique() }) : (this.ignoreLoading ? null : <div>Loading...</div>);
+    //return <div>
+    //  <RouteHookItem hook={this} contentHolder={this.status.topActive}/>
+    //  <RouteHookItem hook={this} contentHolder={!this.status.topActive}/>
+    //</div>;
+    //return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.$props.$ignoreLoading ? null : <div>Loading...</div>);
+    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store2: st => this.hookedStore = st ? st : this.hookedStore, key: getUnique() }) : (this.$props.$ignoreLoading ? null : <div>Loading...</div>);
   }
 }
+
+//interface IRouteHookItemProps { hook: RouteHookStore; contentHolder: boolean; }
+//class RouteHookItem extends React.Component<IRouteHookItemProps, {}> {
+//  state: TStore;
+//  shouldComponentUpdate(nextProps: IRouteHookItemProps, nextState: TStore, nextContext: any): boolean {
+//    if (this.props.contentHolder) {
+//      if (this.props.hook.hookedStoreOld) return this.state != nextState;
+//    }
+//  }
+//  render(): JSX.Element {
+//    if (this.props.contentHolder) {
+//      if (this.props.hook.hookedStoreOld) throw new Exception('');
+
+//    } else {
+//    }
+//  }
+//}
+
 
 export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback) {
   store.rootRouteBind(routes, true, res => res instanceof Error ? completed(res) : completed(null));
@@ -486,9 +533,7 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   // - in windows.onPopstate event (flux.decodeFullUrl(), false)
   rootRouteBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean, completed?: TCreateStoreCallback) {
     if (!routes) routes = this.getStartRoute(); if (!routes) { if (completed) completed(null); return; };
-    var root = this.findRouteHook(routes.hookId);
-    root.startRouting();
-    root.bindRouteToHookStore(false, routes, err => root.endRouting(err, withPustState, completed));
+    this.findRouteHook(routes.hookId).routing(routes, withPustState, completed);
   }
   actRoutes(): TRouteActionPar { return this.routeHookDefault.$routePar; }
 
@@ -505,12 +550,13 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
       let literal = source as IStoreLiteral;
       flux.literalToAppState(literal); //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
       //store.bindRouteToStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
-      store.findRouteHook(store.saveRoute.hookId).bindRouteToHookStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
-        delete store.saveRoute;
-        store.pushState();
-        ReactDOM.render(store.render(), store.$appElement); //render all, route is already binded in state
-        if (compl) compl(null);
-      });
+      //store.findRouteHook(store.saveRoute.hookId).bindRouteToHookStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
+      store.findRouteHook(store.saveRoute.hookId).assignRouteParForJSON(store.saveRoute);
+      delete store.saveRoute;
+      store.pushState();
+      ReactDOM.render(store.render(), store.$appElement); //render all, route is already binded in state
+      if (compl) compl(null);
+      //});
     } else { //from StoreApp constructor
       let cls = source as TStoreAppClass;
       new cls(); //vedlejsi efekt je naplneni store

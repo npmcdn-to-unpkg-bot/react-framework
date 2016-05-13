@@ -27,7 +27,7 @@ export interface IAppRootRoutePar extends flux.IActionPar { title: string; } //r
 export class AppRootStore extends flux.Store<{}> {
   title: string;
   initFromRoutePar(routePar: IAppRootRoutePar, completed: flux.TCreateStoreCallback) { //asynchronni inicializace store po jeho vytvoreni
-    setTimeout(() => { this.title = routePar.title; completed(this); }, 500);
+    setTimeout(() => { this.title = routePar.title; completed(this); }, 1500);
   } 
   render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, AppRootAction.click, 'click') }>Title: {this.title}</h1>; }
   doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {

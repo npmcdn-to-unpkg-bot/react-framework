@@ -1,4 +1,4 @@
-﻿export {encodeUrl, encodeFullUrl, decodeUrl, decodeFullUrl, createRoute, getChildRoutes} from './router';
+﻿export {encodeUrl, encodeFullUrl, decodeUrl, decodeFullUrl, createRoute, getChildRoutePropNames} from './router';
 export {appStateToJSON, literalToAppState, ActionRecorder, startPlaying, saveAllRecordings, getAllRecordings, getRecording, hasRecording, ITest, Tests} from './action-recorder';
 export {StoreApp, TStoreAppClass, RouteHookStore, TComponent, TProps, Component, RouteHook, StoreDef, TAction, IStoreLiteral, playActions, navigate,
 IActionPar, TStore, Store, TRouteActionPar, TExceptionCallback, TCreateStoreCallback, store, ELoginNeeded, IRouteActionPar, TStoreClass, routeParIgnores,

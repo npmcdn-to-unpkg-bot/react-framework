@@ -41,7 +41,7 @@ export function createRoute<T extends flux.IActionPar>(storeClass: flux.TStoreCl
   return res;
 }
 
-export function getChildRoutes(st: flux.TRouteActionPar): Array<string> {
+export function getChildRoutePropNames(st: flux.TRouteActionPar): Array<string> {
   let props = [];
   for (let p in st) if (flux.routeParIgnores.indexOf(p) < 0) props.push(p);
   return props;
@@ -108,7 +108,7 @@ function encodeUrlLow(res: Array<string>, st: flux.TRouteActionPar, parentPropNa
     for (let p in st.par) props.push(p);
     props.sort().forEach(p => res.push(`;${p}=${encodeURIComponent(st.par[p])}`));
   }
-  getChildRoutes(st).sort().forEach(p => {
+  getChildRoutePropNames(st).sort().forEach(p => {
     res.push('/');
     encodeUrlLow(res, st[p], p == flux.routeHookDefaultName ? null : p);
     res.push('$/');
