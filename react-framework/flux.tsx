@@ -104,12 +104,25 @@ export interface IActionPar { } //flux action parameter
 export type TAction = IAction<IActionPar>;
 
 export function playActions(actions: Array<TAction>): rx.Observable<any> {
+  //var getPromisses: Array<() => Promise<any>> = [];
+  //actions.forEach(act => {
+  //  getPromisses.push(() => PromiseTimeout(300));
+  //  getPromisses.push(() => {
+  //    let actStore = store.findStore(act.dispPath); if (!actStore) { Promise.reject(new flux.Exception(`Cannot find store ${act.dispPath}`)); return; }
+  //    try {
+  //      return actStore.action(act.actionId, act.descr, act.par);
+  //    } catch (err) {
+  //      return Promise.reject(new Exception(err));
+  //    }
+  //  });
+  //});
+  //return PromiseContactAll(getPromisses);
   return rx.Observable.from(actions).concatMap((act: TAction) =>
     rx.Observable.timer(300).concat(
       rx.Observable.create((obs: rx.Subscriber<any>) => {
         let actStore = store.findStore(act.dispPath); if (!actStore) { obs.error(new flux.Exception(`Cannot find store ${act.dispPath}`)); return; }
         try {
-          actStore.action(act.actionId, act.descr, act.par, err => { if (err) obs.error(err); else obs.complete(); });
+          actStore.action(act.actionId, act.descr, act.par).then(() => obs.complete()).catch(err => obs.error(err));
         } catch (err) {
           obs.error(new flux.Exception(err));
         }
@@ -122,41 +135,54 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
   constructor(props: TProps<T, P>, ctx: IComponentContext) {
     super(props, ctx);
 
-    if (props.$store2) {
-      this.state = Store.createInRender2<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$store2);
-      //if (this.state.id != props.id || this.state.$parent != ctx.$parent) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}" or component $parent`);
-      if (!this.state.$initialized) {
-        this.state.initStateFromProps(props);
-        this.state.$initialized = true;
-      }
-      this.state.itsMe(this);
-      this.state.componentCreated(); //notificiation
-      return;
-    }
-
-    this.state = props.$store;
-    //state to parent child states
-    if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
-    else {
-      //if (this.state.$parent && ctx.$parent && this.state.$parent !== ctx.$parent) throw new Exception(`Parent mishmash`);
-      if (props.id && this.state.id && props.id != this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}"`);
-    }
-    if (!this.state.id) this.state.id = props.id;
+    var res;
+    if (props.$store2 instanceof Store) res = { res: props.$store2 };
+    else res = Store.createInComponent<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$routePar, props.$store2 as TGetStore<T>);
+    //if (props.$store2) {
+    //var res = Store.createInComponent<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$routePar, props.$store2);
+    this.state = res.res;
+    this.state.$props = props; this.state.$comp = this;
+    if (props.$animation) this.state.$animation = new flux.Animation(this.state, props.$animation);
     if (!this.state.$initialized) {
       this.state.initStateFromProps(props);
       this.state.$initialized = true;
     }
-    this.state.itsMe(this);
     this.state.componentCreated(); //notificiation
+
+    //async loading
+    if (res.wait) {
+      if (store.justRouting()) store.$routing.waitings.push(res.wait);
+      else res.wait.then(() => this.forceUpdate());
+    }
+
+    //return;
+    //}
+
+    //this.state = props.$store;
+    ////state to parent child states
+    //if (!this.state) { this.state = Store.createInRender<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id); }
+    //else {
+    //  //if (this.state.$parent && ctx.$parent && this.state.$parent !== ctx.$parent) throw new Exception(`Parent mishmash`);
+    //  if (props.id && this.state.id && props.id != this.state.id) throw new Exception(`Store "id=${this.state.id}" cannot be overrided by Component "id=${props.id}"`);
+    //}
+    //if (!this.state.id) this.state.id = props.id;
+    //if (!this.state.$initialized) {
+    //  this.state.initStateFromProps(props);
+    //  this.state.$initialized = true;
+    //}
+    ////this.state.itsMe(this);
+    //this.state.componentCreated(); //notificiation
   }
   state: T;
   //props: TProps<T, P>;
   //context: IComponentContext;
   componentWillUnmount() { this.state.componentWillUnmount(); }
-  componentDidMount() { this.state.componentDidMount(); }
+  componentDidMount() { this.state.trace('componentDidMount'); this.state.componentDidMount(); }
+  componentDidUpdate() { this.state.trace('componentDidUpdate'); this.state.$props = this.props; this.state.componentDidUpdate(); }
   render(): JSX.Element {
+    if (!this.state.$initialized) return null;
     this.state.trace('render');
-    this.state.itsMe(this);
+    //this.state.itsMe(this);
     return this.state.render();
   }
   getChildContext(): IComponentContext { return { $parent: this.state }; }
@@ -173,9 +199,11 @@ export var defaultTemplates: { [storeId: string]: TTemplate<TStore>; } = {};
 //****************** STORE
 export type IChildStores = { [idInParent: string]: TStore; };
 //export interface IPropsEx {  }
+type TGetStore<T extends TStore> = (st?: T) => T;
 export interface IProps<T extends TStore> {
-  $store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem komponenty
-  $store2?: (st?: T) => T;
+  //$store?: T; //cast globalniho stavy aplikace, ktery je initialnim stavem komponenty
+  $store2?: TGetStore<T> | T;
+  $routePar?: IActionPar;
   id?: string;
   $template?: TTemplate<T>;
   $animation?: flux.IAnimation;
@@ -204,59 +232,67 @@ export abstract class Store<T> implements IStoreLiteral {
   animIsOut: boolean; //aktualni hodnota animace v didMount: undefined - animuje se do IN, true - nastavi se OUT, false - nastavi se IN
 
   constructor(public $parent: TStore, public id?: string) {
-    this._type = this.getMeta().classId;
-    let idInParent = this.getIdInParent();
-    this.path = ($parent ? $parent.path + '/' : '') + idInParent;
+    var meta = this.getMeta();
+    if (meta) { //!meta => store without component
+      this._type = meta.classId;
+      let idInParent = this.getIdInParent();
+      this.path = ($parent ? $parent.path + '/' : '') + idInParent;
+    }
   }
-  static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
-    if (!storeId) { completed(null); return; }
-    let cls = Store.getStoreClass(storeId);
-    if (store.loginNeeded(cls)) { completed(new ELoginNeeded()); return null; }
-    let res = new cls(parent, instanceId);
-    res.$initialized = true;
-    res.initFromRoutePar(routePar, completed);
-  }
-  static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id?: string): T {
-    let cls = Store.getStoreClass(storeId);
-    let idInParent = Store.getClassIdInParent(cls, id);
-    let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
-    if (res) return res;
-    res = new cls(parent, id) as T;
-    if (!parent.childStores) parent.childStores = {};
-    parent.childStores[idInParent] = res;
-    return res as T;
-  }
-  static createInRender2<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id: string, storeProc: (st?: T) => T): T {
+  //async dokonceni konstructoru.
+  //!!!**** asyncConstructor je volan az po componentCreated a po initStateFromProps
+  asyncConstructor(): Promise<this> { return null; }
+
+
+  //static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
+  //  if (!storeId) { completed(null); return; }
+  //  let cls = Store.getStoreClass(storeId);
+  //  if (store.loginNeeded(cls)) { completed(new ELoginNeeded()); return null; }
+  //  let res = new cls(parent, instanceId);
+  //  res.$initialized = true;
+  //  res.initFromRoutePar(routePar);
+  //}
+  //static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id?: string): T {
+  //  let cls = Store.getStoreClass(storeId);
+  //  let idInParent = Store.getClassIdInParent(cls, id);
+  //  let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
+  //  if (res) return res;
+  //  res = new cls(parent, id) as T;
+  //  if (!parent.childStores) parent.childStores = {};
+  //  parent.childStores[idInParent] = res;
+  //  return res as T;
+  //}
+  static createInComponent<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id: string, routePar: IActionPar, storeProc: (st?: T) => T): { res: T, wait?: Promise<T> } {
     let res: T;
-    //Store jiz vytvoren, v parent fieldu
-    if (storeProc) { res = storeProc(); if (res) return res; }
-    //Store jiz vytvoren, v parent childStores
+    if (storeProc) { res = storeProc(); if (res) return { res: res }; } //Store jiz vytvoren, v parent fieldu
     let cls = Store.getStoreClass(storeId);
     let idInParent = null;
-    if (!storeProc) {
+    if (!storeProc) { //Store jiz vytvoren, v parent childStores
       idInParent = Store.getClassIdInParent(cls, id);
       res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
-      if (res) return res;
+      if (res) return { res: res };
     }
     //Store nevytvoren, vytvor:
     res = new cls(parent, id) as T;
+    if (routePar) res.initFromRoutePar(routePar);
     if (storeProc) storeProc(res); //... a uloz do fieldu
     else { //... a uloz do parent childStores
       if (!parent.childStores) parent.childStores = {};
       parent.childStores[idInParent] = res;
     }
-    return res;
+    return { res: res, wait: res.asyncConstructor() };
   }
+
   static createInJSON(parent: TStore, _type: string, id: string): TStore {
     let meta = storeMetasDir[_type]; if (!meta) throw new flux.Exception(`Store ${_type} not registered`);
     var res = new meta.storeClass(parent, id); res.$initialized = true;
     return res;
   }
 
-  getMeta(): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClassLow); } //store meta info
+  getMeta(avoidNull?: boolean): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClassLow, avoidNull); } //store meta info
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClassLow, this.id); } //jednoznacna identifikace v parent child seznamu
-  static getClassMeta(storeClass: TStoreClassLow): IStoreMeta { //store meta info
-    let res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (!res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
+  static getClassMeta(storeClass: TStoreClassLow, avoidNull?: boolean): IStoreMeta { //store meta info
+    let res: IStoreMeta = storeClass.prototype[prototypeMeta]; if (avoidNull && !res) throw new flux.Exception('Maybe missing @StoreDef() store decorator'); return res;
   }
   static getStoreClass(storeId: string | TStoreClassLow): TStoreClassLow {
     if (typeof storeId === 'string') {
@@ -302,14 +338,15 @@ export abstract class Store<T> implements IStoreLiteral {
   }
 
   //************** Component management
-  itsMe(comp: Component<this, {}>) {
-    this.$props = comp.props as TProps<this, T>; this.$comp = comp;
-    if (this.$props.$animation) this.$animation = new flux.Animation(this, this.$props.$animation);
-  }
+  //itsMe(comp: Component<this, {}>) {
+  //  this.$props = comp.props as TProps<this, T>; this.$comp = comp;
+  //  if (this.$props.$animation) this.$animation = new flux.Animation(this, this.$props.$animation);
+  //}
 
   render(): JSX.Element {
     return this.renderTemplate(null, true) as JSX.Element;
   }
+
   componentCreated() {
     this.trace('create');
     this.subscribe(this.$comp, true);
@@ -319,6 +356,7 @@ export abstract class Store<T> implements IStoreLiteral {
     if (this.$animation) this.$animation.onDidMount();
     else this.$onDidMount.complete();
   }
+  componentDidUpdate() { }
   componentWillUnmount() {
     if (this.$parent && this.$parent.childStores) this.$parent.childStores[this.getIdInParent()]; //undo adjustComponentState
     this.unSubscribe(this.$comp, true);
@@ -331,13 +369,10 @@ export abstract class Store<T> implements IStoreLiteral {
   initStateFromProps(props: TProps<this, T>) { if (props.$animation) this.animIsOut = props.$animation.animIsOutDefault; }
 
   //finish store creation from route parameters. Not called in playing bootApp for action playing.
-  //Could be async
-  initFromRoutePar(par: IActionPar, completed: TCreateStoreCallback) {
-    completed(this);
-  }
+  initFromRoutePar(par: IActionPar) { }
 
   //************** Action Binding
-  doDispatchAction(id: number, par: IActionPar, completed: TExceptionCallback) { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
+  doDispatchAction(id: number, par: IActionPar): Promise<any> { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
 
   findRouteHook(hookId: string): RouteHookStore {
     if (!hookId) hookId = routeHookDefaultName;
@@ -354,14 +389,14 @@ export abstract class Store<T> implements IStoreLiteral {
   //  hookStore.bindRouteToHookStore(isRestore, rPar, completed);
   //}
 
-  action<T extends IActionPar>(id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action
+  action<T extends IActionPar>(id: number, descr: string, par?: T): Promise<any> { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);
     store.$recorder.onStoreAction(() => { return { dispPath: this.path, actionId: id, par: par, descr: this.getMeta().classId + ': ' + descr }; });
-    this.doDispatchAction(id, par, completed ? completed : flux.noop);
+    return this.doDispatchAction(id, par);
   }
-  clickAction<T extends IActionPar>(ev: React.MouseEvent, id: number, descr: string, par?: T, completed?: TExceptionCallback) { //call action and prevent default for HTML DOM mouse event
-    this.action<T>(id, descr, par, completed);
+  clickAction<T extends IActionPar>(ev: React.MouseEvent, id: number, descr: string, par?: T): Promise<any> { //call action and prevent default for HTML DOM mouse event
     ev.preventDefault();
+    return this.action<T>(id, descr, par);
   }
 }
 
@@ -370,8 +405,20 @@ export type TStoreClassLow = TStoreClass<{}>;
 export type TDispatchCallback = (store: TStore) => void;
 
 //****************** ROUTER HOOK STORE
+enum RoutingGlobalStatus { no, toStart, toFinish }
+class RoutingGlobalStore extends Store<{}> { //globalni routing change information
+  sender: RouteHookStore; //actual routing store
+  waitings: Array<Promise<TStore>>; //async stores, cekajici na naladovani. !!waitings => priznak ze bezi routing phase
+  running: RoutingGlobalStatus;
+  // sender routing global info
+  topIsAct: boolean;
+  actComp: JSX.Element;
+  nextComp: JSX.Element;
+  completed: Deferred<any>;
+}
+
 export interface IRouteHookProps { $ignoreLoading?: boolean; }
-export interface IRouteHookState { topActive: boolean; }
+export interface IRouteHookState { routing: boolean; }
 
 export class RouteHook extends Component<RouteHookStore, IRouteHookProps> { }
 
@@ -379,8 +426,6 @@ export class RouteHook extends Component<RouteHookStore, IRouteHookProps> { }
 export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook component
 
   hookedStore: TStore;
-  hookedStoreOld: TStore;
-  status: IRouteHookState;
   $routePar: TRouteActionPar;
 
   assignRouteParForJSON(par: TRouteActionPar) { //po JSON deserializaci stavu: obnov $routePar field
@@ -392,8 +437,9 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
   }
 
   unBindRouteStore(completed: TExceptionCallback) { //asynchronni route unbind
+    if (!this.$routePar) { completed(null); return; }
     var self = this;
-    let childRoutes = flux.getChildRoutePropNames(this.$routePar); if (childRoutes.length <= 0) { completed(null); return; } 
+    let childRoutes = flux.getChildRoutePropNames(this.$routePar); if (childRoutes.length <= 0) { completed(null); return; }
     let childRoutesPromises = childRoutes.map(p => this.$routePar[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => {
       var childHook = self.hookedStore.findRouteHook(subPar.hookId);
       childHook.unBindRouteStore(er => {
@@ -403,77 +449,118 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
     }));
     rx.Observable.merge.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
   }
-  bindRouteToHookStore(par: TRouteActionPar, completed: TCreateStoreCallback) {
-    this.$routePar = par;
-    var self = this;
-    Store.createInHook<TStore>(this, par.storeId, res => {
-      if (res instanceof Store) {
-        self.hookedStore = res;
-        //process child routes
-        let childRoutes = flux.getChildRoutePropNames(par); if (childRoutes.length <= 0) { completed(self.hookedStore); return; } //no child routes => completed
-        //let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.findRouteHook(subPar.ho).bindRouteToStore(false, subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
-        let childRoutesPromises = childRoutes.map(p => par[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => res.findRouteHook(subPar.hookId).bindRouteToHookStore(subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
-        rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(self.hookedStore));
-      } else {
-        delete self.hookedStore; delete self.$routePar;
-        completed(null);
-      }
-    }, null, par.par);
+  //bindRouteToHookStore(par: TRouteActionPar, completed: TCreateStoreCallback) {
+  //  this.$routePar = par;
+  //  var self = this;
+  //  Store.createInHook<TStore>(this, par.storeId, res => {
+  //    if (res instanceof Store) {
+  //      self.hookedStore = res;
+  //      //process child routes
+  //      let childRoutes = flux.getChildRoutePropNames(par); if (childRoutes.length <= 0) { completed(self.hookedStore); return; } //no child routes => completed
+  //      //let childRoutesPromises = childRoutes.map(p => par[p]).map(subPar => new Promise((ok, err) => res.findRouteHook(subPar.ho).bindRouteToStore(false, subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
+  //      let childRoutesPromises = childRoutes.map(p => par[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => res.findRouteHook(subPar.hookId).bindRouteToHookStore(subPar, res => { if (res instanceof Error) err(res); else ok(res); })));
+  //      rx.Observable.concat.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(self.hookedStore));
+  //    } else {
+  //      delete self.hookedStore; delete self.$routePar;
+  //      completed(null);
+  //    }
+  //  }, null, par.par);
+  //}
+
+  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback): Promise<TStore> {
+    return this.routing({ storeId: storeId, par: par }, true);
   }
 
-  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback) {
-    this.routing({ storeId: storeId, par: par }, true, completed);
-  }
-
-  routing(routes: TRouteActionPar, withPustState: boolean, completed?: flux.TCreateStoreCallback) {
+  routing(routes: TRouteActionPar, withPustState: boolean): Promise<TStore> {
+    store.$routing.completed = new Deferred<any>();
     let self = this;
     self.unBindRouteStore(err => {
-      if (err) { completed(err); return; }
-      //debugger;
-      let modyifying = true; self.hookedStoreOld = self.hookedStore;  delete self.hookedStore;
-      self.bindRouteToHookStore(routes, res => {
-        modyifying = false;
-        delete self.hookedStoreOld;
-        if (res instanceof Error) { store.navigateError(res, completed); return; }
-        self.modify();
-        if (withPustState) store.pushState();
-        if (completed) completed(res);
+      if (err) { store.$routing.completed.reject(err); return; }
+      this.$routePar = routes;
+      if (this.hookedStore) { this.hookedStore.componentWillUnmount(); delete this.hookedStore; }
+      store.$routing.subscribe(self.$comp);
+      store.$routing.modify(st => {
+        st.running = RoutingGlobalStatus.toStart;
+        st.sender = this;
+        st.waitings = [];
       });
-      if (modyifying) self.modify();
+      //self.modify();
+      //let cls = Store.getStoreClass(routes.storeId);
+      //var compClass = Store.getClassMeta(cls).componentClass;
+      //self.bindRouteToHookStore(routes, res => {
+      //  if (res instanceof Error) { store.navigateError(res, completed); return; }
+      //  self.modify();
+      //  if (withPustState) store.pushState();
+      //  if (completed) completed(res);
+      //});
     });
+    return store.$routing.completed.promise;
   }
 
+  routed() {
+    if (store.$routing.sender !== this || !store.$routing.running) return;
+    let doFinish = () => {
+      store.$routing.modify(st => {
+        st.running = RoutingGlobalStatus.toFinish;
+        st.actComp = st.nextComp;
+        st.completed.resolve(null);
+        delete st.waitings; delete st.nextComp; delete st.completed;
+      });
+      store.$routing.unSubscribe(this.$comp);
+    }
+    if (store.$routing.waitings.length > 0) Promise.all(store.$routing.waitings).then(() => doFinish());
+    else doFinish();
+  }
 
   render(): JSX.Element {
-    //return <div>
-    //  <RouteHookItem hook={this} contentHolder={this.status.topActive}/>
-    //  <RouteHookItem hook={this} contentHolder={!this.status.topActive}/>
-    //</div>;
-    //return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store: this.hookedStore, key: getUnique() }) : (this.$props.$ignoreLoading ? null : <div>Loading...</div>);
-    return this.hookedStore ? React.createElement(this.hookedStore.getMeta().componentClass, { $store2: st => this.hookedStore = st ? st : this.hookedStore, key: getUnique() }) : (this.$props.$ignoreLoading ? null : <div>Loading...</div>);
+    //empty route par
+    if (!this.$routePar) return null;
+
+    //recreate and re-render hooked comp
+    let getComp = () => {
+      let compClass = Store.getClassMeta(Store.getStoreClass(this.$routePar.storeId)).componentClass;
+      return React.createElement(compClass, {
+        key: getUnique(), id: 'hooked',
+        $store2: st => this.hookedStore = st ? st : this.hookedStore,
+        $routePar: this.$routePar.par,
+      });
+    }
+
+    //no routing, just render hook
+    if (store.$routing.sender !== this || !store.$routing.running) return getComp();
+
+    if (store.$routing.running === RoutingGlobalStatus.toStart) {
+
+      //first routing => actComp is splash
+      if (!store.$routing.actComp) store.$routing.actComp = this.$props.$ignoreLoading ? null : <div>Loading...</div>;
+      store.$routing.nextComp = getComp();
+      store.$routing.topIsAct = !store.$routing.topIsAct;
+      this.trace('... routing');
+      return store.$routing.topIsAct ?
+        <div><RouteHookItem key={1} comp={store.$routing.actComp} store={this}/><RouteHookItem key={2} comp={store.$routing.nextComp} store={this}/></div> :
+        <div><RouteHookItem key={2} comp={store.$routing.actComp} store={this}/><RouteHookItem key={1} comp={store.$routing.nextComp} store={this}/></div>;
+    } else if (store.$routing.running === RoutingGlobalStatus.toFinish) {
+      this.trace('... NOT routing');
+      store.$routing.running = RoutingGlobalStatus.no;
+      return <div><RouteHookItem key={store.$routing.topIsAct ? 2 : 1} comp={store.$routing.actComp} store={this}/></div>;
+    } else
+      throw new Exception('');
   }
+
+  componentDidMount() { super.componentDidMount(); this.routed(); }
+  componentDidUpdate() { super.componentDidUpdate(); this.routed(); }
+
 }
 
-//interface IRouteHookItemProps { hook: RouteHookStore; contentHolder: boolean; }
-//class RouteHookItem extends React.Component<IRouteHookItemProps, {}> {
-//  state: TStore;
-//  shouldComponentUpdate(nextProps: IRouteHookItemProps, nextState: TStore, nextContext: any): boolean {
-//    if (this.props.contentHolder) {
-//      if (this.props.hook.hookedStoreOld) return this.state != nextState;
-//    }
-//  }
-//  render(): JSX.Element {
-//    if (this.props.contentHolder) {
-//      if (this.props.hook.hookedStoreOld) throw new Exception('');
-
-//    } else {
-//    }
-//  }
-//}
+interface IRouteHookItemProps { comp: JSX.Element; store: RouteHookStore; }
+class RouteHookItem extends React.Component<IRouteHookItemProps, {}> {
+  shouldComponentUpdate(nextProps: IRouteHookItemProps, nextState: TStore, nextContext: any): boolean { return !this.props.store || store.$routing.actComp !== this.props.comp; }
+  render(): JSX.Element { return this.props.comp; }
+}
 
 
-export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback) {
-  store.rootRouteBind(routes, true, res => res instanceof Error ? completed(res) : completed(null));
+export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExceptionCallback): Promise<TStore> {
+  return store.rootRouteBind(routes, true);
 }
 
 export interface IRouteActionPar<T extends IActionPar> extends IActionPar {
@@ -505,6 +592,7 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
     //this.startRoute = this.getStartRoute();
     this.$isHashRouter = this.getIsHashRouter();
     this.$defaultLoginNeeded = this.getDefaultLoginNeeded();
+    this.$routing = new RoutingGlobalStore(this);
   }
 
   //************************** CONFIGURATION SECTION
@@ -526,25 +614,28 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   saveRoute: TRouteActionPar;
   $recorder = new ActionRecorder();
 
+  //**** routing 
+  $routing: RoutingGlobalStore;
+  justRouting(): boolean { return !!this.$routing.running; }
+
   //************************** 
   //called: 
   // - in navigate(routes, true, completed)
   // - in bootApp(), not playing, just start app
   // - in windows.onPopstate event (flux.decodeFullUrl(), false)
-  rootRouteBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean, completed?: TCreateStoreCallback) {
-    if (!routes) routes = this.getStartRoute(); if (!routes) { if (completed) completed(null); return; };
-    this.findRouteHook(routes.hookId).routing(routes, withPustState, completed);
+  rootRouteBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean): Promise<TStore> {
+    if (!routes) routes = this.getStartRoute(); if (!routes) return Promise.resolve(null);
+    return this.findRouteHook(routes.hookId).routing(routes, withPustState);
   }
   actRoutes(): TRouteActionPar { return this.routeHookDefault.$routePar; }
 
-  static bootApp(source: TStoreAppClass /*run app*/ | IStoreLiteral /*before play actions*/, compl?: TExceptionCallback, startRoute?: TRouteActionPar /* ===null => force getStartRoute -> decodeFullUrl call, ===undefined => decodeFullUrl -> getStartRoute, ===else => startRoute*/) {
-    //clear all
+  static bootApp(source: TStoreAppClass /*run app*/ | IStoreLiteral /*before play actions*/, startRoute?: TRouteActionPar /* ===null => force getStartRoute -> decodeFullUrl call, ===undefined => decodeFullUrl -> getStartRoute, ===else => startRoute*/): Promise<TStore> {    //clear all
     if (store) {
       store.$recorder.stopAll();
       ReactDOM.unmountComponentAtNode(store.$appElement);
       store = null;
     }
-    if (!source) { if (compl) compl(null); return; } //clear by ReactDOM.unmountComponentAtNode only
+    if (!source) return Promise.resolve(null); // { if (compl) compl(null); return; } //clear by ReactDOM.unmountComponentAtNode only
     //create
     if ((source as IStoreLiteral)._type) { //from StoreApp encoded do JSON literal object
       let literal = source as IStoreLiteral;
@@ -555,7 +646,8 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
       delete store.saveRoute;
       store.pushState();
       ReactDOM.render(store.render(), store.$appElement); //render all, route is already binded in state
-      if (compl) compl(null);
+      return Promise.resolve(null);
+      //if (compl) compl(null);
       //});
     } else { //from StoreApp constructor
       let cls = source as TStoreAppClass;
@@ -570,10 +662,12 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
         startRoute = flux.decodeFullUrl();
         if (!startRoute) startRoute = store.getStartRoute() //this code is repeated in store.routeBind, putting here for logic clarification
       }
-      if (!startRoute) { if (compl) compl(null); return; } //this code is repeated in store.routeBind, putting here for logic clarification
+      if (!startRoute) return Promise.resolve(null);
+      // { if (compl) compl(null); return; } //this code is repeated in store.routeBind, putting here for logic clarification
 
       //route exists => bind route
-      store.rootRouteBind(startRoute, startRoute ? true : false, !compl ? null : res => res instanceof Error ? compl(res) : compl(null)); //bind (=> init Stores) route
+      //store.rootRouteBind(startRoute, startRoute ? true : false, !compl ? null : res => res instanceof Error ? compl(res) : compl(null)); //bind (=> init Stores) route
+      return store.rootRouteBind(startRoute, startRoute ? true : false);
     }
   }
 
@@ -617,7 +711,9 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
     } else { //unmount
       //komponenta
       if (includingComponent) {
-        if (!this.$components[st.path]) throw new flux.Exception(`${st.path}: !Sync.path2Component[p]`);
+        //componentWillUnmount se pro RouteHook.hookStore vola dvakrat, kontrol atedy neprojde
+        //if (!this.$components[st.path]) throw new flux.Exception(`${st.path}: !Sync.path2Component[p]`);
+        //delete this.$components[st.path];
         delete this.$components[st.path];
       }
       //st.path nemusi byt v st.$subscribers, protoze st muze byt vytvoreno uplne znova (v ramci zmen parenta).
@@ -714,3 +810,66 @@ export function getClassName(constructor: Function): string {
 }
 
 export function noop() { }
+
+//console.log('####### START');
+//interface item { x: number; }
+//var subj = new rx.Subject<number>();
+//var obs = subj.scan<item>((r, i) => { return { x: i }; }, { x: 0 });
+//obs.do(x => console.log('A## ' + x.x)).subscribe();
+//subj.next(1);
+//setTimeout(() => subj.next(2), 500);
+//var subb = obs.do(x => console.log('B## ' + x.x)).subscribe();
+//subj.next(3);
+//obs.do(x => console.log('C## ' + x.x)).subscribe();
+//setTimeout(() => subj.next(4), 500);
+//subb.unsubscribe();
+//console.log('####### DONE');
+
+
+//https://github.com/seangenabe/es6-deferred/blob/master/deferred.js
+export class Deferred<T> {
+  constructor() {
+    this.promise = new Promise((function (resolve, reject) { this.resolve = resolve; this.reject = reject; }).bind(this));
+    this.then = this.promise.then.bind(this.promise);
+    this.catch = this.promise.catch.bind(this.promise);
+  }
+  promise;
+  then: (compl: (res: T) => void) => void;
+  catch: (error: (err: any) => void) => void;
+  resolve: (res: T) => void;
+  reject: (reason: any) => void;
+};
+
+//var d = new Deferred<boolean>();
+//d.resolve(true);
+//d.then(res => { debugger; })
+//debugger;
+////setTimeout(() => d.resolve(true), 1000);
+
+export function PromiseTimeout<T>(milisecs: number): Promise<any> { return new Promise<any>(res => setTimeout(() => res(null), milisecs)); }
+
+export function PromiseContactAll<T>(getPromises: Array<() => Promise<T>>): Promise<Array<T | Error>> {
+
+  // Create a new empty promise
+  var sequence = Promise.resolve<T>(null);
+  var res: Array<T | Error> = [];
+  var hasError = false;
+
+  getPromises.forEach(getPromise => {
+    // Chain one computation onto the sequence
+    sequence = sequence.then(getPromise).then(r => { res.push(r); return r; }).catch((err: Error) => { hasError = true; res.push(err); });
+  });
+
+  // This will resolve after the entire chain is resolved
+  return sequence.then(r => new Promise<Array<T | Error>>((ok, err) => {
+    if (hasError) err(res); else ok(res);
+  }));
+}
+
+//debugger;
+//var pr = PromiseContactAll<number>([
+//  () => new Promise<number>(ok => setTimeout(() => ok(1), 1000)),
+//  () => new Promise<number>((ok, err) => setTimeout(() => ok(2)/*err(new Error('xxx'))*/, 1000)),
+//  () => new Promise<number>(ok => setTimeout(() => ok(3), 1000)),
+//]);
+//pr.then(res => { debugger; pr.then(r => { debugger; }); }).catch(err => { debugger; })
