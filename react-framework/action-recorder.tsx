@@ -78,10 +78,11 @@ export function startPlaying(saveId: string, progress: (pos: number, len: number
   if (!playList) { completed(new flux.Exception(`Empty Recording playlist: ${saveId}`)); return; }
   let len = playList.length; let pos = 1;
   //playing = true; var compl = err => { playing = false; completed(err); }
-  flux.StoreApp.bootApp(data.store, res => {
-    if (res) { completed(res); return; }
+  flux.StoreApp.bootApp(data.store).then(() => {
+    //if (res) { completed(res); return; }
     flux.store.$recorder.playListCancel = flux.playActions(playList).subscribe(() => progress(pos++, len), err => completed(err), () => completed(null));
-  });
+    //flux.store.$recorder.playListCancel = flux.playActions(playList, it => { if (!it) return; progress(pos++, len) }).then(() => completed(null)).catch(err => completed(err));
+  }).catch(res => completed(res));
 }
 
 export function appStateToJSON(st: flux.StoreApp, indent?: number): string {

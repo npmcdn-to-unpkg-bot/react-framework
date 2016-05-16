@@ -28,8 +28,6 @@ export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element { return <h1>{this.title}</h1>; }
   title: string;
   //asynchronni inicializace Store
-  initFromRoutePar(routePar: IAppRoutePar, completed: flux.TCreateStoreCallback) {
-    this.title = routePar.title;
-    setTimeout(() => completed(this), 1000);
-  } 
+  asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 1000)); }
+  initFromRoutePar(routePar: IAppRoutePar) { this.title = routePar.title; } 
 }

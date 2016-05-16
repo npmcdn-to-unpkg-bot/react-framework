@@ -37,11 +37,11 @@ export class AppRootStore extends flux.Store<{}> {
   }
   inp: InputSmartStore;
 
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
-      case TActions.validate: this.inp.validate(res => completed(null)); break;
-      case TActions.reset: this.inp.reset(); completed(null); break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TActions.validate: return new Promise(ok => this.inp.validate(res => ok(null))); 
+      case TActions.reset: this.inp.reset(); return Promise.resolve();
+      default: return super.doDispatchAction(id, par);
     }
   }
 }

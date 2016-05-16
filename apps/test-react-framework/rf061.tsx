@@ -31,15 +31,12 @@ export class AppRootStore extends flux.Store<{}> {
       Force component create: <Child $title={this.title} key={flux.getUnique() } id='child2'/>
     </div>;
   }
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case TActions.click:
         this.modify(st => st.title += 'x');
-        completed(null);
-        break;
-      default:
-        super.doDispatchAction(id, par, completed);
-        break;
+        return Promise.resolve();
+      default: return super.doDispatchAction(id, par);
     }
   }
 }
@@ -52,14 +49,12 @@ export class Child extends flux.Component<ChildStore, IPropsChild> { }
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child })
 export class ChildStore extends flux.Store<IPropsChild> {
   subTitle: string = 'subTitle ';
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case TActions.childClick:
         this.modify(st => st.subTitle += 'x');
-        completed(null);
-        break;
-      default:
-        super.doDispatchAction(id, par, completed)
+        return Promise.resolve();
+      default: return super.doDispatchAction(id, par);
     }
   }
   render(): JSX.Element {

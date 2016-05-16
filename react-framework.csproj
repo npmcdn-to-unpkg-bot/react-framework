@@ -52,6 +52,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="apps\mdl-d-ts\mdl-d-ts.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\rf061.tsx" />
+    <TypeScriptCompile Include="apps\test-react-framework\rf071.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\rf08.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui012.tsx" />
     <TypeScriptCompile Include="apps\test-react-framework\ui011.tsx" />

@@ -59,10 +59,10 @@ export class AppRootStore extends flux.Store<{}> {
     </div>;
   }
 
-  doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: TActions, par: flux.IActionPar): Promise<any> {
     switch (id) {
-      case TActions.showModal: forms.dimmerShow<flux.IActionPar, forms.IModalOut>(ModalSmart as any, {}, completed).then(out => { }); break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TActions.showModal: return new Promise(ok => forms.dimmerShow<flux.IActionPar, forms.IModalOut>(ModalSmart as any, {}, () => ok()).then(out => { }));
+      default: return super.doDispatchAction(id, par);
     }
   }
 

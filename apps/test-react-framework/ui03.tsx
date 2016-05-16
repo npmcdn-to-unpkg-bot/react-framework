@@ -36,9 +36,7 @@ class TestDimmer extends DimmerStore<forms.IModalIn, forms.IModalOut> {
       </div>
     </Dimmer>
   }
-  initFromRoutePar(par, completed) {
-    super.initFromRoutePar(par, res => setTimeout(() => completed(res),500));
-  }
+  asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 500)); }
   cont: Element;
 }
 
@@ -54,10 +52,10 @@ export class AppRootStore extends flux.Store<{}> {
     </div>;
   }
 
-  doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: TActions, par: flux.IActionPar): Promise<any> {
     switch (id) {
-      case TActions.showDimmer: forms.dimmerShow<forms.IModalIn, forms.IModalOut>(TestDimmer, { hideOnEscape: true }, completed).then(out => { }); break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TActions.showDimmer: return new Promise(ok => forms.dimmerShow<forms.IModalIn, forms.IModalOut>(TestDimmer, { hideOnEscape: true }, () => ok()).then(out => { })); 
+      default: return super.doDispatchAction(id, par);
     }
   }
 

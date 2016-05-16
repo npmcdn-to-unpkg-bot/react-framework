@@ -62,14 +62,12 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
       delete st.error;
     });
   }
-  doDispatchAction(id: number, par: FieldActionPar<V>, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: FieldActionPar<V>):Promise<any> {
     switch (id) {
       case TFieldActions.setState:
         this.blured = true;
-        this.setAndValidate(false, par.value, er => completed(null));
-        break;
-      default:
-        super.doDispatchAction(id, par, completed);
+        return new Promise((ok, err) => this.setAndValidate(false, par.value, er => ok()));
+      default: return super.doDispatchAction(id, par);
     }
   }
 

@@ -1,5 +1,5 @@
 ﻿import * as flux from '../react-framework/exports';
-import * as testRF from './test-react-framework/app';
+//import * as testRF from './test-react-framework/app';
 import * as rf01 from './test-react-framework/rf01';
 import * as rf02 from './test-react-framework/rf02';
 import * as rf03 from './test-react-framework/rf03';
@@ -8,6 +8,7 @@ import * as rf05 from './test-react-framework/rf05';
 import * as rf06 from './test-react-framework/rf06';
 import * as rf061 from './test-react-framework/rf061';
 import * as rf07 from './test-react-framework/rf07';
+import * as rf071 from './test-react-framework/rf071';
 import * as rf08 from './test-react-framework/rf08';
 import * as ui01 from './test-react-framework/ui01';
 import * as ui011 from './test-react-framework/ui011';
@@ -27,6 +28,7 @@ export function init() {
     rf06: { descr: 'Routing: subNavigate', storeAppClass: rf06.AppStore },
     rf061: { descr: 'Parent-child properties', storeAppClass: rf061.AppStore },
     rf07: { descr: 'Combined routing', storeAppClass: rf07.AppStore },
+    rf071: { descr: 'Combined routing', storeAppClass: rf071.AppStore },
     rf08: { descr: 'Animation', storeAppClass: rf08.AppStore },
     ui01: { descr: 'InputSmart', storeAppClass: ui01.AppStore },
     ui011: { descr: 'CheckBox', storeAppClass: ui011.AppStore },

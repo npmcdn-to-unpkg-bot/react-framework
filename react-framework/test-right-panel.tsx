@@ -22,9 +22,7 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 export class AppRootStore extends flux.Store<{}> {
   dumpKey: string;
   mode: AppRootMode;
-  initFromRoutePar(routePar: IAppRootRouteActionPar, completed: flux.TCreateStoreCallback) {
-    Object.assign(this, routePar); completed(this);
-  }
+  initFromRoutePar(routePar: IAppRootRouteActionPar) { Object.assign(this, routePar); }
   import(ev: React.MouseEvent) {
     ev.preventDefault();
     try {
@@ -61,14 +59,15 @@ export class RightClient {
   init(key: string, compl?: flux.TExceptionCallback) {
     if (!key) { flux.StoreApp.bootApp(null); if (compl) compl(null); return; }
     var test = flux.Tests.tests[key];
-    var boot = () => flux.StoreApp.bootApp(test.storeAppClass, compl, test.startUrl ? test.startUrl : null /*default route*/);
+    if (!compl) compl = flux.noop;
+    var boot = () => flux.StoreApp.bootApp(test.storeAppClass, test.startUrl ? test.startUrl : null /*default route*/).then(res => compl(null)).catch(err => compl(err));
     if (test.resetServer) test.resetServer(boot); else boot();
   }
   startRecording() { flux.store.$recorder.startRecording(); }
   saveRecording(key: string) { flux.store.$recorder.saveRecording(key); }
   hasRecording(key: string) { return flux.hasRecording(key); }
   startPlaying(key: string, progress: (pos: number, len: number) => void, completed: flux.TExceptionCallback) { flux.startPlaying(key, progress, completed); }
-  service(mode: AppRootMode, dumpKey?: string) { flux.StoreApp.bootApp(AppStore, null, flux.createRoute<IAppRootRouteActionPar>(AppRootStore, { mode: mode, dumpKey: dumpKey })); }
+  service(mode: AppRootMode, dumpKey?: string) { flux.StoreApp.bootApp(AppStore, flux.createRoute<IAppRootRouteActionPar>(AppRootStore, { mode: mode, dumpKey: dumpKey })); }
   getActStatus(): string {
     if (!flux.store) return '';
     flux.store['actUrl'] = window.location.href;

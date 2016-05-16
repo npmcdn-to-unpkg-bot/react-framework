@@ -132,6 +132,7 @@ export class Animation {
   constructor(private store: flux.TStore, public par: IAnimation) { }
 
   onDidMount() {
+    if (flux.store.justRouting()) return; //prave bezi routign proces => neanimuj
     var el = this.el(); if (!el) return;
     if (this.store.animIsOut == undefined) this.in(() => { if (this.store.$onDidMount.isUnsubscribed) return; this.store.$onDidMount.complete(); });
     else this.setState(this.store.animIsOut, el);

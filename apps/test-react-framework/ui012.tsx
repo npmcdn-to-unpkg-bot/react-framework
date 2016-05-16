@@ -46,11 +46,11 @@ export class AppRootStore extends flux.Store<{}> {
       <a href='#' onClick={ev => this.clickAction(ev, TActions.reset, 'reset') }>Reset</a>
     </div>;
   }
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
-      case TActions.validate: break;
-      case TActions.reset: this.radios.reset(); completed(null); break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TActions.validate: return Promise.resolve(null); 
+      case TActions.reset: this.radios.reset(); return Promise.resolve(null);
+      default: return super.doDispatchAction(id, par);
     }
   }
 }

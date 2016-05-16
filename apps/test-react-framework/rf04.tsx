@@ -20,18 +20,14 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  constructor($parent: flux.TStore, id?: string) {
-    super($parent, id);
-    this.comp2 = new CompStore(this);
-  }
+
   render(): JSX.Element {
     return <div>
-      <Comp $title='Comp 1 title' id='comp1'/>
-      <Comp $title='Comp 2 title' $store={this.comp2} id='comp2'/>
+      <Comp $title='Comp 1 title' $store2={st => this.comp1 = st ? st : this.comp1} id='comp1'/>
+      <Comp $title='Comp 2 title' id='comp2'/>
     </div>
   }
-  comp2: CompStore;
-  comp3: CompStore;
+  comp1: CompStore;
 }
 
 //****************** Comp component
@@ -44,4 +40,6 @@ export class CompStore extends flux.Store<ICompPar> {
   render(): JSX.Element {
     return <h1>Title: {this.$props.$title}</h1>;
   }
+  asyncConstructor() { return this.id == 'comp1' ? null : new Promise<{}>(res => setTimeout(() => res(null), 1000)); }
+  //asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), this.id == 'comp1' ? 1000 : 2000)); }
 }

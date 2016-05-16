@@ -29,32 +29,25 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
 
-  constructor(parent, id) {
-    super(parent, id);
-    this.checkBox1 = new CheckBoxStore(this, 'checkBox1');
-    this.checkBox2 = new CheckBoxStore(this, 'checkBox2');
-    this.checkBox3 = new CheckBoxStore(this, 'checkBox3');
-  }
-
   checkBox1: CheckBoxStore;
   checkBox2: CheckBoxStore;
   checkBox3: CheckBoxStore;
 
   render(): JSX.Element {
     return <div>
-      <CheckBox $store={this.checkBox1} $title='Check Box Test 1'/><br/>
-      <CheckBox $store={this.checkBox2} $title='Check Box Test 2' $defaultValue={true}/><br/>
-      <CheckBox $store={this.checkBox3} $title='Check Box Test 3' $defaultValue={false}/><br/>
+      <CheckBox $store2={st => this.checkBox1 = st ? st : this.checkBox1} id='checkbox1' $title='Check Box Test 1'/><br/>
+      <CheckBox $store2={st => this.checkBox1 = st ? st : this.checkBox2} id='checkbox2' $title='Check Box Test 2' $defaultValue={true}/><br/>
+      <CheckBox $store2={st => this.checkBox1 = st ? st : this.checkBox3} id='checkbox3' $title='Check Box Test 3' $defaultValue={false}/><br/>
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.validate, 'validate') }>Validate</a> |
       <a href='#' onClick={ev => this.clickAction(ev, TActions.reset, 'reset') }>Reset</a>
     </div>;
   }
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar):Promise<any> {
     switch (id) {
-      case TActions.validate: this.checkBox1.validate(res => completed(null)); break;
-      case TActions.reset: this.checkBox1.reset(); this.checkBox2.reset(); this.checkBox3.reset(); completed(null); break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TActions.validate: return new Promise(ok => this.checkBox1.validate(res => ok(null))); 
+      case TActions.reset: this.checkBox1.reset(); this.checkBox2.reset(); this.checkBox3.reset(); return Promise.resolve();
+      default: return super.doDispatchAction(id, par);
     }
   }
 }

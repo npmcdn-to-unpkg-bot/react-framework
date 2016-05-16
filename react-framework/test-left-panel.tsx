@@ -49,7 +49,7 @@ export class AppRootStore extends flux.Store<{}> {
       <a href='#' onClick={this.playAll.bind(this) }>Play All</a>
       {shoDumpEl}
       <hr/>
-      {this.items.map(item => <TestItem $store={item} key={item.id}/>) }
+      {this.items.map(item => <TestItem $store2={st => item} key={item.id} />) }
     </div>;
   }
 }
@@ -59,7 +59,7 @@ export enum TItemState { no, playing, recording }
 
 export class TestItem extends flux.Component<TestItemStore, {}> { }
 
-@flux.StoreDef({ moduleId: moduleId })
+@flux.StoreDef({ moduleId: moduleId, componentClass:TestItem })
 export class TestItemStore extends flux.Store<{}> {
   constructor($parent: AppRootStore, instanceId: string, public key: string, public cfg: flux.ITest) {
     super($parent, instanceId);

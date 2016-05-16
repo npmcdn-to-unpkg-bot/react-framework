@@ -21,4 +21,5 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element { return <h1>Hallo world 1</h1>; }
+  asyncConstructor(): Promise<this> { return new Promise<{}>((res, rej) => setTimeout(() => res(null), 1000)); } 
 }

@@ -40,37 +40,32 @@ export class AppRootStore extends flux.Store<{}> {
   otherHook: flux.RouteHookStore;
   child1: ChildStore;
   title = 'App title';
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case TActions.appClick:
-        setTimeout(() => { this.modify(st => st.title += 'x'); completed(null); }, 200);
-        break;
+        return new Promise(res => setTimeout(() => { this.modify(st => st.title += 'x'); res(null); }, 200));
       case TActions.navigate:
-        flux.navigate(
+        return flux.navigate(
           flux.createRoute(AppRootStore, null,
             flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'NavigateChild1' }),
-            { otherHook: flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'NavigateChild2' }) }),
-          completed
+            { otherHook: flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'NavigateChild2' }) })
         );
-        break;
-      default:
-        super.doDispatchAction(id, par, completed)
+      default: return super.doDispatchAction(id, par);
     }
   }
-  initFromRoutePar(routePar: flux.IActionPar, completed: flux.TCreateStoreCallback) {
-    setTimeout(() => completed(this), 200);
-  }
+  asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 200)); }
+
   render(): JSX.Element {
     return <div>
       <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       <hr/>
-      <Child $title='Not routed child 1' $store={this.child1} id='child1'/>
+      <Child $title='Not routed child 1' $store2={this.child1} id='child1'/>
       <Child $title='Not routed child 2' id='child2'/>
       <hr/>
-      <RouteHook $store={this.routeHookDefault}/>
+      <RouteHook $store2={this.routeHookDefault}/>
       <hr/>
-      <RouteHook $store={this.otherHook}/>
+      <RouteHook $store2={this.otherHook}/>
       <hr/>
       {/*
       */}
@@ -94,24 +89,21 @@ export interface IChildRouteActionPar { title: string; }
 export class ChildStore extends flux.Store<IPropsChild> implements IChildRouteActionPar {
 
   title: string;
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case TActions.childClick:
         if (this.$parent instanceof flux.RouteHookStore) {
-          (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(this.getMeta().classId, { title: this.title += 'x' }, res => res instanceof Error ? completed(res) : completed(null));
+          return (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(this.getMeta().classId, { title: this.title += 'x' });
         } else {
           this.modify(st => st.title += 'x');
-          completed(null);
+          return Promise.resolve();
         }
-        break;
-      default:
-        super.doDispatchAction(id, par, completed)
+      default: return super.doDispatchAction(id, par);
     }
   }
   //init from router parametter, could be async
-  initFromRoutePar(routePar: IChildRouteActionPar, completed: flux.TCreateStoreCallback) {
-    setTimeout(() => { Object.assign(this, routePar); completed(this); }, 200);
-  }
+  asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 200)); }
+  initFromRoutePar(routePar: IChildRouteActionPar) { Object.assign(this, routePar); }
   initStateFromProps(props) {
     super.initStateFromProps(props);
     this.title = props.$title;

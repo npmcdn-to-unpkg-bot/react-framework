@@ -48,10 +48,10 @@ export class RadioLowStore extends flux.Store<RadioProps> {
     props.onClick = ev => this.action(TAction.radioClick, 'radioClick');
     props.name = this.$parent.getIdInParent();
   }
-  doDispatchAction(id: number, par, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par): Promise<any> {
     switch (id) {
-      case TAction.radioClick: this.$parent.onRadioClick(this); completed(null); break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TAction.radioClick: this.$parent.onRadioClick(this); return Promise.resolve(null); 
+      default: return super.doDispatchAction(id, par);
     }
   }
 

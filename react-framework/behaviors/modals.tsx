@@ -34,19 +34,16 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
     this.closeAction(out);
   }
 
-  doDispatchAction(id: TModalAction, out: TOut, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: TModalAction, out: TOut): Promise<any> {
     switch (id) {
-      case TModalAction.close:
-        this.close(out, res => res instanceof Error ? completed(res) : completed(null));
-        break;
-      default: super.doDispatchAction(id, out, completed); break;
+      case TModalAction.close: return new Promise(ok => this.close(out, res => res instanceof Error ? ok(res) : ok(null)))
+      default: return super.doDispatchAction(id, out);
     }
   }
 
-  initFromRoutePar(par: TInp, completed: flux.TCreateStoreCallback) {
+  initFromRoutePar(par: TInp) {
     if (par.hideOnClick === undefined) par.hideOnClick = true; if (par.hideOnEscape === undefined) par.hideOnEscape = true; //default values
     this.inputPars = par;
-    super.initFromRoutePar(par, completed);
   }
 
   componentCreated() {

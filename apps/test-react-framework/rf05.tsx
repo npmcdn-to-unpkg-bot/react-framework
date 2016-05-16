@@ -26,8 +26,6 @@ export class AppRootStore extends flux.Store<{}> {
       <Comp $title='Aync' $async={true} id='async'/>
     </div>
   }
-  comp2: CompStore;
-  comp3: CompStore;
 }
 
 //****************** Comp component
@@ -40,22 +38,19 @@ export enum CompAction { click }
 export class CompStore extends flux.Store<ICompPar> {
   subTitle: string = '';
   render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, CompAction.click, 'click') }>Title/subTitle: {this.$props.$title}/{this.subTitle}</h1>; }
-  doDispatchAction(id: number, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case CompAction.click:
         if (this.$props.$async) { //Async action
-          setTimeout(() => {
-            this.modify(st => st.subTitle += 'x');
-            completed(null);
-          }, 500)
+          return new Promise(res => setTimeout(() => {
+              this.modify(st => st.subTitle += 'x');
+              res(null);
+            }, 500));
         } else { //Sync action
           this.modify(st => st.subTitle += 'x');
-          completed(null);
+          return Promise.resolve();
         }
-        break;
-      default:
-        super.doDispatchAction(id, par, completed);
-        break;
+      default: return super.doDispatchAction(id, par);
     }
   }
 }

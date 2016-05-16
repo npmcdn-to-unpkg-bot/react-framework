@@ -28,14 +28,14 @@ export class AppRootStore extends flux.Store<{}> {
 
   constructor(p, i) {
     super(p, i);
-    //this.dummy = new DummyStore(this, 'dummy');
-    //this.dummy2 = new DummyStore(this, 'dummy2'); //this.dummy2.animIsOut = false;
+    this.dummy = new DummyStore(this, 'dummy');
+    this.dummy2 = new DummyStore(this, 'dummy2'); //this.dummy2.animIsOut = false;
   }
 
   render(): JSX.Element {
     return <div>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.click, 'click') }>Toggle</a>
-      {this.hidden ? null : <Dummy $store={this.dummy} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} $store2={st => this.dummy = st ? st : this.dummy} id='dummy' >
+      {this.hidden ? null : <Dummy $store2={this.dummy} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} >
         <div style={{ width: '200px', border: '1px solid black' }} >
           <h2>Title</h2>
           <p>Content</p>
@@ -43,7 +43,7 @@ export class AppRootStore extends flux.Store<{}> {
       </Dummy>}
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.click2, 'click2') }>Toggle</a>
-      <Dummy $store={this.dummy2} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} $store2={st => this.dummy2 = st ? st : this.dummy2} id='dummy2'>
+      <Dummy $store2={this.dummy2} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} >
         <div style={{ width: '200px', border: '1px solid black' }} >
           <h2>Title</h2>
           <p>Content</p>
@@ -51,7 +51,7 @@ export class AppRootStore extends flux.Store<{}> {
       </Dummy>
     </div>;
   }
-  doDispatchAction(id: TActions, par: flux.IActionPar, completed: flux.TExceptionCallback) {
+  doDispatchAction(id: TActions, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case TActions.click:
         //as modal dialog: create and remove with animation efect
@@ -59,20 +59,16 @@ export class AppRootStore extends flux.Store<{}> {
           //create Dummy component
           this.modify(st => st.hidden = false);
           //subscribe musi byt az po this.modify, $onDidMount se vytvari v didMount
-          this.dummy.$onDidMount.subscribe(null, null, () => completed(null)); //callback after mount and enter animation
+          return new Promise(ok => this.dummy.$onDidMount.subscribe(null, null, () => ok(null))); //callback after mount and enter animation
         } else {
           //animation out and remove Dummy component
-          this.dummy.$animation.out(() => {
+          return new Promise(ok => this.dummy.$animation.out(() => {
             this.modify(st => st.hidden = true);
-            completed(null);
-          });
+            ok(null);
+          }));
         }
-        break;
-      case TActions.click2:
-        //just change target animation status
-        this.dummy2.$animation.toggle(() => completed(null));
-        break;
-      default: super.doDispatchAction(id, par, completed); break;
+      case TActions.click2: return new Promise(ok => this.dummy2.$animation.toggle(() => ok(null))); //just change target animation status
+      default: return super.doDispatchAction(id, par);
     }
   }
   dummy: DummyStore;
