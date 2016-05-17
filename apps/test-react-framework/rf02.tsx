@@ -23,8 +23,8 @@ export interface IAppRoutePar extends flux.IActionPar { title: string; } //route
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  render(): JSX.Element { return <h1>{this.title}</h1>; }
-  title: string;
+  render(): JSX.Element { return <h1>{this.getRoutePar<IAppRoutePar>().title}</h1>; }
+  //title: string;
   //finish store creation from route parameters. Not called in playing bootApp for action playing.
-  initFromRoutePar(routePar: IAppRoutePar) { this.title = routePar.title } //inicializace store po jeho vytvoreni. Muze byt asynchronni
+  //initFromRoutePar(routePar: IAppRoutePar) { this.title = routePar.title } //inicializace store po jeho vytvoreni. Muze byt asynchronni
 }

@@ -28,7 +28,8 @@ export class AppRootStore extends flux.Store<{}> {
     return <div>
       <h1 onClick={ev => this.clickAction(ev, TActions.click, 'click') }>Title: {this.title}</h1>
       <Child $title={this.title} id='child1'/><br/>
-      Force component create: <Child $title={this.title} key={flux.getUnique() } id='child2'/>
+      Force component create:
+      <Child $title={this.title} key={flux.getUnique() } id='child2'/>
     </div>;
   }
   doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {

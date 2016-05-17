@@ -138,7 +138,7 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
     var res: ICreateInComponent<T> = props.$store instanceof Store ? { res: props.$store as T } : Store.createInComponent<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$store as TGetStore<T>);
     //if (props.$store2) {
     //var res = Store.createInComponent<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$routePar, props.$store2);
-    this.state = res.res; delete this.state.routePar; delete this.state.$animation;
+    this.state = res.res; delete this.state.$animation;
     this.state.$props = props; this.state.$comp = this;
     if (props.$animation) this.state.$animation = new flux.Animation(this.state, props.$animation);
     
@@ -146,8 +146,12 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
       this.state.initStateFromProps(props);
       this.state.$initialized = true;
     }
-    //if (props.$routePar) this.state.initFromRoutePar(props.$routePar.par);
-    var route = this.state.route(); if (route) this.state.routePar = route.$hookPar.par;
+    //var route = this.state.parentRoute(); if (route) this.state.routePar = route.$hookPar.par;
+    //var route = this.state.parentRoute();
+    //if (route) {
+    //  var hookPar = route.getHookPar();
+    //  if (hookPar) this.state.routePar = hookPar.par;
+    //}
 
     this.state.componentCreated(); //notificiation
 
@@ -176,13 +180,13 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
     //this.state.componentCreated(); //notificiation
   }
   state: T;
-  //props: TProps<T, P>;
   //context: IComponentContext;
   componentWillUnmount() { this.state.componentWillUnmount(); }
   componentDidMount() { this.state.trace('componentDidMount'); this.state.componentDidMount(); }
-  componentDidUpdate() { this.state.trace('componentDidUpdate'); this.state.$props = this.props; this.state.componentDidUpdate(); }
+  componentDidUpdate() { this.state.trace('componentDidUpdate'); this.state.componentDidUpdate(); }
   render(): JSX.Element {
     if (!this.state.$initialized) return null;
+    this.state.$props = this.props;
     this.state.trace('render');
     //this.state.itsMe(this);
     return this.state.render();
@@ -214,6 +218,10 @@ export interface IProps<T extends TStore> {
 export type TProps<T extends TStore, P> = IProps<T> & P & { children?: React.ReactNode };
 export type TTemplate<T extends TStore> = (self: T) => React.ReactNode;
 export type TStore = Store<{}>;
+interface IChildRoutesResult {
+  hookId: string;
+  hook: RouteHookStore;
+}
 
 //IPropsEx x Store relationship:
 //Every component props (eg. title:string) has to be defined in Store:
@@ -230,7 +238,7 @@ export abstract class Store<T> implements IStoreLiteral {
   $animation: Animation; //component animations
 
   _type: string; //store type, kvuli JSON deserializaci
-  routePar: IActionPar; //TRouteActionPar.par, assigned from route
+  //routePar: IActionPar; //TRouteActionPar.par, assigned from route
   path: string; //unique Store identification
   childStores: IChildStores;
   animIsOut: boolean; //aktualni hodnota animace v didMount: undefined - animuje se do IN, true - nastavi se OUT (bez animace), false - nastavi se IN
@@ -321,7 +329,37 @@ export abstract class Store<T> implements IStoreLiteral {
   unSubscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
-  route(): RouteHookStore { return this.$parent instanceof RouteHookStore ? this.$parent as RouteHookStore : null; }
+  parentRoute(): RouteHookStore {
+    if (!(this.$parent instanceof RouteHookStore)) throw new Exception(`Parent component is not RouteHookStore: ${this.path}`);
+    return this.$parent as RouteHookStore;
+  }
+  childRoutes(): Array<RouteHookStore> {
+    let res: Array<RouteHookStore> = [];
+    let push = (r: RouteHookStore) => { if (!(r instanceof RouteHookStore)) return; res.push(r); };
+    for (var p in this) push(this[p]);
+    if (this.childStores) for (var p in this.childStores) push(this.childStores[p] as RouteHookStore);
+    return res;
+  }
+  findRouteHook(hookId?: string): RouteHookStore {
+    if (!hookId) hookId = routeHookDefaultName;
+    var res = this.childRoutes().find(r => {
+      var hid = r.$props.$hookId ? r.$props.$hookId : routeHookDefaultName;
+      return hid === hookId;
+    });
+    if (!res) throw new Exception(`Cannot find RouteHook, hookId=${hookId}`);
+    return res;
+  }
+  getRoutePar<T extends IActionPar>(): T {
+    return this.parentRoute().getHookPar().par as T;
+  }
+
+  //findRouteHook(hookId: string): RouteHookStore {
+  //  return this.findRoute(hookId);
+  //  //if (!hookId) hookId = routeHookDefaultName;
+  //  //let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${hookId}`);
+  //  //return hookStore;
+  //}
+
 
   renderTemplate(escape?: React.ReactChild | Array<React.ReactChild>, forceElement?: boolean): React.ReactNode {
     let expandTemplate = () => {
@@ -374,16 +412,10 @@ export abstract class Store<T> implements IStoreLiteral {
   initStateFromProps(props: TProps<this, T>) { if (props.$animation) this.animIsOut = props.$animation.animIsOutDefault; }
 
   //finish store creation from route parameters. Not called in playing bootApp for action playing.
-  initFromRoutePar(par: IActionPar) { }
+  //initFromRoutePar(par: IActionPar) { }
 
   //************** Action Binding
   doDispatchAction(id: number, par: IActionPar): Promise<any> { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
-
-  findRouteHook(hookId: string): RouteHookStore {
-    if (!hookId) hookId = routeHookDefaultName;
-    let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${hookId}`);
-    return hookStore;
-  }
 
   onUnbindFromRoute(completed: TExceptionCallback) { return completed(null); }
 
@@ -414,8 +446,10 @@ enum RoutingGlobalStatus { no, toStart, toFinish }
 class RoutingGlobalStore extends Store<{}> { //globalni routing change information
   sender: RouteHookStore; //actual routing store
   waitings: Array<Promise<TStore>>; //async stores, cekajici na naladovani.
-  //status pro sender
   running: RoutingGlobalStatus; //routing phase
+  //route: TRouteActionPar;
+  //paths: { [path: string]: TRouteActionPar; } = {};
+  //status pro sender
   topIsAct: boolean;
   actComp: JSX.Element;
   nextComp: JSX.Element;
@@ -438,28 +472,40 @@ export class RouteHook extends Component<RouteHookStore, IRouteHookProps> { }
 export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook component
 
   hookedStore: TStore;
-  $hookPar: TRouteActionPar;
 
-  assignRouteParForJSON(par: TRouteActionPar) { //po JSON deserializaci stavu: obnov $routePar field
-    //this.$routePar = par;
-    flux.getChildRoutePropNames(par).forEach(propName => {
-      var routePar: TRouteActionPar = par[propName];
-      this.hookedStore.findRouteHook(routePar.hookId).assignRouteParForJSON(routePar);
-    });
+  getHookPar(): TRouteActionPar {
+    if (this.$parent === store) return this.$props.$hookId ? null : store.route; //simple case
+    var act: RouteHookStore = this; var path: Array<string> = [];
+    while (act.$parent != store) {
+      path.push(this.$props.$hookId ? this.$props.$hookId : routeHookDefaultName);
+      act = act.$parent.$parent as RouteHookStore;
+    }
+    var res = store.route;
+    for (var i = path.length-1; i >= 0; i--) res = res[path[i]];
+    return res;
   }
 
+  //assignRouteParForJSON(par: TRouteActionPar) { //po JSON deserializaci stavu: obnov $routePar field
+  //  //this.$routePar = par;
+  //  flux.getChildRoutePropNames(par).forEach(propName => {
+  //    var routePar: TRouteActionPar = par[propName];
+  //    this.hookedStore.findRouteHook(routePar.hookId).assignRouteParForJSON(routePar);
+  //  });
+  //}
+
   unBindRouteStore(completed: TExceptionCallback) { //asynchronni route unbind
-    if (!this.$hookPar) { completed(null); return; }
-    var self = this;
-    let childRoutes = flux.getChildRoutePropNames(this.$hookPar); if (childRoutes.length <= 0) { completed(null); return; }
-    let childRoutesPromises = childRoutes.map(p => this.$hookPar[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => {
-      var childHook = self.hookedStore.findRouteHook(subPar.hookId);
-      childHook.unBindRouteStore(er => {
-        if (er) { err(er); return; }
-        childHook.onUnbindFromRoute(er => { if (er) err(er); else ok(null); });
-      });
-    }));
-    rx.Observable.merge.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
+    completed(null); return;
+    //if (!this.$hookPar) { completed(null); return; }
+    //var self = this;
+    //let childRoutes = flux.getChildRoutePropNames(this.$hookPar); if (childRoutes.length <= 0) { completed(null); return; }
+    //let childRoutesPromises = childRoutes.map(p => this.$hookPar[p]).map((subPar: TRouteActionPar) => new Promise((ok, err) => {
+    //  var childHook = self.hookedStore.findRouteHook(subPar.hookId);
+    //  childHook.unBindRouteStore(er => {
+    //    if (er) { err(er); return; }
+    //    childHook.onUnbindFromRoute(er => { if (er) err(er); else ok(null); });
+    //  });
+    //}));
+    //rx.Observable.merge.apply(self, childRoutesPromises).subscribe(null, err => completed(err), () => completed(null));
   }
   //bindRouteToHookStore(par: TRouteActionPar, completed: TCreateStoreCallback) {
   //  this.$routePar = par;
@@ -479,16 +525,19 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
   //  }, null, par.par);
   //}
 
-  subNavigate<T extends flux.IActionPar>(storeId: string, par: T, completed?: flux.TCreateStoreCallback): Promise<TStore> {
-    return this.routing({ storeId: storeId, par: par }, true);
+  subNavigate(subRoute: flux.TRouteActionPar): Promise<TStore> {
+    //{ storeId: storeId, par: par }
+    var hookPar = this.getHookPar();
+    Object.assign(hookPar, subRoute);
+    //hookPar.storeId = storeId; hookPar.par = par;
+    return this.routing(true);
   }
 
-  routing(routes: TRouteActionPar, withPustState: boolean): Promise<TStore> {
+  routing(withPustState: boolean): Promise<TStore> {
     store.$routing.completed = new Deferred<any>();
     let self = this;
     self.unBindRouteStore(err => {
       if (err) { store.$routing.completed.reject(err); return; }
-      this.$hookPar = routes;
       if (this.hookedStore) { this.hookedStore.componentWillUnmount(); delete this.hookedStore; }
       store.$routing.subscribe(self.$comp);
       store.$routing.modify(st => {
@@ -497,16 +546,8 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
         st.waitings = [];
         delete st.topIsAct; delete st.actComp; delete st.nextComp; 
       });
-      //self.modify();
-      //let cls = Store.getStoreClass(routes.storeId);
-      //var compClass = Store.getClassMeta(cls).componentClass;
-      //self.bindRouteToHookStore(routes, res => {
-      //  if (res instanceof Error) { store.navigateError(res, completed); return; }
-      //  self.modify();
-      //  if (withPustState) store.pushState();
-      //  if (completed) completed(res);
-      //});
     });
+    if (withPustState) store.pushState();
     return store.$routing.completed.promise;
   }
 
@@ -517,7 +558,7 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
         st.running = RoutingGlobalStatus.toFinish;
         st.actComp = st.nextComp;
         st.completed.resolve(null);
-        delete st.waitings; delete st.nextComp; delete st.completed;
+        delete st.waitings; delete st.nextComp; 
       });
       store.$routing.unSubscribe(this.$comp);
     }
@@ -526,16 +567,14 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
   }
 
   render(): JSX.Element {
-    //empty route par
-    if (!this.$hookPar) return null;
+    let hookPar = this.getHookPar(); if (!hookPar) return null; //empty route par
 
     //recreate and re-render hooked comp
     let getComp = () => {
-      let compClass = Store.getClassMeta(Store.getStoreClass(this.$hookPar.storeId)).componentClass;
+      let compClass = Store.getClassMeta(Store.getStoreClass(hookPar.storeId)).componentClass;
       return React.createElement(compClass, {
         key: getUnique(), id: 'hooked',
         $store: st => this.hookedStore = st ? st : this.hookedStore,
-        //$routePar: this.$hookPar,
       });
     }
 
@@ -559,10 +598,6 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
       throw new Exception('');
   }
 
-  componentCreated() {
-    super.componentCreated();
-    this.$hookPar = this.$props.$hookPar;
-  }
   componentDidMount() { super.componentDidMount(); this.routed(); }
   componentDidUpdate() { super.componentDidUpdate(); this.routed(); }
 
@@ -573,7 +608,6 @@ class RouteHookItem extends React.Component<IRouteHookItemProps, {}> {
   shouldComponentUpdate(nextProps: IRouteHookItemProps, nextState: TStore, nextContext: any): boolean { return !this.props.store || store.$routing.actComp !== this.props.comp; }
   render(): JSX.Element { return this.props.comp; }
 }
-
 
 export var routeParIgnores = ['storeId', 'hookId', 'par'];
 export var routeHookDefaultName = 'routeHookDefault';
@@ -586,19 +620,17 @@ export function navigate(routes: flux.TRouteActionPar, completed?: flux.TExcepti
 export var store: StoreApp;
 export type TStoreAppClass = new () => StoreApp;
 
-@StoreDef({ moduleId: moduleId })
+class StoreComponent extends Component<StoreApp, {}> { }
+
+@StoreDef({ moduleId: moduleId, componentClass: StoreComponent })
 export abstract class StoreApp extends Store<{}> { //global Application store (root for other stores)
   constructor() {
     super(null);
     //configure App
     store = this;
-    //this.routeHookDefault = new RouteHookStore(this, 'hook');
-    //this.routeHookModal = new RouteHookStore(this, 'modal');
-    //this.routeHookModal.ignoreLoading = true;
     this.$basicUrl = this.getBasicUrl(window.location.href);
     console.log(`> router basicUrl=${this.$basicUrl}`);
     this.$appElement = this.getAppElement();
-    //this.startRoute = this.getStartRoute();
     this.$isHashRouter = this.getIsHashRouter();
     this.$defaultLoginNeeded = this.getDefaultLoginNeeded();
     this.$routing = new RoutingGlobalStore(this);
@@ -619,8 +651,9 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   $defaultLoginNeeded: boolean;
   getIsLogged(): boolean { throw new flux.ENotImplemented('isLogged'); } //dej info o zalogovani
 
+  route: TRouteActionPar;
   //**** action player
-  saveRoute: TRouteActionPar;
+  //saveRoute: TRouteActionPar;
   $recorder = new ActionRecorder();
 
   //**** routing 
@@ -634,9 +667,11 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   // - in windows.onPopstate event (flux.decodeFullUrl(), false)
   rootRouteBind(routes: TRouteActionPar /*null => start route*/, withPustState: boolean): Promise<TStore> {
     if (!routes) routes = this.getStartRoute(); if (!routes) return Promise.resolve(null);
-    return this.findRouteHook(routes.hookId).routing(routes, withPustState);
+    store.route = routes;
+    //return this.findRouteHook(routes.hookId).routing(routes, withPustState);
+    return this.findRouteHook(routes.hookId).routing(withPustState);
   }
-  actRoutes(): TRouteActionPar { return this.routeHookDefault.$hookPar; }
+  actRoutes(): TRouteActionPar { return store.route; }// throw new ENotImplemented('return this.findRouteHook().$hookPar;'); }
 
   static bootApp(source: TStoreAppClass /*run app*/ | IStoreLiteral /*before play actions*/, startRoute?: TRouteActionPar /* ===null => force getStartRoute -> decodeFullUrl call, ===undefined => decodeFullUrl -> getStartRoute, ===else => startRoute*/): Promise<TStore> {    //clear all
     if (store) {
@@ -651,17 +686,19 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
       flux.literalToAppState(literal); //nahrad objects literals (with _type prop) by new Store(). Vedlejsi efekt je naplneni store
       //store.bindRouteToStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
       //store.findRouteHook(store.saveRoute.hookId).bindRouteToHookStore(true, store.saveRoute, exp => { //assign route to StoreRouteHook.$routePar
-      store.findRouteHook(store.saveRoute.hookId).assignRouteParForJSON(store.saveRoute);
-      delete store.saveRoute;
+      //store.findRouteHook(store.saveRoute.hookId).assignRouteParForJSON(store.saveRoute);
+      //delete store.saveRoute;
       store.pushState();
-      ReactDOM.render(store.render(), store.$appElement); //render all, route is already binded in state
+      //ReactDOM.render(store.render(), store.$appElement); //render all, route is already binded in state
+      ReactDOM.render(React.createElement(StoreComponent, {$store:store}), store.$appElement); //render all, route is already binded in state
       return Promise.resolve(null);
       //if (compl) compl(null);
       //});
     } else { //from StoreApp constructor
       let cls = source as TStoreAppClass;
       new cls(); //vedlejsi efekt je naplneni store
-      ReactDOM.render(store.render(), store.$appElement); //render pouze StoreApp a jeji hook
+      //ReactDOM.render(store.render(), store.$appElement); //render pouze StoreApp a jeji hook
+      ReactDOM.render(React.createElement(StoreComponent, { $store: store }), store.$appElement); //render pouze StoreApp a jeji hook
 
       //compute start route logic. 
       if (startRoute === null) { //null used just in test-right-panel.tsx as a flag for forcing store.getStartRoute() call
@@ -701,8 +738,8 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
   }
 
 
-  routeHookDefault: RouteHookStore; //hook for root React component
-  routeHookModal: RouteHookStore; //hook modal dialog
+  //routeHookDefault: RouteHookStore; //hook for root React component
+  //routeHookModal: RouteHookStore; //hook modal dialog
 
   findComponent(path: string): TComponent { let comp = this.$components[path]; if (!comp) throw new flux.Exception(`Component ${path} does not exist`); return comp; }
 
@@ -735,12 +772,12 @@ export abstract class StoreApp extends Store<{}> { //global Application store (r
 
   render(): JSX.Element {
     //return <div>
-    //  <RouteHook $store={this.routeHookDefault}/>
-    //  <RouteHook $store={this.routeHookModal}/>
+    //  <RouteHook $store={st => this.routeHookDefault = st ? st : this.routeHookDefault} id='hook'/>
+    //  <RouteHook $store={st => this.routeHookModal = st ? st : this.routeHookModal} $hookId='modal' $ignoreLoading id='modal'/>
     //</div>
     return <div>
-      <RouteHook $store={st => this.routeHookDefault = st ? st : this.routeHookDefault} id='hook'/>
-      <RouteHook $store={st => this.routeHookModal = st ? st : this.routeHookModal} $ignoreLoading id='modal'/>
+      <RouteHook id='hook'/>
+      <RouteHook $hookId='modal' $ignoreLoading id='modal'/>
     </div>
   }
 

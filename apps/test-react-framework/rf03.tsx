@@ -25,9 +25,9 @@ export interface IAppRoutePar extends flux.IActionPar { title: string; } //route
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  render(): JSX.Element { return <h1>{this.title}</h1>; }
-  title: string;
+  render(): JSX.Element { return <h1>{this.getRoutePar<IAppRoutePar>().title}</h1>; }
+  //title: string;
   //asynchronni inicializace Store
   asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 1000)); }
-  initFromRoutePar(routePar: IAppRoutePar) { this.title = routePar.title; } 
+  //initFromRoutePar(routePar: IAppRoutePar) { this.title = routePar.title; }
 }

@@ -86,7 +86,7 @@ export function startPlaying(saveId: string, progress: (pos: number, len: number
 }
 
 export function appStateToJSON(st: flux.StoreApp, indent?: number): string {
-  st.saveRoute = st.actRoutes();
+  //st.saveRoute = st.actRoutes();
   return JSON.stringify(st, (key, val) => {
     //console.log('>>>* ' + key);
     //if (key == 'state') { debugger; }

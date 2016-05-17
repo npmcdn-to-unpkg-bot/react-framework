@@ -2,7 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import * as flux from '../flux';
+import * as flux from '../exports';
 
 const moduleId = 'behaviors';
 
@@ -41,10 +41,10 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
     }
   }
 
-  initFromRoutePar(par: TInp) {
-    if (par.hideOnClick === undefined) par.hideOnClick = true; if (par.hideOnEscape === undefined) par.hideOnEscape = true; //default values
-    this.inputPars = par;
-  }
+  //initFromRoutePar(par: TInp) {
+  //  if (par.hideOnClick === undefined) par.hideOnClick = true; if (par.hideOnEscape === undefined) par.hideOnEscape = true; //default values
+  //  this.inputPars = par;
+  //}
 
   componentCreated() {
     super.componentCreated();
@@ -61,7 +61,7 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
     this.action(TModalAction.close, 'close', par);
   }
   close(out: TOut, completed: flux.TCreateStoreCallback) {
-    flux.store.routeHookModal.subNavigate(null, null, res => { //odstran z DOM
+    flux.store.findRouteHook().subNavigate(null).then(res => { //odstran z DOM
       if (this.$completed) this.$completed(out);
       if (completed) completed(res);
     });
@@ -72,13 +72,12 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
 
 export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: flux.TStoreClass<TInp>, par: TInp, onShowed: flux.TExceptionCallback): Promise<TOut> {
   return new Promise<TOut>((ok, err) => {
-    flux.store.routeHookModal.subNavigate(flux.Store.getClassMeta(comp as any).classId, par, (res: Error | TDimmerStore) => {
-      if (res instanceof Error) err(res);
-      else {
+    flux.store.findRouteHook().subNavigate(flux.createRoute(flux.Store.getClassMeta(comp as any).storeClass, par))
+      .then((res: TDimmerStore) => {
         res.$completed = out => ok(out as TOut);
         res.$onDidMount.subscribe(null, null, () => onShowed(null));
         //if (onShowed) onShowed(null);
-      }
-    });
+      })
+      .catch(er => err(er));
   });
 }

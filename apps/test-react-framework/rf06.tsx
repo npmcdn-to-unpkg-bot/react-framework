@@ -25,19 +25,19 @@ export interface IAppRootRoutePar extends flux.IActionPar { title: string; } //r
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  title: string;
+  //title: string;
   uniqId = (() => {
     var res = flux.getUnique(); console.log(res); return res;
   })();
-  initFromRoutePar(routePar: IAppRootRoutePar) { this.title = routePar.title; } 
+  //initFromRoutePar(routePar: IAppRootRoutePar) { this.title = routePar.title; }
   asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 1000)); }
   render(): JSX.Element {
     this.trace(`... ${this.uniqId}`);
-    return <h1 onClick={ev => this.clickAction(ev, AppRootAction.click, 'click') }>Title: {this.title}</h1>;
+    return <h1 onClick={ev => this.clickAction(ev, AppRootAction.click, 'click') }>Title: {this.getRoutePar<IAppRootRoutePar>().title}</h1>;
   }
   doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
-      case AppRootAction.click: return (this.$parent as flux.RouteHookStore).subNavigate<IAppRootRoutePar>(this.getMeta().classId, { title: this.title += 'x' });
+      case AppRootAction.click: return (this.$parent as flux.RouteHookStore).subNavigate(flux.createRoute<IAppRootRoutePar>(AppRootStore, { title: this.getRoutePar<IAppRootRoutePar>().title+='x' }));
       default: return super.doDispatchAction(id, par);
     }
   }

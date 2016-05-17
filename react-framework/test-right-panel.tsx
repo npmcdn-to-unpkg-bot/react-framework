@@ -20,9 +20,9 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
-  dumpKey: string;
-  mode: AppRootMode;
-  initFromRoutePar(routePar: IAppRootRouteActionPar) { Object.assign(this, routePar); }
+  //dumpKey: string;
+  //mode: AppRootMode;
+  //initFromRoutePar(routePar: IAppRootRouteActionPar) { Object.assign(this, routePar); }
   import(ev: React.MouseEvent) {
     ev.preventDefault();
     try {
@@ -35,16 +35,17 @@ export class AppRootStore extends flux.Store<{}> {
   }
   input;
   render(): JSX.Element {
-    if (this.mode == AppRootMode.import) return <div>
+    var routePar = this.getRoutePar<IAppRootRouteActionPar>();
+    if (routePar.mode == AppRootMode.import) return <div>
       <br/>
       <div>Paste exported JSON here and click <a href='#' onClick={this.import.bind(this) }><b>Import</b></a></div>
       <br/>
       <textarea ref= {c => this.input = c} rows={40} style={{ width: '99%' }}></textarea>
     </div>;
     var txt = '';
-    switch (this.mode) {
+    switch (routePar.mode) {
       case AppRootMode.export: txt = flux.getAllRecordings(); break;
-      case AppRootMode.dump: txt = flux.getRecording(this.dumpKey); break;
+      case AppRootMode.dump: txt = flux.getRecording(routePar.dumpKey); break;
       //case AppRootMode.dumpAct: txt = flux.appStateToJSON(flux.store, 2); break;
       default: return null;
     }
