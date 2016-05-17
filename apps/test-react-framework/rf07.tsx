@@ -31,11 +31,10 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 export class AppRootStore extends flux.Store<{}> {
   constructor($parent: flux.TStore) {
     super($parent);
-    this.routeHookDefault = new flux.RouteHookStore(this, '1');
-    this.otherHook = new flux.RouteHookStore(this, '2');
-    this.child1 = new ChildStore(this);
+    //this.routeHookDefault = new flux.RouteHookStore(this, '1');
+    //this.otherHook = new flux.RouteHookStore(this, '2');
+    //this.child1 = new ChildStore(this, 'child1');
   }
-
   routeHookDefault: flux.RouteHookStore;
   otherHook: flux.RouteHookStore;
   child1: ChildStore;
@@ -48,7 +47,7 @@ export class AppRootStore extends flux.Store<{}> {
         return flux.navigate(
           flux.createRoute(AppRootStore, null,
             flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'NavigateChild1' }),
-            { otherHook: flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'NavigateChild2' }) })
+            { 'otherHook': flux.createRoute<IChildRouteActionPar>(ChildStore, { title: 'NavigateChild2' }) })
         );
       default: return super.doDispatchAction(id, par);
     }
@@ -56,16 +55,19 @@ export class AppRootStore extends flux.Store<{}> {
   asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 200)); }
 
   render(): JSX.Element {
+    //debugger;
     return <div>
-      <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appCLick') }>{this.title}</h2>
+      <h2 onClick={ev => this.clickAction(ev, TActions.appClick, 'appClick') }>{this.title}</h2>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.navigate, 'navigate') }>Navigate</a>
       <hr/>
-      <Child $title='Not routed child 1' $store2={this.child1} id='child1'/>
+      {/*
+      <Child $title='Not routed child 1' $store={this.child1} />
       <Child $title='Not routed child 2' id='child2'/>
+        */}
       <hr/>
-      <RouteHook $store2={this.routeHookDefault}/>
+      <RouteHook id='1'/>
       <hr/>
-      <RouteHook $store2={this.otherHook}/>
+      <RouteHook $hookId='otherHook' id='2'/>
       <hr/>
       {/*
       */}
@@ -74,7 +76,7 @@ export class AppRootStore extends flux.Store<{}> {
 }
 
 //****************** Child component
-export interface IPropsChild { $title?: string }
+export interface IPropsChild { $title?: string; }
 
 export class Child extends flux.Component<ChildStore, IPropsChild> {
   //constructor(props, ctx) {
@@ -86,29 +88,24 @@ export class Child extends flux.Component<ChildStore, IPropsChild> {
 export interface IChildRouteActionPar { title: string; }
 
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child })
-export class ChildStore extends flux.Store<IPropsChild> implements IChildRouteActionPar {
+export class ChildStore extends flux.Store<IPropsChild> {
 
-  title: string;
+  //title: string;
+  //routePar: IChildRouteActionPar;
   doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
-      case TActions.childClick:
-        if (this.$parent instanceof flux.RouteHookStore) {
-          return (this.$parent as flux.RouteHookStore).subNavigate<IChildRouteActionPar>(this.getMeta().classId, { title: this.title += 'x' });
-        } else {
-          this.modify(st => st.title += 'x');
-          return Promise.resolve();
-        }
+      case TActions.childClick: return this.parentRoute().subNavigate(flux.createRoute<IChildRouteActionPar>(ChildStore, { title: this.getRoutePar<IChildRouteActionPar>().title += 'x' }));
       default: return super.doDispatchAction(id, par);
     }
   }
   //init from router parametter, could be async
   asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 200)); }
-  initFromRoutePar(routePar: IChildRouteActionPar) { Object.assign(this, routePar); }
-  initStateFromProps(props) {
-    super.initStateFromProps(props);
-    this.title = props.$title;
-  }
+  //initFromRoutePar(routePar: IChildRouteActionPar) { Object.assign(this, routePar); }
+  //initStateFromProps(props: IPropsChild) {
+  //  super.initStateFromProps(props);
+  //  this.routePar = { title: props.$title };
+  //}
   render(): JSX.Element {
-    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.title}</h3>;
+    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>{this.getRoutePar<IChildRouteActionPar>().title}</h3>;
   }
 }
