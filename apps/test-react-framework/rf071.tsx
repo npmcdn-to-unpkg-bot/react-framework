@@ -31,7 +31,7 @@ export class AppRootStore extends flux.Store<{}> {
   asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), 200)); }
   render(): JSX.Element {
     return <div>
-      <RouteHook $store2={st => this.routeHookDefault = st ? st : this.routeHookDefault}/>
+      <RouteHook $store={st => this.routeHookDefault = st ? st : this.routeHookDefault}/>
     </div>;
   }
 }

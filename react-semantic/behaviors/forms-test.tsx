@@ -66,14 +66,14 @@ export class FormTestStore extends flux.Store<{}> {
   render(): JSX.Element {
     return <Container>
       <h1>Input Validation</h1>
-      <FormSmart id='form1' $store2={st => this.form = st ? st : this.form}>
+      <FormSmart id='form1' $store={st => this.form = st ? st : this.form}>
         <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator() } id='checkBox'/><br/>
-        <InputSmart $title='Name' $defaultValue='3' $store2={st => this.name = st ? st : this.name}
+        <InputSmart $title='Name' $defaultValue='3' $store={st => this.name = st ? st : this.name}
           $validator = {[flux.requiredValidator(), flux.rangeValidator(3, 10)]}
           $validatorAsync = {(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000) }
           $template = {inpTemplate}
           />
-        <InputSmart $title='Password' $store2={st => this.password = st ? st : this.password} $validator = {flux.requiredValidator() } $template = {inpTemplate} />
+        <InputSmart $title='Password' $store={st => this.password = st ? st : this.password} $validator = {flux.requiredValidator() } $template = {inpTemplate} />
       </FormSmart>
       <hr/>
       <BindToState $stores={[this.password, this.name]} $template={self => <i>Name={this.name.value}, Password={this.password.value}</i>}/>
@@ -81,7 +81,7 @@ export class FormTestStore extends flux.Store<{}> {
       <a href='#' onClick={ev => this.clickAction(ev, TAction.click, 'click') }>OK</a>
       <hr/>
       <h1>Form, Fields</h1>
-      <FormSmart $store2={st => this.form2 = st ? st : this.form2} id='form2'>
+      <FormSmart $store={st => this.form2 = st ? st : this.form2} id='form2'>
         <Fields $inline>
           <CheckBox $title='Check Box' $validator={flux.requiredBoolValidator() } style={{ marginRight: '10px' }} $defaultValue={true} id='checkbox'/>
           <Field><Radio $parent={this.radios} id='r1' $title='r1 title' checked/></Field>
@@ -90,7 +90,7 @@ export class FormTestStore extends flux.Store<{}> {
         <Fields $equalWidth>
           <FieldSmart $title='First Name' id='firstName' $required $validator = {flux.requiredValidator() } $template = {fieldTemplate}/>
           <FieldSmart $title='Last Name' id='lastName' $required $validator = {flux.requiredValidator() } $template = {fieldTemplate}/>
-          <FieldSmart $title='Name' $defaultValue='3' $store2={st => this.name2 = st ? st : this.name2} $template = {fieldTemplate} $validatorAsync={(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000)}/>
+          <FieldSmart $title='Name' $defaultValue='3' $store={st => this.name2 = st ? st : this.name2} $template = {fieldTemplate} $validatorAsync={(val, completed) => setTimeout(() => completed((val ? val.trim() : val) == '4' ? null : 'async validation error'), 4000)}/>
         </Fields>
       </FormSmart>
       <hr/>

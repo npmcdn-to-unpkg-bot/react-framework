@@ -49,7 +49,7 @@ export class AppRootStore extends flux.Store<{}> {
       <a href='#' onClick={this.playAll.bind(this) }>Play All</a>
       {shoDumpEl}
       <hr/>
-      {this.items.map(item => <TestItem $store2={st => item} key={item.id} />) }
+      {this.items.map(item => <TestItem $store={st => item} key={item.id} />) }
     </div>;
   }
 }

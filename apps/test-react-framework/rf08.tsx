@@ -35,7 +35,7 @@ export class AppRootStore extends flux.Store<{}> {
   render(): JSX.Element {
     return <div>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.click, 'click') }>Toggle</a>
-      {this.hidden ? null : <Dummy $store2={this.dummy} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} >
+      {this.hidden ? null : <Dummy $store={this.dummy} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} >
         <div style={{ width: '200px', border: '1px solid black' }} >
           <h2>Title</h2>
           <p>Content</p>
@@ -43,7 +43,7 @@ export class AppRootStore extends flux.Store<{}> {
       </Dummy>}
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.click2, 'click2') }>Toggle</a>
-      <Dummy $store2={this.dummy2} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} >
+      <Dummy $store={this.dummy2} $animation={{ in: flux.transition.expandIn, inDuration: 500 }} >
         <div style={{ width: '200px', border: '1px solid black' }} >
           <h2>Title</h2>
           <p>Content</p>

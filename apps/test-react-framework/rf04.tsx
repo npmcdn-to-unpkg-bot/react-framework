@@ -23,7 +23,7 @@ export class AppRootStore extends flux.Store<{}> {
 
   render(): JSX.Element {
     return <div>
-      <Comp $title='Comp 1 title' $store2={st => this.comp1 = st ? st : this.comp1} id='comp1'/>
+      <Comp $title='Comp 1 title' $store={st => this.comp1 = st ? st : this.comp1} id='comp1'/>
       <Comp $title='Comp 2 title' id='comp2'/>
     </div>
   }

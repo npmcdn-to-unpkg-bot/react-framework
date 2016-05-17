@@ -35,9 +35,9 @@ export class AppRootStore extends flux.Store<{}> {
 
   render(): JSX.Element {
     return <div>
-      <CheckBox $store2={st => this.checkBox1 = st ? st : this.checkBox1} id='checkbox1' $title='Check Box Test 1'/><br/>
-      <CheckBox $store2={st => this.checkBox1 = st ? st : this.checkBox2} id='checkbox2' $title='Check Box Test 2' $defaultValue={true}/><br/>
-      <CheckBox $store2={st => this.checkBox1 = st ? st : this.checkBox3} id='checkbox3' $title='Check Box Test 3' $defaultValue={false}/><br/>
+      <CheckBox $store={st => this.checkBox1 = st ? st : this.checkBox1} id='checkbox1' $title='Check Box Test 1'/><br/>
+      <CheckBox $store={st => this.checkBox1 = st ? st : this.checkBox2} id='checkbox2' $title='Check Box Test 2' $defaultValue={true}/><br/>
+      <CheckBox $store={st => this.checkBox1 = st ? st : this.checkBox3} id='checkbox3' $title='Check Box Test 3' $defaultValue={false}/><br/>
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.validate, 'validate') }>Validate</a> |
       <a href='#' onClick={ev => this.clickAction(ev, TActions.reset, 'reset') }>Reset</a>
