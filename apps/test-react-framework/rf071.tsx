@@ -39,7 +39,6 @@ export interface IChildRouteActionPar { title: string; }
 @flux.StoreDef({ moduleId: moduleId, componentClass: Child })
 export class ChildStore extends flux.Store<{}> {
 
-  //title: string;
   doDispatchAction(id: number, par: flux.IActionPar):Promise<any> {
     switch (id) {
       case TActions.childClick: return this.parentRoute().subNavigate(flux.createRoute<IChildRouteActionPar>(ChildStore, { title: this.getRoutePar<IChildRouteActionPar>().title += 'x' }));
