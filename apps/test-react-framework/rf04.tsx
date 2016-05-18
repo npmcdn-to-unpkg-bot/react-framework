@@ -38,7 +38,7 @@ export class Comp extends flux.Component<CompStore, ICompPar> { }
 @flux.StoreDef({ moduleId: moduleId, componentClass: Comp })
 export class CompStore extends flux.Store<ICompPar> {
   render(): JSX.Element {
-    return <h1>Title: {this.$props.$title}</h1>;
+    return <h1>Title: {this.$props().$title}</h1>;
   }
   asyncConstructor() { return this.id == 'comp1' ? null : new Promise<{}>(res => setTimeout(() => res(null), 1000)); }
   //asyncConstructor() { return new Promise<{}>(res => setTimeout(() => res(null), this.id == 'comp1' ? 1000 : 2000)); }

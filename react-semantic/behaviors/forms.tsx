@@ -72,6 +72,6 @@ export class DimmerSmart extends forms.Dimmer<DimmerStore<{}, forms.IModalOut>, 
 @flux.StoreDef({ moduleId: moduleId, componentClass: DimmerSmart })
 export class DimmerStore<TInp extends forms.IModalIn, TOut extends forms.IModalOut> extends forms.DimmerStore<ui.DimmerProps & TInp, TOut> {
   render(): JSX.Element {
-    return React.createElement(ui.Dimmer, this.$props, this.renderTemplate());
+    return React.createElement(ui.Dimmer, this.$props(), this.renderTemplate());
   }
 }

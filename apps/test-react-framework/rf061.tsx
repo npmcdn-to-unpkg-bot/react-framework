@@ -59,7 +59,7 @@ export class ChildStore extends flux.Store<IPropsChild> {
     }
   }
   render(): JSX.Element {
-    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>Title/subtitle: {this.$props.$title}/{this.subTitle}</h3>;
+    return <h3 onClick={ev => this.clickAction(ev, TActions.childClick, 'childClick') }>Title/subtitle: {this.$props().$title}/{this.subTitle}</h3>;
   }
 
 }

@@ -58,7 +58,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
     this.asyncCancel();
     delete this.$asyncLastResult;
     this.modify(st => {
-      if (this.$props) st.value = this.assignTo(this.$props.$defaultValue);
+      if (this.$props()) st.value = this.assignTo(this.$props().$defaultValue);
       delete st.error;
     });
   }
@@ -73,7 +73,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
 
   modifyInputTagProps(props: React.HTMLAttributes) { }
 
-  protected hasValidator(): boolean { return !!this.$props.$validator || !!this.$props.$validatorAsync; }
+  protected hasValidator(): boolean { return !!this.$props().$validator || !!this.$props().$validatorAsync; }
 
   protected blur() {
     console.log('blur');
@@ -100,7 +100,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
       self.asyncCancel();
       self.modify(st => { st.validating = true; st.error = null; });
       let obs: rx.Observable<string> = rx.Observable.create((obs: rx.Subscriber<string>) => {
-        self.$props.$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
+        self.$props().$validatorAsync(val, err => { console.log('getErrorAsync completed'); self.asyncDelete(); if (err) obs.error(err); else obs.complete(); });
         return () => { };
       });
       self.$asyncConnectable = obs.publish();
@@ -116,14 +116,14 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
     if (!this.hasValidator()) { refreshComponent(null); return; }
 
     //******* sync validation
-    if (this.$props.$validator) {
+    if (this.$props().$validator) {
       if (!self.blured) { refreshComponent(null); return; }
       let error = null;
-      var vals = Array.isArray(this.$props.$validator) ? this.$props.$validator as Array<flux.TSyncValidator<V>> : [this.$props.$validator as flux.TSyncValidator<V>];
+      var vals = Array.isArray(this.$props().$validator) ? this.$props().$validator as Array<flux.TSyncValidator<V>> : [this.$props().$validator as flux.TSyncValidator<V>];
       if (vals.find(v => { error = v(val); return !!error; })) { refreshComponent(error); return; }
     }
 
-    if (!this.$props.$validatorAsync) { refreshComponent(null); return; }
+    if (!this.$props().$validatorAsync) { refreshComponent(null); return; }
 
     //******* async validation
     //** at handleChange

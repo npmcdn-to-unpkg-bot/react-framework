@@ -137,7 +137,8 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
 
     var res: ICreateInComponent<T> = props.$store instanceof Store ? { res: props.$store as T } : Store.createInComponent<T>(ctx.$parent, componentToStore(this.constructor as TComponentClass), props.id, props.$store as TGetStore<T>);
     this.state = res.res; delete this.state.$animation;
-    this.state.$props = props; this.state.$comp = this;
+    //this.state.$props() = props;
+    this.state.$comp = this;
     if (props.$animation) this.state.$animation = new flux.Animation(this.state, props.$animation);
     
     if (!this.state.$initialized) {
@@ -160,7 +161,7 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
   componentDidUpdate() { this.state.trace('componentDidUpdate'); this.state.componentDidUpdate(); }
   render(): JSX.Element {
     if (!this.state.$initialized) return null;
-    this.state.$props = this.props;
+    //this.state.$props() = this.props;
     this.state.trace('render');
     return this.state.render();
   }
@@ -205,7 +206,6 @@ export abstract class Store<T> implements IStoreLiteral {
 
   $comp: Component<Store<T>, {}>; //self component, could be omited for stores without component
   $subscribers: Array<string> = []; //components path's, using this store as a status
-  $props: TProps<this, T>; //my component props
   $initialized = false; //flag: store already initialized from component properties
   $onDidMount: rx.Subject<any>;//component didMount notification. Called after velocity start animation.
   $animation: Animation; //component animations
@@ -228,6 +228,7 @@ export abstract class Store<T> implements IStoreLiteral {
   //!!!**** asyncConstructor je volan az po componentCreated a po initStateFromProps
   asyncConstructor(): Promise<this> { return null; }
 
+  $props(): TProps<this, T> { return this.$comp.props as TProps<this, T>; } //my component props
 
   //static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
   //  if (!storeId) { completed(null); return; }
@@ -316,7 +317,7 @@ export abstract class Store<T> implements IStoreLiteral {
   findRouteHook(hookId?: string): RouteHookStore {
     if (!hookId) hookId = routeHookDefaultName;
     var res = this.childRoutes().find(r => {
-      var hid = r.$props.$hookId ? r.$props.$hookId : routeHookDefaultName;
+      var hid = r.$props().$hookId ? r.$props().$hookId : routeHookDefaultName;
       return hid === hookId;
     });
     if (!res) throw new Exception(`Cannot find RouteHook, hookId=${hookId}`);
@@ -336,7 +337,7 @@ export abstract class Store<T> implements IStoreLiteral {
 
   renderTemplate(escape?: React.ReactChild | Array<React.ReactChild>, forceElement?: boolean): React.ReactNode {
     let expandTemplate = () => {
-      let templ = this.$props.$template || defaultTemplates[this.getMeta().classId];
+      let templ = this.$props().$template || defaultTemplates[this.getMeta().classId];
       return templ ? templ(this) : null;
     };
     let normalizeArray = arr => {
@@ -348,7 +349,7 @@ export abstract class Store<T> implements IStoreLiteral {
       }
     }
 
-    let res = normalizeArray(React.Children.toArray(this.$props.children)) || normalizeArray(expandTemplate()) || normalizeArray(escape) || <div>Missing children or $template component property</div>;
+    let res = normalizeArray(React.Children.toArray(this.$props().children)) || normalizeArray(expandTemplate()) || normalizeArray(escape) || <div>Missing children or $template component property</div>;
     let isArr = Array.isArray(res); if (!isArr) return res;
     return forceElement ? <div>{res}</div> : res;
   }
@@ -445,10 +446,10 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
   hookedStore: TStore;
 
   getHookPar(): TRouteActionPar {
-    if (this.$parent === store) return this.$props.$hookId ? null : store.route; //simple case
+    if (this.$parent === store) return this.$props().$hookId ? null : store.route; //simple case
     let act: RouteHookStore = this; let path: Array<string> = [];
     while (act.$parent != store) { //hookId path:
-      path.push(this.$props.$hookId ? this.$props.$hookId : routeHookDefaultName);
+      path.push(this.$props().$hookId ? this.$props().$hookId : routeHookDefaultName);
       do { act = act.$parent as RouteHookStore; } while ( !(act instanceof RouteHookStore));
     }
     let res = store.route; for (var i = path.length - 1; i >= 0; i--) {
@@ -524,7 +525,7 @@ export class RouteHookStore extends Store<IRouteHookProps> { //Route Hook compon
     if (store.$routing.sender !== this || !store.$routing.running) return getComp();
 
     if (store.$routing.running === RoutingGlobalStatus.toStart) {
-      if (!store.$routing.actComp) store.$routing.actComp = this.$props.$ignoreLoading ? null : <div>Loading...</div>; //first routing => actComp is splash
+      if (!store.$routing.actComp) store.$routing.actComp = this.$props().$ignoreLoading ? null : <div>Loading...</div>; //first routing => actComp is splash
       store.$routing.nextComp = getComp();
       store.$routing.topIsAct = !store.$routing.topIsAct;
       this.trace('... routing');
@@ -751,13 +752,13 @@ export class BindToStateStore extends Store<BindToStateProps> {
   //$stores: Array<flux.TStore> | flux.TStore;
   componentCreated() {
     super.componentCreated();
-    if (this.$props.$stores) this.stores().forEach(st => st.subscribe(this.$comp));
+    if (this.$props().$stores) this.stores().forEach(st => st.subscribe(this.$comp));
   }
   componentWillUnmount() {
     super.componentWillUnmount();
-    if (this.$props.$stores) this.stores().forEach(st => st.unSubscribe(this.$comp));
+    if (this.$props().$stores) this.stores().forEach(st => st.unSubscribe(this.$comp));
   }
-  private stores(): Array<flux.TStore> { return Array.isArray(this.$props.$stores) ? this.$props.$stores as Array<flux.TStore> : [this.$props.$stores as flux.TStore]; }
+  private stores(): Array<flux.TStore> { return Array.isArray(this.$props().$stores) ? this.$props().$stores as Array<flux.TStore> : [this.$props().$stores as flux.TStore]; }
 }
 
 //***************** POPSTATE EVENT
