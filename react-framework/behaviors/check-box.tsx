@@ -39,7 +39,7 @@ export class RadioLowStore extends flux.Store<RadioProps> {
 
   componentCreated() {
     super.componentCreated();
-    this.value = this.$props().$defaultValue;
+    this.value = this.getProps().$defaultValue;
   }
 
   modifyInputTagProps(props: React.HTMLAttributes) {
@@ -81,7 +81,7 @@ export class RadiosStore extends forms.FieldLowStore<any> {
   reset() {
     for (var p in this.childStores) {
       var ch: RadioLowStore = this.childStores[p] as RadioLowStore;
-      ch.modify(st => st.value = ch.$props().$defaultValue);
+      ch.modify(st => st.value = ch.getProps().$defaultValue);
     }
     super.reset();
   }

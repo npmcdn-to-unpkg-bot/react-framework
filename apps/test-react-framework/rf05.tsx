@@ -37,11 +37,11 @@ export enum CompAction { click }
 @flux.StoreDef({ moduleId: moduleId, componentClass: Comp })
 export class CompStore extends flux.Store<ICompPar> {
   subTitle: string = '';
-  render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, CompAction.click, 'click') }>Title/subTitle: {this.$props().$title}/{this.subTitle}</h1>; }
+  render(): JSX.Element { return <h1 onClick={ev => this.clickAction(ev, CompAction.click, 'click') }>Title/subTitle: {this.getProps().$title}/{this.subTitle}</h1>; }
   doDispatchAction(id: number, par: flux.IActionPar): Promise<any> {
     switch (id) {
       case CompAction.click:
-        if (this.$props().$async) { //Async action
+        if (this.getProps().$async) { //Async action
           return new Promise(res => setTimeout(() => {
               this.modify(st => st.subTitle += 'x');
               res(null);

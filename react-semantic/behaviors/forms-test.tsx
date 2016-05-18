@@ -35,14 +35,14 @@ var inpTemplate: flux.TTemplate<InputSmartStore> = self =>
     <Input $error={!!self.error} $iconLeft $loading={self.validating}>
       <InputTag placeholder="Search..." /><Icon $Icon={icon.search}/>
     </Input>
-    <Label $tiny $pointingLeft $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px', }}>{self.error} in {self.$props().$title}</Label>
+    <Label $tiny $pointingLeft $colRed $basic style={{ visibility: self.error ? 'visible' : 'hidden', marginTop: '-1px', }}>{self.error} in {self.getProps().$title}</Label>
   </div>;
 
 var fieldTemplate: flux.TTemplate<InputSmartStore> = self =>
-  [<label key={0}>{self.$props().$title}</label>,
-    <InputTag placeholder={self.$props().$title} key={1}/>,
+  [<label key={0}>{self.getProps().$title}</label>,
+    <InputTag placeholder={self.getProps().$title} key={1}/>,
     <Label $small $colRed $basic style={{ visibility: self.error || self.validating ? 'visible' : 'hidden', border: '0px', }} key={2}>
-      <span style={{ display: self.error ? null : 'none' }} key={0}>{self.error} in {self.$props().$title}</span>
+      <span style={{ display: self.error ? null : 'none' }} key={0}>{self.error} in {self.getProps().$title}</span>
       <Icon $disabled $Color={color.no} style={{ display: self.validating ? null : 'none' }} $Icon={icon.circleNotched} $loading key={2}/>
     </Label>]
 
