@@ -111,7 +111,6 @@ function decodeOutEfect(ef: transition | callout | velocity.Properties, inEf: tr
   if (efectAssigned(ef)) return ef;
   if (typeof inEf != 'number' || inEf >= 100) throw 'decodeOutEfect';
   var res: string = transition[inEf as number] as string;
-  //if (res.endsWith('In')) throw 'decodeOutEfect 2';
   return `transition.${res.endsWith('In') ? res.replace('In', 'Out') : res.replace('Out', 'In')}`;
 }
 
@@ -134,7 +133,7 @@ export class Animation {
   onDidMount() {
     if (flux.store.justRouting()) return; //prave bezi routign proces => neanimuj
     var el = this.el(); if (!el) return;
-    if (this.store.animIsOut == undefined) this.in(() => { if (this.store.$onDidMount.isUnsubscribed) return; this.store.$onDidMount.complete(); });
+    if (this.store.animIsOut == undefined) this.in().then(() => this.store.$onDidMount.resolve(null));
     else this.setState(this.store.animIsOut, el);
   }
   dispose() {
@@ -143,27 +142,29 @@ export class Animation {
     Velocity(el, 'stop');
   }
 
-  in(completed: () => void) {
-    var el = this.el(); if (!el) { completed(); return; }
-    var ef = decodeEfect(this.par.in);
-    this.store.animIsOut = false;
-    var opt: velocity.Options = { complete: () => completed() };
-    this.setPar(true, opt);
-    Velocity(el, 'finish');
-    Velocity(el, ef, opt);
+  in(): Promise<any> {
+    return new Promise(ok => {
+      var el = this.el(); if (!el) { ok(); return; }
+      var ef = decodeEfect(this.par.in);
+      this.store.animIsOut = false;
+      var opt: velocity.Options = { complete: () => { debugger; ok(); } };
+      this.setPar(true, opt);
+      Velocity(el, 'finish');
+      Velocity(el, ef, opt);
+    });
   }
-  out(completed: () => void) {
-    var el = this.el(); if (!el) { completed(); return; }
-    var ef = decodeOutEfect(this.par.out, this.par.in);
-    this.store.animIsOut = true;
-    var opt: velocity.Options = { complete: () => completed() };
-    this.setPar(!efectAssigned(this.par.out), opt);
-    Velocity(el, 'finish');
-    Velocity(el, ef, opt);
+  out():Promise<any> {
+    return new Promise(ok => {
+      var el = this.el(); if (!el) { ok(); return; }
+      var ef = decodeOutEfect(this.par.out, this.par.in);
+      this.store.animIsOut = true;
+      var opt: velocity.Options = { complete: () => { debugger; ok(); } };
+      this.setPar(!efectAssigned(this.par.out), opt);
+      Velocity(el, 'finish');
+      Velocity(el, ef, opt);
+    });
   }
-  toggle(completed: () => void) {
-    if (this.store.animIsOut) this.in(completed); else this.out(completed);
-  }
+  toggle(): Promise<any> { return this.store.animIsOut ? this.in() : this.out(); }
 
   private setPar(inPar: boolean, opt: velocity.Options) {
     var pars = inPar ? { duration: this.par.inDuration, delay: this.par.inDelay, easing: this.par.inEasing } : { duration: this.par.outDuration, delay: this.par.outDelay, easing: this.par.outEasing };

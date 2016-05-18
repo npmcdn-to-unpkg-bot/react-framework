@@ -194,7 +194,8 @@ export abstract class Store<T> implements IStoreLiteral {
   $comp: Component<Store<T>, {}>; //self component, could be omited for stores without component
   $subscribers: Array<string> = []; //components path's, using this store as a status
   $initialized = false; //flag: store already initialized from component properties
-  $onDidMount: rx.Subject<any>;//component didMount notification. Called after velocity start animation.
+  //$onDidMount: rx.Subject<any>;//component didMount notification. Called after velocity start animation.
+  $onDidMount: Deferred<any>; //componentDidMount is async due to velocity start animation.
   $animation: Animation; //component animations
 
   _type: string; //store type, kvuli JSON deserializaci
@@ -215,26 +216,9 @@ export abstract class Store<T> implements IStoreLiteral {
   //!!!**** asyncConstructor je volan az po componentCreated a po initStateFromProps
   asyncConstructor(): Promise<this> { return null; }
 
-  getProps(): TProps<this, T> { return this.$comp.props as TProps<this, T>; } //my component props
+  //"status from component props" initialization
+  initStateFromProps(props: TProps<this, T>) { if (props.$animation) this.animIsOut = props.$animation.animIsOutDefault; }
 
-  //static createInHook<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, completed: TCreateStoreCallback, instanceId?: string, routePar?: IActionPar) {
-  //  if (!storeId) { completed(null); return; }
-  //  let cls = Store.getStoreClass(storeId);
-  //  if (store.loginNeeded(cls)) { completed(new ELoginNeeded()); return null; }
-  //  let res = new cls(parent, instanceId);
-  //  res.$initialized = true;
-  //  res.initFromRoutePar(routePar);
-  //}
-  //static createInRender<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id?: string): T {
-  //  let cls = Store.getStoreClass(storeId);
-  //  let idInParent = Store.getClassIdInParent(cls, id);
-  //  let res = (parent.childStores ? parent.childStores[idInParent] : null) as T;
-  //  if (res) return res;
-  //  res = new cls(parent, id) as T;
-  //  if (!parent.childStores) parent.childStores = {};
-  //  parent.childStores[idInParent] = res;
-  //  return res as T;
-  //}
   static createInComponent<T extends TStore>(parent: TStore, storeId: string | TStoreClassLow, id: string, storeProc: (st?: T) => T): ICreateInComponent<T> {
     let res: T;
     if (storeProc) { res = storeProc(); if (res) return { res: res }; } //Store jiz vytvoren, v parent fieldu
@@ -261,6 +245,11 @@ export abstract class Store<T> implements IStoreLiteral {
     return res;
   }
 
+  subscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, true, includingComponent); } //called in React.Component constructor
+  unSubscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
+  trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
+  getProps(): TProps<this, T> { return this.$comp.props as TProps<this, T>; } //my component props
+
   getMeta(avoidNull?: boolean): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClassLow, avoidNull); } //store meta info
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClassLow, this.id); } //jednoznacna identifikace v parent child seznamu
   static getClassMeta(storeClass: TStoreClassLow, avoidNull?: boolean): IStoreMeta { //store meta info
@@ -286,10 +275,8 @@ export abstract class Store<T> implements IStoreLiteral {
       comp.forceUpdate();
     });
   }
-  subscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, true, includingComponent); } //called in React.Component constructor
-  unSubscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
-  trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
 
+ //************** when ROUTE 
   parentRoute(): RouteHookStore {
     if (!(this.$parent instanceof RouteHookStore)) throw new Exception(`Parent component is not RouteHookStore: ${this.path}`);
     return this.$parent as RouteHookStore;
@@ -319,14 +306,7 @@ export abstract class Store<T> implements IStoreLiteral {
   }
   onUnbindFromRoute(): Promise<any> { return null; }
 
-  //findRouteHook(hookId: string): RouteHookStore {
-  //  return this.findRoute(hookId);
-  //  //if (!hookId) hookId = routeHookDefaultName;
-  //  //let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${hookId}`);
-  //  //return hookStore;
-  //}
-
-
+  //************** Component management
   renderTemplate(escape?: React.ReactChild | Array<React.ReactChild>, forceElement?: boolean): React.ReactNode {
     let expandTemplate = () => {
       let templ = this.getProps().$template || defaultTemplates[this.getMeta().classId];
@@ -346,12 +326,6 @@ export abstract class Store<T> implements IStoreLiteral {
     return forceElement ? <div>{res}</div> : res;
   }
 
-  //************** Component management
-  //itsMe(comp: Component<this, {}>) {
-  //  this.$props = comp.props as TProps<this, T>; this.$comp = comp;
-  //  if (this.$props.$animation) this.$animation = new flux.Animation(this, this.$props.$animation);
-  //}
-
   render(): JSX.Element {
     return this.renderTemplate(null, true) as JSX.Element;
   }
@@ -361,9 +335,9 @@ export abstract class Store<T> implements IStoreLiteral {
     this.subscribe(this.$comp, true);
   }
   componentDidMount() {
-    this.$onDidMount = new rx.Subject();
+    this.$onDidMount = new Deferred();
     if (this.$animation) this.$animation.onDidMount();
-    else this.$onDidMount.complete();
+    else this.$onDidMount.resolve(null);
   }
   componentDidUpdate() { }
   componentWillUnmount() {
@@ -373,22 +347,8 @@ export abstract class Store<T> implements IStoreLiteral {
     this.trace('destroy');
   }
 
-  //********************* INIT
-  //"status from component props" initialization
-  initStateFromProps(props: TProps<this, T>) { if (props.$animation) this.animIsOut = props.$animation.animIsOutDefault; }
-
-  //finish store creation from route parameters. Not called in playing bootApp for action playing.
-  //initFromRoutePar(par: IActionPar) { }
-
   //************** Action Binding
   doDispatchAction(id: number, par: IActionPar): Promise<any> { throw new flux.ENotImplemented(`id=${id}, par=${JSON.stringify(par)}`); }
-
-  //bindRouteToStore(isRestore: boolean/*=true => bind from global state, encoded do JSON literal object*/, rPar: TRouteActionPar, completed: TCreateStoreCallback) {
-  //  let hookId = rPar.hookId ? rPar.hookId : routeHookDefaultName;
-  //  let hookStore = this[hookId] as RouteHookStore; if (!hookStore) throw new flux.Exception(`Missing route hook ${rPar.hookId}`);
-  //  console.log(`> binding to hook: hookId=${rPar.hookId ? rPar.hookId : routeHookDefaultName}, storeId=${rPar.storeId}`);
-  //  hookStore.bindRouteToHookStore(isRestore, rPar, completed);
-  //}
 
   action<T extends IActionPar>(id: number, descr: string, par?: T): Promise<any> { //call action
     console.log(`> action ${JSON.stringify({ dispPath: this.path, actionId: id, par: par })}`);

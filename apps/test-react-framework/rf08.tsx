@@ -59,15 +59,18 @@ export class AppRootStore extends flux.Store<{}> {
           //create Dummy component
           this.modify(st => st.hidden = false);
           //subscribe musi byt az po this.modify, $onDidMount se vytvari v didMount
-          return new Promise(ok => this.dummy.$onDidMount.subscribe(null, null, () => ok(null))); //callback after mount and enter animation
+          //return new Promise(ok => this.dummy.$onDidMount.subscribe(null, null, () => ok(null))); //callback after mount and enter animation
+          return this.dummy.$onDidMount.promise; //callback after mount and enter animation
         } else {
+          debugger;
           //animation out and remove Dummy component
-          return new Promise(ok => this.dummy.$animation.out(() => {
+          return new Promise(ok => this.dummy.$animation.out().then(() => {
+            debugger;
             this.modify(st => st.hidden = true);
             ok(null);
           }));
         }
-      case TActions.click2: return new Promise(ok => this.dummy2.$animation.toggle(() => ok(null))); //just change target animation status
+      case TActions.click2: return this.dummy2.$animation.toggle(); //just change target animation status
       default: return super.doDispatchAction(id, par);
     }
   }

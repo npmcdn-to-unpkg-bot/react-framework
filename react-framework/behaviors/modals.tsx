@@ -75,7 +75,7 @@ export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: 
     flux.store.findRouteHook().subNavigate(flux.createRoute(flux.Store.getClassMeta(comp as any).storeClass, par))
       .then((res: TDimmerStore) => {
         res.$completed = out => ok(out as TOut);
-        res.$onDidMount.subscribe(null, null, () => onShowed(null));
+        res.$onDidMount.then(() => onShowed(null));
         //if (onShowed) onShowed(null);
       })
       .catch(er => err(er));
