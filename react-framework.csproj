@@ -79,7 +79,7 @@
     <TypeScriptCompile Include="react-framework\exports.ts" />
     <TypeScriptCompile Include="react-framework\action-recorder.tsx" />
     <TypeScriptCompile Include="react-semantic\behaviors\templates.tsx" />
-    <TypeScriptCompile Include="react-semantic\behaviors\forms-test.tsx" />
+    <None Include="react-semantic\behaviors\forms-test.tsx_" />
     <TypeScriptCompile Include="react-framework\behaviors\forms.tsx" />
     <TypeScriptCompile Include="react-framework\js.ts" />
     <TypeScriptCompile Include="react-framework\router.ts" />

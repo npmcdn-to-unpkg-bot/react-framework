@@ -33,7 +33,7 @@ import {Animation} from './animation';
 
 4. PLAY version
 call root store.render(), yielding to calling all component constructors:
-- component props and context to store.$props / store.$context
+- component props and context to store.$props / store.getContext()
 - state change notification subscribe
 */
 
@@ -152,7 +152,7 @@ export class Component<T extends TStore, P> extends React.Component<IProps<T> & 
     this.state.trace('render');
     return this.state.render();
   }
-  getChildContext(): IComponentContext { return { $parent: this.state }; }
+  getChildContext(): IComponentContext { return { $parent: this.state }; } //React child context provider
 }
 Component['childContextTypes'] = { $parent: React.PropTypes.any };
 Component['contextTypes'] = { $parent: React.PropTypes.any };
@@ -248,7 +248,8 @@ export abstract class Store<T> implements IStoreLiteral {
   subscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, true, includingComponent); } //called in React.Component constructor
   unSubscribe(comp: TComponent, includingComponent?: boolean) { store.doSubscribe(this, comp, false, includingComponent); } //called in React.Component componentWillUnmount
   trace(msg: string) { console.log(`> ${this.path}: ${msg}`); } //helper
-  getProps(): TProps<this, T> { return this.$comp.props as TProps<this, T>; } //my component props
+  getProps(): TProps<this, T> { return this.$comp ? this.$comp.props as TProps<this, T> : null; } //my component props
+  getContext<T extends IComponentContext>(): any { return this.$comp ? this.$comp.context as T : null; } //my component context
 
   getMeta(avoidNull?: boolean): IStoreMeta { return Store.getClassMeta(this.constructor as TStoreClassLow, avoidNull); } //store meta info
   getIdInParent(): string { return Store.getClassIdInParent(this.constructor as TStoreClassLow, this.id); } //jednoznacna identifikace v parent child seznamu

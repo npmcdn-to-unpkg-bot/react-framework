@@ -32,12 +32,12 @@ export class AppRootStore extends flux.Store<{}> {
 
   constructor(parent, id) {
     super(parent, id);
-    this.form = new FormSmartStore(this, 'form');
-    this.num = new FieldSmartStore(this, 'num');
-    this.firstName = new FieldSmartStore(this, 'firstName');
-    this.lastName = new FieldSmartStore(this, 'lastName');
-    this.radios = new RadiosStore(this, 'radios');
-    this.checkBox = new CheckBoxStore(this, 'checkBox');
+    //this.form = new FormSmartStore(this, 'form');
+    //this.num = new FieldSmartStore(this, 'num');
+    //this.firstName = new FieldSmartStore(this, 'firstName');
+    //this.lastName = new FieldSmartStore(this, 'lastName');
+    //this.radios = new RadiosStore(this, 'radios');
+    //this.checkBox = new CheckBoxStore(this, 'checkBox');
   }
 
   render(): JSX.Element {
@@ -47,13 +47,18 @@ export class AppRootStore extends flux.Store<{}> {
           <CheckBox $title='Check Box' $store={st => this.checkBox = st ? st : this.checkBox} id='checkBox' $validator={flux.requiredBoolValidator() } />
         </Field>
         <Fields $inline key={2}>
+          {/*
           <Field key={1}><Radio $parent={this.radios} id='r1' $title='r1 title' $defaultValue/></Field>
           <Field key={2}><Radio $parent={this.radios} id='r2' $title='r2 title'/></Field>
+          <Field key={1}><Radio $radios={(st => { debugger; return this.radios = st ? st : this.radios }).bind(this)} id='r1' $title='r1 title' $defaultValue/></Field>
+          */}
+          <Field key={1}><Radio $radios={st => this.radios = st ? st : this.radios} id='r1' $title='r1 title' $defaultValue/></Field>
+          <Field key={2}><Radio $radios={st => this.radios = st ? st : this.radios} id='r2' $title='r2 title'/></Field>
         </Fields>
         <Fields $equalWidth key={3}>
           <FieldSmart $title='First Name' $store={st => this.firstName = st ? st : this.firstName}  id='firstName' $required $validator = {flux.requiredValidator() } />
           <FieldSmart $title='Last Name' $store={st => this.lastName = st ? st : this.lastName}  id='lastName' $required $validator = {flux.requiredValidator() } />
-          <FieldSmart $title='Name' $defaultValue='3' $store={st => this.num = st ? st : this.num}  id='num' />
+          <FieldSmart $title='Name' $defaultValue='3' $store={st => this.num = st ? st : this.num}  id='num' $validatorAsync={(val, compl) => setTimeout(() => { compl(val == '5' ? null : '5 required') }, 300) }/>
         </Fields>
       </FormSmart>
       <hr/>

@@ -29,18 +29,13 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 @flux.StoreDef({ moduleId: moduleId, componentClass: AppRoot })
 export class AppRootStore extends flux.Store<{}> {
 
-  constructor(parent, id) {
-    super(parent, id);
-    this.radios = new RadiosStore(this, 'radios');
-  }
-
   radios: RadiosStore;
 
   render(): JSX.Element {
     return <div>
-      <Radio $parent={this.radios} $title='Radio 1' id='r1'/><br/>
-      <Radio $parent={this.radios} $title='Radio 2' id='r2' $defaultValue={true}/><br/>
-      <Radio $parent={this.radios} $title='Radio 3' id='r3'/><br/>
+      <Radio $radios={st => this.radios = st ? st : this.radios} $title='Radio 1' id='r1'/><br/>
+      <Radio $radios={st => this.radios = st ? st : this.radios} $title='Radio 2' id='r2' $defaultValue={true}/><br/>
+      <Radio $radios={st => this.radios = st ? st : this.radios} $title='Radio 3' id='r3'/><br/>
       <hr/>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.validate, 'validate') }>Validate</a> |
       <a href='#' onClick={ev => this.clickAction(ev, TActions.reset, 'reset') }>Reset</a>

@@ -30,8 +30,7 @@ import {
 } from '../../react-semantic/common/exports';
 import * as ui from '../../react-semantic/common/exports';
 
-import {FormSmartTest} from '../../react-semantic/behaviors/forms-test';
-
+//import {FormSmartTest} from '../../react-semantic/behaviors/forms-test';
 
 var moduleId = 'UITest'
 

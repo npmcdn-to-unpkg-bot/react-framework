@@ -14,7 +14,7 @@ interface FieldActionPar<T> extends flux.IActionPar { value: T; }
 export interface IFieldContext extends flux.IComponentContext { MyInput: { modifyInputTagProps(props: React.HTMLAttributes); }; }
 
 export abstract class FieldLow<V, T extends FieldLowStore<V>, P> extends flux.Component<T, FieldLowProps<V> & P> { getChildContext(): IFieldContext { return { MyInput: this.state, $parent: this.state }; } }
-FieldLow['contextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
+//FieldLow['contextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
 FieldLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.PropTypes.any };
 
 type TFieldComponent = FieldLow<any, FieldLowStore<any>, {}>;
@@ -28,8 +28,6 @@ export interface FieldLowProps<V> {
 
 //************** FieldLowStore
 export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
-  $context: IFormContext;
-  $myForm: FormLowStore;
   $actionInBlur: boolean;
   $actionInHandleChange: boolean;
   //state
@@ -39,14 +37,13 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
   validating: boolean;
 
   //abstract value
-  assignTo(val: V): V {return val;}
-  modified(val1: V, val2: V):boolean {return val1===val2;}
+  assignTo(val: V): V { return val; }
+  modified(val1: V, val2: V): boolean { return val1 === val2; }
 
-  componentCreated() {
-    super.componentCreated();
-    if (this.$context && this.$context.MyForm) this.$context.MyForm.register(this, true);
-  }
-  componentWillUnmount(): void { this.asyncCancel(); if (this.$myForm) this.$myForm.register(this, false); super.componentWillUnmount(); }
+  getMyForm(): FormLowStore { var fld = this.$parent; while (fld != null) { if (fld instanceof FormLowStore) return fld as FormLowStore; fld = fld.$parent; } return null; }
+
+  componentCreated() { super.componentCreated(); FormLowStore.register(this.getMyForm(), this, true); }
+  componentWillUnmount(): void { this.asyncCancel(); FormLowStore.register(this.getMyForm(), this, false); super.componentWillUnmount(); }
 
   initStateFromProps(props: FieldLowProps<V>) { super.initStateFromProps(props); this.value = this.assignTo(props.$defaultValue); }
 
@@ -62,7 +59,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
       delete st.error;
     });
   }
-  doDispatchAction(id: number, par: FieldActionPar<V>):Promise<any> {
+  doDispatchAction(id: number, par: FieldActionPar<V>): Promise<any> {
     switch (id) {
       case TFieldActions.setState:
         this.blured = true;
@@ -108,7 +105,7 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
     }
     function asyncSubscribe() { //subscribe to async validation result
       let lastVal = val;
-      let done = err => { self.$asyncLastResult = { value: self.assignTo(lastVal), error: err}; refreshComponent(err); }
+      let done = err => { self.$asyncLastResult = { value: self.assignTo(lastVal), error: err }; refreshComponent(err); }
       self.$asyncConnectable.subscribe(null, err => done(err), () => done(null));
     }
 
@@ -160,11 +157,11 @@ export abstract class FieldLowStore<V> extends flux.Store<FieldLowProps<V>> {
 type TFieldLowStore = FieldLowStore<any>
 
 //************** InputTag
-export class InputTag extends React.Component<React.HTMLAttributes, {}>  { 
+export class InputTag extends React.Component<React.HTMLAttributes, {}>  {
   render(): JSX.Element {
-    let props: React.HTMLAttributes = {}; 
+    let props: React.HTMLAttributes = {};
     if (this.context && this.context.MyInput) this.context.MyInput.modifyInputTagProps(props);
-    Object.assign(props, this.props); 
+    Object.assign(props, this.props);
     if (!props.type) props.type = 'text';
     return React.createElement('input', props);
   }
@@ -173,21 +170,15 @@ export class InputTag extends React.Component<React.HTMLAttributes, {}>  {
 }
 
 //************** FormLow
-export abstract class FormLow<T extends FormLowStore, P> extends flux.Component<T, P> {
-  getChildContext(): IFormContext { return { MyForm: this.state, $parent:this.state }; }
-}
-FormLow['childContextTypes'] = { MyForm: React.PropTypes.any, $parent: React.PropTypes.any };
-export interface IFormContext extends flux.IComponentContext { MyForm: FormLowStore; }
-
+export abstract class FormLow<T extends FormLowStore, P> extends flux.Component<T, P> { }
 
 export abstract class FormLowStore extends flux.Store<{}>  {
- register(input: TFieldLowStore, isRegister: boolean) {
+  static register(form: FormLowStore, input: TFieldLowStore, isRegister: boolean) {
+    if (!form) return;
     if (isRegister) {
-      input.$myForm = this;
-      this.$inputs.push(input); 
+      form.$inputs.push(input);
     } else {
-      let idx = this.$inputs.indexOf(input);
-      if (idx >= 0) this.$inputs = this.$inputs.slice(idx);
+      let idx = form.$inputs.indexOf(input); if (idx >= 0) form.$inputs = form.$inputs.slice(idx);
     }
   }
 

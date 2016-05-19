@@ -28,19 +28,22 @@ export abstract class CheckBoxLow<T extends CheckBoxLowStore, P> extends forms.F
 enum TAction { radioClick }
 
 export interface RadioProps {
-  $parent: RadiosStore;
+  $radios: TGetRadios;
   $defaultValue?: boolean;
   $title?: string;
 }
+type TGetRadios = (st?: RadiosStore) => RadiosStore;
 
 export class RadioLowStore extends flux.Store<RadioProps> {
-  $parent:RadiosStore;
-  value:boolean;
+  $parent: RadiosStore;
+  value: boolean;
 
   componentCreated() {
     super.componentCreated();
     this.value = this.getProps().$defaultValue;
+    if (this.isRadiosOwner()) forms.FormLowStore.register(this.getMyForm(), this.$parent, true);
   }
+  componentWillUnmount(): void { if (this.isRadiosOwner()) forms.FormLowStore.register(this.getMyForm(), this.$parent, false); super.componentWillUnmount(); }
 
   modifyInputTagProps(props: React.HTMLAttributes) {
     props.type = 'radio';
@@ -50,16 +53,27 @@ export class RadioLowStore extends flux.Store<RadioProps> {
   }
   doDispatchAction(id: number, par): Promise<any> {
     switch (id) {
-      case TAction.radioClick: this.$parent.onRadioClick(this); return Promise.resolve(null); 
+      case TAction.radioClick: this.$parent.onRadioClick(this); return Promise.resolve(null);
       default: return super.doDispatchAction(id, par);
     }
   }
+  isRadiosOwner(): boolean { return this.id + '_owner' === this.$parent.id; }
 
+  getMyForm(): forms.FormLowStore {
+    var fld: flux.TStore = this.$parent;
+    while (fld != null) { if (fld instanceof forms.FormLowStore) return fld as forms.FormLowStore; fld = fld.$parent; }
+    return null;
+  }
 }
 
-export abstract class RadioLow<T> extends flux.Component<RadioLowStore, RadioProps & T> { 
+export abstract class RadioLow<T> extends flux.Component<RadioLowStore, RadioProps & T> {
   constructor(props: flux.IProps<RadioLowStore> & RadioProps & T, ctx: flux.IComponentContext) {
-    ctx.$parent = props.$parent;
+    //adjust (create or use) RadiosStore
+    let rad = props.$radios();
+    if (!rad) { //radios creator is its owner (see RadioLowStore.componentCreated and RadioLowStore.componentWillUnmount)
+      rad = new RadiosStore(ctx.$parent, props.id + '_owner'); props.$radios(rad);
+    }
+    ctx.$parent = rad;
     super(props, ctx);
   }
   getChildContext(): forms.IFieldContext { return { MyInput: this.state, $parent: this.state }; }
@@ -69,12 +83,12 @@ RadioLow['childContextTypes'] = { MyInput: React.PropTypes.any, $parent: React.P
 
 @flux.StoreDef({ moduleId: moduleId })
 export class RadiosStore extends forms.FieldLowStore<any> {
- 
+
   onRadioClick(radio: RadioLowStore) {
     if (radio.value) return;
     radio.modify(st => st.value = true);
     for (var p in this.childStores) {
-      var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch===radio || !ch.value) continue;
+      var ch: RadioLowStore = this.childStores[p] as RadioLowStore; if (ch === radio || !ch.value) continue;
       ch.modify(st => st.value = false);
     }
   }
@@ -85,8 +99,8 @@ export class RadiosStore extends forms.FieldLowStore<any> {
     }
     super.reset();
   }
-  selected():RadioLowStore {
-    for(var p in this.childStores) { var ch:RadioLowStore  = this.childStores[p] as RadioLowStore; if (ch.value) return ch; }
+  selected(): RadioLowStore {
+    for (var p in this.childStores) { var ch: RadioLowStore = this.childStores[p] as RadioLowStore; if (ch.value) return ch; }
     return null;
   }
 }
