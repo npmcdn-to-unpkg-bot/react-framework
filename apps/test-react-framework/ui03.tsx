@@ -47,7 +47,7 @@ export class AppRoot extends flux.Component<AppRootStore, {}> { }
 export class AppRootStore extends flux.Store<{}> {
 
   render(): JSX.Element {
-    return <div>
+      return <div>
       <a href='#' onClick={ev => this.clickAction(ev, TActions.showDimmer, 'showDimmer') }>Show Dimmer</a>
     </div>;
   }

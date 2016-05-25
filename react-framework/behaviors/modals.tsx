@@ -48,6 +48,7 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
 
   componentCreated() {
     super.componentCreated();
+    this.inputPars = this.getRoutePar<TInp>();
     if (this.inputPars.hideOnEscape) document.addEventListener('keydown', this.$keyDownCancel = this.keyDownCancel.bind(this));
     if (this.inputPars.hideOnClick) document.addEventListener('click', this.$dimmerClickCancel = this.dimmerClickCancel.bind(this));
   } private $keyDownCancel; private $dimmerClickCancel;
@@ -72,7 +73,7 @@ export abstract class DimmerStore<TInp extends IModalIn, TOut extends IModalOut>
 
 export function dimmerShow<TInp extends IModalIn, TOut extends IModalOut>(comp: flux.TStoreClass<TInp>, par: TInp, onShowed: flux.TExceptionCallback): Promise<TOut> {
   return new Promise<TOut>((ok, err) => {
-    flux.store.findRouteHook().subNavigate(flux.createRoute(flux.Store.getClassMeta(comp as any).storeClass, par))
+    flux.store.findRouteHook('modal').subNavigate(flux.createRoute(flux.Store.getClassMeta(comp).storeClass, par))
       .then((res: TDimmerStore) => {
         res.$completed = out => ok(out as TOut);
         res.$onDidMount.then(() => onShowed(null));
